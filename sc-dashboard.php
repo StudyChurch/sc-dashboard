@@ -117,3 +117,5 @@ class SC_Dashboard {
 function sc_dashboard() {
 	return SC_Dashboard::get_instance();
 }
+
+sc_dashboard();
