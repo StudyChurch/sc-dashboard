@@ -1,0 +1,101 @@
+.sc-activity {
+
+	&--card {
+		min-height: 70px;
+
+		&--update {
+			.avatar {
+				display: none;
+			}
+		}
+
+		&--edit {
+			font-size: 0.7142em;
+			float: right;
+		}
+
+		.card-category,
+		.category {
+			a {
+				color: inherit;
+				cursor: inherit;
+				&:hover {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+
+	&--mine {
+	}
+
+	&--group {
+	}
+
+	&--answer {
+		margin-bottom: 1rem;
+		position: relative;
+		margin-left: 40px;
+
+		.mention {
+			font-weight: bold;
+		}
+
+		.avatar {
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			left: -40px;
+			top: 0;
+		}
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&--comment {
+		margin-bottom: 1rem;
+		position: relative;
+		margin-left: 30px;
+		background: #cccccc2b;
+		border-radius: 10px;
+		padding: 5px 10px;
+		box-shadow: 1px 1px 5px -1px #ccc;
+
+		.mention {
+			font-weight: bold;
+		}
+
+		.avatar {
+			position: absolute;
+			width: 20px;
+			height: 20px;
+			left: -30px;
+			top: 5px;
+		}
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+
+	}
+
+	&--update {
+		&.card-body {
+			margin-left: 90px; // 90px + 15px
+		}
+
+		&--form {
+			position: relative;
+		}
+
+		.avatar {
+			position: absolute;
+			width: 75px;
+			height: 75px;
+			left: -90px;
+			top: 0;
+		}
+	}
+}

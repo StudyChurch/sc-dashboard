@@ -1,0 +1,46 @@
+.sc-group {
+
+	.card-user svg.avatar {
+		padding: 10px;
+		color: white;
+		background: $brand-primary;
+	}
+
+	.el-menu-item {
+		height: auto;
+		line-height: 3em;
+		padding: 0 .75em;
+	}
+
+	&--widget {
+
+		&--details {
+
+			&--edit {
+				position: absolute;
+				top: 15px;
+				right: 15px;
+			}
+
+		}
+
+	}
+
+	&--members {
+
+		.card {
+
+			td:first-child {
+				width: 60px;
+			}
+
+			.avatar {
+				width: 45px;
+				height: 45px;
+			}
+
+		}
+
+	}
+
+}

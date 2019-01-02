@@ -1,0 +1,24 @@
+@import "./now-ui-dashboard/variables";
+
+/* theme color */
+$--color-primary: red !global;
+$--color-success: $success-color !default;
+$--color-warning: $warning-color !default;
+$--color-danger: $danger-color !default;
+$--color-info: $info-color !default;
+$--color-text-primary: $primary-color !default;
+$--color-text-secondary: $default-color !default;
+$--color-text-regular: #606266 !default;
+$--color-text-secondary: #909399 !default;
+$--color-text-placeholder: #c0c4cc !default;
+
+$--background-color-base: #f5f7fa !default;
+/* Table
+-------------------------- */
+$--table-header-color: $--color-text-primary !default;
+$--table-row-hover-background: transparent !default;
+$--table-header-background: transparent !default;
+$--table-current-row-background: transparent !default;
+$--table-footer-background: $--color-text-placeholder !default;
+$--table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, .12) !default;
+
