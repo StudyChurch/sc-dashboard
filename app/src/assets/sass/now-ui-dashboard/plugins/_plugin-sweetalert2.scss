@@ -383,7 +383,7 @@ body.swal2-iosfix {
               transform: rotate(-45deg); }
     .swal2-icon.swal2-success [class^='swal2-success-line'] {
       height: 5px;
-      background-color: #18ce0f;
+      background-color: $success-color;
       display: block;
       border-radius: 2px;
       position: absolute;

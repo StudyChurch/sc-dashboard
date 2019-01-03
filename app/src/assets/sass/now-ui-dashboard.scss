@@ -15,6 +15,8 @@
 
  */
 
+@import 'brand_variables';
+
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
@@ -71,6 +73,69 @@
 // example pages and sections
 @import 'now-ui-dashboard/example-pages';
 @import 'now-ui-dashboard/sections';
+
+@import "element_variables";
+
+@import "~element-ui/packages/theme-chalk/src/base";
+@import "~element-ui/packages/theme-chalk/src/pagination";
+//@import "~element-ui/packages/theme-chalk/src/dialog";
+@import "~element-ui/packages/theme-chalk/src/autocomplete";
+@import "~element-ui/packages/theme-chalk/src/dropdown";
+@import "~element-ui/packages/theme-chalk/src/dropdown-menu";
+@import "~element-ui/packages/theme-chalk/src/dropdown-item";
+@import "~element-ui/packages/theme-chalk/src/menu";
+@import "~element-ui/packages/theme-chalk/src/submenu";
+@import "~element-ui/packages/theme-chalk/src/menu-item";
+@import "~element-ui/packages/theme-chalk/src/menu-item-group";
+@import "~element-ui/packages/theme-chalk/src/input";
+@import "~element-ui/packages/theme-chalk/src/input-number";
+@import "~element-ui/packages/theme-chalk/src/radio";
+@import "~element-ui/packages/theme-chalk/src/radio-group";
+@import "~element-ui/packages/theme-chalk/src/radio-button";
+@import "~element-ui/packages/theme-chalk/src/checkbox";
+@import "~element-ui/packages/theme-chalk/src/checkbox-button";
+@import "~element-ui/packages/theme-chalk/src/checkbox-group";
+//@import "~element-ui/packages/theme-chalk/src/switch";
+@import "~element-ui/packages/theme-chalk/src/select";
+@import "~element-ui/packages/theme-chalk/src/button";
+@import "~element-ui/packages/theme-chalk/src/button-group";
+@import "~element-ui/packages/theme-chalk/src/table";
+@import "~element-ui/packages/theme-chalk/src/table-column";
+@import "~element-ui/packages/theme-chalk/src/date-picker";
+//@import "~element-ui/packages/theme-chalk/src/time-select";
+//@import "~element-ui/packages/theme-chalk/src/time-picker";
+@import "~element-ui/packages/theme-chalk/src/popover";
+//@import "~element-ui/packages/theme-chalk/src/tooltip";
+@import "~element-ui/packages/theme-chalk/src/message-box";
+//@import "~element-ui/packages/theme-chalk/src/breadcrumb";
+//@import "~element-ui/packages/theme-chalk/src/breadcrumb-item";
+//@import "~element-ui/packages/theme-chalk/src/form";
+//@import "~element-ui/packages/theme-chalk/src/form-item";
+@import "~element-ui/packages/theme-chalk/src/tabs";
+@import "~element-ui/packages/theme-chalk/src/tab-pane";
+//@import "~element-ui/packages/theme-chalk/src/tag";
+//@import "~element-ui/packages/theme-chalk/src/tree";
+@import "~element-ui/packages/theme-chalk/src/alert";
+@import "~element-ui/packages/theme-chalk/src/notification";
+//@import "~element-ui/packages/theme-chalk/src/slider";
+@import "~element-ui/packages/theme-chalk/src/loading";
+//@import "~element-ui/packages/theme-chalk/src/row";
+//@import "~element-ui/packages/theme-chalk/src/col";
+@import "~element-ui/packages/theme-chalk/src/upload";
+//@import "~element-ui/packages/theme-chalk/src/progress";
+//@import "~element-ui/packages/theme-chalk/src/spinner";
+//@import "~element-ui/packages/theme-chalk/src/message";
+//@import "~element-ui/packages/theme-chalk/src/badge";
+@import "~element-ui/packages/theme-chalk/src/card";
+//@import "~element-ui/packages/theme-chalk/src/rate";
+//@import "~element-ui/packages/theme-chalk/src/steps";
+//@import "~element-ui/packages/theme-chalk/src/step";
+//@import "~element-ui/packages/theme-chalk/src/carousel";
+//@import "~element-ui/packages/theme-chalk/src/scrollbar";
+//@import "~element-ui/packages/theme-chalk/src/carousel-item";
+//@import "~element-ui/packages/theme-chalk/src/collapse";
+//@import "~element-ui/packages/theme-chalk/src/collapse-item";
+//@import "~element-ui/packages/theme-chalk/src/cascader";
 
 // element-ui plugins
 @import "now-ui-dashboard/element-ui-plugins/select";

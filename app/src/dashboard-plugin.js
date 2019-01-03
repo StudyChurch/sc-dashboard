@@ -20,7 +20,6 @@ locale.use(lang);
 // asset imports
 import 'bootstrap/scss/bootstrap.scss';
 import './assets/sass/now-ui-dashboard.scss';
-import './assets/css/demo.css';
 
 // library auto imports
 import 'es6-promise/auto';

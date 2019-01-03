@@ -1,0 +1,11 @@
+$env : 'sc' !default;
+
+@if $env == 'pilgrimage' {
+	$primary-color: #46c7ea !global;
+} @else {
+	$primary-color: #3ebeb2 !global;
+}
+
+$brand-primary: $primary-color !default;
+$blue: $primary-color !default;
+$primary: $primary-color !default;

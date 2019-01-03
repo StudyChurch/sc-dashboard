@@ -76,11 +76,11 @@
     }
   } @else {
     .nav li.active > a:not([data-toggle="collapse"]){
-      color: $success-color;
+      color: $primary-color;
 
       i, svg,
       .sidebar-mini-icon{
-        color: $success-color;
+        color: $primary-color;
       }
     }
   }

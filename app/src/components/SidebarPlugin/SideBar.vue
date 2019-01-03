@@ -44,7 +44,7 @@
     props: {
       title: {
         type: String,
-        default: 'Devo360'
+        default: (undefined === window.scSidebarTitle) ? 'StudyChurch' : window.scSidebarTitle,
       },
       backgroundColor: {
         type: String,
@@ -56,7 +56,7 @@
       },
       logo: {
         type: String,
-        default: require('@/assets/img/icon-vue.png')
+        default: '/wp-content/plugins/sc-dashboard/app/dist/logo.png'
       },
       sidebarLinks: {
         type: Array,

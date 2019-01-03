@@ -4,13 +4,6 @@
   ],
   "plugins": [
     [
-      "component",
-      {
-        "libraryName": "element-ui",
-        "styleLibraryName": "theme-chalk"
-      }
-    ],
-    [
       "module-resolver",
       {
         "alias": {

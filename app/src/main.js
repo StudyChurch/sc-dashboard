@@ -5,8 +5,6 @@ import Axios from 'axios';
 import router from './router';
 import store from './store/store';
 
-import { setAccessToken, setUserData, getUserData } from './auth';
-
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
@@ -22,10 +20,6 @@ let vm = new Vue({
   render : h => h(App),
   router,
   store,
-  data   : {
-    userData    : getUserData(),
-    currentGroup: 0,
-  },
   created() {
     store
       .dispatch('user/fetchMe')
@@ -34,7 +28,6 @@ let vm = new Vue({
         store.dispatch('group/fetchOrgs');
         store.dispatch('study/fetchStudies');
       })
-
   },
   methods: {
     setCurrentGroup (groupID) {
@@ -73,6 +66,3 @@ let vm = new Vue({
   }
 
 });
-
-/* We import element-ui variables at the end so they can override the default element-ui colors */
-import './assets/sass/element_variables.scss';

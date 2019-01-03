@@ -8,17 +8,21 @@
     "serve": "vue-cli-service serve --open",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
+    "build-pilgrimage": "NODE_ENV=pilgrimage vue-cli-service build --mode pilgrimage",
     "test": "vue-cli-service test --watch",
     "lint": "vue-cli-service lint",
-    "watch": "webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
+    "watch": "webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
+    "watch-pilgrimage": "NODE_ENV=pilgrimage webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/vue-fontawesome": "^0.1.2",
     "axios": "^0.18.0",
+    "babel-plugin-component-scss": "^1.1.2",
     "bootstrap": "^4.0.0",
     "chart.js": "^2.7.1",
+    "custom-env": "^1.0.0",
     "element-ui": "^2.2.1",
     "es6-promise": "^4.1.1",
     "fullcalendar": "^3.9.0",

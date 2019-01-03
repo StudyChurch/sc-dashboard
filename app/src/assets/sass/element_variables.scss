@@ -1,8 +1,11 @@
 @import "./now-ui-dashboard/variables";
 
 /* theme color */
-$--color-primary: red !global;
-$--color-success: $success-color !default;
+
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+$--color-primary: $primary-color !global;
+$--color-success: $success-color;
 $--color-warning: $warning-color !default;
 $--color-danger: $danger-color !default;
 $--color-info: $info-color !default;
@@ -21,4 +24,3 @@ $--table-header-background: transparent !default;
 $--table-current-row-background: transparent !default;
 $--table-footer-background: $--color-text-placeholder !default;
 $--table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, .12) !default;
-
