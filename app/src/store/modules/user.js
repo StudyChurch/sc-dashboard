@@ -70,7 +70,7 @@ export const actions = {
         dispatch('notification/add', notification, {root: true});
       });
   },
-  fetchUsersByID({commit, getters, state}, ids) {
+  fetchUsersByID({commit, getters, dispatch}, ids) {
     let idsToFetch = [];
 
     for (let id of ids) {
@@ -88,6 +88,11 @@ export const actions = {
         commit('ADD_USERS', response.data);
       })
       .catch(error => {
+        const notification = {
+          type   : 'error',
+          message: 'There was a problem fetching users: ' + error.message
+        };
+        dispatch('notification/add', notification, {root: true});
       });
   },
   fetchUser({commit, getters, state}, id) {
@@ -95,7 +100,7 @@ export const actions = {
       return state.user;
     }
 
-    var user = getters.getUserById(id);
+    let user = getters.getUserById(id);
 
     if (user) {
       commit('SET_USER', user);
@@ -107,7 +112,7 @@ export const actions = {
       });
     }
   },
-  fetchMe({commit, getters, state}) {
+  fetchMe({commit}) {
     return UserService.getMe().then(response => {
       commit('SET_ME', response.data);
       return response.data;
@@ -127,13 +132,17 @@ export const getters = {
   },
   getAvatar: (state, getters) => id => {
     let user = getters.getUserById(id);
-    return typeof user.avatar_urls.full !== "undefined" ? user.avatar_urls.full : '';
+    return user.avatar_urls !== undefined ? user.avatar_urls.full : '';
   },
   getName: (state, getters) => id => {
     let user = getters.getUserById(id);
-    return user.name;
+    return user !== undefined ? user.name : '';
+  },
+  getUsername: (state, getters) => id => {
+    let user = getters.getUserById(id);
+    return user !== undefined ? user.user_login : '';
   },
   currentUserCan: (state) => cap => {
-    return true === state.me.can.cap;
+    return true === state.me.can[cap];
   }
 };

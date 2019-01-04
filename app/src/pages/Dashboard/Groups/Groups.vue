@@ -28,10 +28,10 @@
 					</div>
 
 					<ul slot="raw-content" class="list-group list-group-flush">
-						<li v-for="data in todoData" :class="'list-group-item'">
+						<li v-for="data in todoData" :key="data.id" :class="'list-group-item'">
 							&nbsp;
 							<h6>Due Date: {{data.date}}</h6>
-							<p v-for="lesson in data.lessons">
+							<p v-for="lesson in data.lessons" :key="lesson.id">
 								<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
 									<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
 									<span v-html="lesson.title"></span></router-link>
@@ -111,7 +111,7 @@
 
 				<br />
 
-				<router-view :groupData.sync="groupData"></router-view>
+				<router-view :groupData.sync="groupData" v-if="group.group.id"></router-view>
 
 			</div>
 		</div>

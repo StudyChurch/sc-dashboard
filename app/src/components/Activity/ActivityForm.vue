@@ -7,17 +7,18 @@
 			type="textarea"
 			:autosize="autosize"
 			resize="none"
-			:disabled="disabled"
+			:disabled="isDisabled"
 			:placeholder="placeholder"
 			v-model="comment"
 			v-loading="loading"
 			@change="handleKeydown"
-			@blur="handleKeydown"></el-input>
+			@blur="submitAnswer"></el-input>
 	</div>
 </template>
 <script>
   import { Input } from 'element-ui';
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
+  import ActivityService from '@/services/ActivityService.js';
 
   function _interopDefault (ex) {
     return (
@@ -27,6 +28,7 @@
     ) ? ex['default'] : ex;
   }
 
+  /* global require */
   let Tribute = _interopDefault(require('tributejs'));
 
   export default {
@@ -44,10 +46,11 @@
         },
         loading       : false,
         tributeOptions: {
-          values: this.getTributeValues()
+          values: []
         },
         tribute       : null,
-        comment       : ''
+        comment       : '',
+        disable       : false,
       };
     },
     props     : {
@@ -89,20 +92,34 @@
     },
     computed  : {
       ...mapState(['user', 'group']),
+      ...mapGetters('group', ['getGroupMembers']),
+      ...mapGetters('user', ['getName', 'getUsername']),
+      isDisabled() {
+        return this.disabled || this.disable;
+      },
       getAvatar() {
         return (
-        '' === this.avatar
+          '' === this.avatar
         ) ? this.user.me.avatar_urls.full : this.avatar;
       },
       getClass() {
         return 'sc-activity--input ' + this.elClass;
+      },
+      currentGroup() {
+        return this.group.group;
+      },
+      getUsers() {
+        return this.user.users;
       }
     },
 
     watch: {
-      '$root.currentGroup' (to, from) {
+      currentGroup () {
         this.tribute.append(0, this.getTributeValues(), true);
-      }
+      },
+      getUsers () {
+        this.tribute.append(0, this.getTributeValues(), true);
+      },
     },
 
     methods: {
@@ -134,10 +151,14 @@
        * handle the answer submit
        */
       submitAnswer() {
-        this.loading = true;
 
-        this.$http
-          .post('/wp-json/studychurch/v1/activity/', {
+        if (!this.comment || this.disable) {
+          return;
+        }
+
+		this.loading = this.disable = true;
+
+        ActivityService.addActivity({
             id                   : this.activityID,
             component            : this.component,
             type                 : this.type,
@@ -154,20 +175,20 @@
               this.$emit('activitySaved', response.data[0])
             }
           })
-          .finally(() => this.loading = false)
+          .finally(() => this.loading = this.disable = false)
       },
       getTributeValues() {
-        let group = this.$root.getCurrentGroupData();
+        let members = this.getGroupMembers;
         let values = [];
 
-        if (!group) {
-          return [];
-        }
+        for (let i = 0; i < members.length; i++) {
+          if (this.user.me.id === members[i] || !this.getName(members[i])) {
+            continue;
+          }
 
-        for (let i = 0; i < group.members.length; i++) {
           values.push({
-            key  : group.members[i].name,
-            value: group.members[i].username
+            key  : this.getName(members[i]),
+            value: this.getUsername(members[i])
           })
         }
 
@@ -183,19 +204,11 @@
       }
     },
     mounted() {
-      let _this = this;
       let textarea = this.$refs.commentform.$refs.textarea;
+      this.tributeOptions.values = this.getTributeValues();
 
       this.tribute = new Tribute(this.tributeOptions);
       this.tribute.attach(textarea);
-
-//      textarea.addEventListener('tribute-replaced', function (e) {
-//        _this.$emit('tribute-replaced', e);
-//      });
-//
-//      textarea.addEventListener('tribute-no-match', function (e) {
-//        _this.$emit('tribute-no-match', e);
-//      });
 
       textarea.addEventListener('keydown', this.handleKeydown);
     },
