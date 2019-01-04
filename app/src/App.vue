@@ -1,6 +1,6 @@
 <template>
-	<div v-loading="undefined === user.me.id" style="min-height:500px;">
-		<router-view v-if="undefined !== user.me.id"></router-view>
+	<div v-loading="! user.me.id" style="min-height:500px;">
+		<router-view v-if="user.me.id"></router-view>
 	</div>
 </template>
 

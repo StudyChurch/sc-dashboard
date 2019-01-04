@@ -1,10 +1,10 @@
 <template>
 
 	<div class="sc-group--studies">
-		<div class="text-right">
+		<div class="text-right" v-if="currentUserCan('create_study')">
 			<n-button type="primary" @click.native="showModal = true">Create Study</n-button>
 		</div>
-		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingStudy">
+		<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="currentUserCan('create_study')" v-loading="creatingStudy">
 			<h4 slot="header" class="title title-up">Create a new study</h4>
 			<p>
 				<label for="name">Study Name</label>
@@ -52,7 +52,7 @@
     StudyCard,
     Modal
   } from 'src/components'
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
 
   function getDefaultData () {
     return {
@@ -78,7 +78,8 @@
     props     : {},
     data      : getDefaultData,
     computed  : {
-      ...mapState(['study'])
+      ...mapState(['study']),
+      ...mapGetters('user', ['currentUserCan'])
     },
     methods   : {
       createStudy() {

@@ -2,10 +2,10 @@
 
 	<div class="sc-dashboard--groups sc-group">
 
-		<div class="text-right">
+		<div class="text-right" v-if="currentUserCan('create_group')">
 			<n-button type="primary" @click.native="showModal = true">Create Group</n-button>
 		</div>
-		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingGroup">
+		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingGroup" v-if="currentUserCan('create_group')">
 			<h4 slot="header" class="title title-up">Create a new group</h4>
 			<p>
 				<label for="name">Group Name</label>
@@ -55,7 +55,7 @@
 </template>
 <script>
   import { Input, Message } from 'element-ui';
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
 
   import {
     Card,
@@ -90,7 +90,8 @@
     mounted() {
     },
     computed  : {
-      ...mapState(['user', 'group'])
+      ...mapState(['user', 'group']),
+      ...mapGetters('user', ['currentUserCan']),
     },
     methods   : {
       createGroup() {

@@ -5,7 +5,11 @@ export const namespaced = true;
 export const state = {
   users     : [],
   usersTotal: 0,
-  me        : {},
+  me        : {
+    id : 0,
+    can : {},
+    avatar_urls: {},
+  },
   user      : {},
   perPage   : 3
 };
@@ -129,4 +133,7 @@ export const getters = {
     let user = getters.getUserById(id);
     return user.name;
   },
+  currentUserCan: (state) => cap => {
+    return true === state.me.can.cap;
+  }
 };
