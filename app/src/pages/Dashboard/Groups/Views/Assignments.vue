@@ -2,7 +2,7 @@
 
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
-		<div class="text-right">
+		<div class="text-right" v-if="isGroupAdmin()">
 			<n-button type="primary" @click.native="getStudies();showModal = true">Create Todo</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
@@ -59,11 +59,14 @@
 			<p v-html="data.content"></p>
 		</card>
 
+		<p v-if="!todoData.length && !loadingTodos" class="text-center">There are no upcoming todos.</p>
+
 	</div>
 
 </template>
 <script>
   import { Input, Message, Select, Option, DatePicker } from 'element-ui';
+  import { mapState, mapGetters } from 'vuex';
 
   import {
     Card,
@@ -112,6 +115,10 @@
       this.getGroupTodos();
     },
     computed  : {
+      ...mapState(['user', 'group']),
+      ...mapGetters('user', ['getUserById']),
+      ...mapGetters('group', ['isGroupAdmin', 'isGroupAdmin', 'getGroupMembers', 'getGroupAdmins']),
+
       leaders() {
         return this.groupData.members.filter(member => member.admin);
       },

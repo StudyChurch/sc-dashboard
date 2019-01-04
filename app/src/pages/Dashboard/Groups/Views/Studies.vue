@@ -1,8 +1,8 @@
 <template>
 
-	<div class="sc-group--studies row">
-		<div class="text-right col-md-12">
-			<n-button type="primary" @click.native="getStudies(); showModal = true">Add Study</n-button>
+	<div class="sc-group--studies">
+		<div class="text-right col-md-12" v-if="isGroupAdmin()">
+			<n-button type="primary"  @click.native="getStudies(); showModal = true">Add Study</n-button>
 		</div>
 
 		<modal :show.sync="showModal" headerclasses="justify-content-center">
@@ -28,15 +28,21 @@
 
 				<el-table-column
 					label="Title">
-					<template slot-scope="scope"><span v-html="scope.row.title.rendered"></span></template>
+					<template slot-scope="scope">
+						<span style="word-break:break-word;" v-html="scope.row.title.rendered"></span></template>
 				</el-table-column>
 
 				<el-table-column
 					label="Actions"
-					width="110">
+					width="75">
 					<template slot-scope="scope">
-						<n-button v-if="!getStudyIDs().includes(scope.row.id.toString()) && !getStudyIDs().includes(scope.row.id)" size="sm" type="primary" @click.native="addStudy(scope.row.id)">Select</n-button>
-						<span v-else>Selected</span>
+						<n-button @click.native="addStudy(scope.row.id)"
+								  class="add"
+								  type="primary"
+								  :disabled="getStudyIDs().includes(scope.row.id.toString()) || getStudyIDs().includes(scope.row.id)"
+								  size="sm" round icon>
+							<i class="fa fa-plus"></i>
+						</n-button>
 					</template>
 				</el-table-column>
 
@@ -44,14 +50,55 @@
 
 		</modal>
 
-		<div v-for="study in groupStudies" class="col-md-6 d-block">
-			<study-card
-				v-if="study.id"
-				:id="study.id"
-				:description="study.description"
-				:title="study.title"
-				:thumbnail="study.thumbnail || ''"
-				:link="'/groups/' + groupData.slug + $root.cleanLink(study.link)"></study-card>
+		<div class="row" v-loading="loading">
+			<div class="col-12">
+				<card card-body-classes="table-full-width" no-footer-line>
+					<div>
+
+						<el-table stripe
+								  style="width: 100%;"
+								  :show-header="false"
+								  :data="groupStudies">
+
+							<el-table-column type="expand">
+								<template slot-scope="props">
+									<div v-html="props.row.description"></div>
+								</template>
+							</el-table-column>
+
+							<el-table-column width="220px">
+								<div slot-scope="{row}" class="img-container">
+									<router-link :to="'/groups/' + groupData.slug + $root.cleanLink(row.link)">
+										<img :src="row.thumbnail" /></router-link>
+								</div>
+							</el-table-column>
+
+							<el-table-column min-width="220" key="title" label="Title">
+								<template slot-scope="{row}">
+									<p>
+										<router-link :to="'/groups/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title | decode }}</router-link>
+									</p>
+								</template>
+							</el-table-column>
+
+							<el-table-column
+								v-if="isGroupAdmin()"
+								fixed="right"
+								label="Actions"
+								width="110">
+								<template slot-scope="scope">
+									<n-button @click.native="removeStudy(scope.row.id)"
+											  class="remove"
+											  type="danger"
+											  size="sm" round icon>
+										<i class="fa fa-times"></i>
+									</n-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</div>
+				</card>
+			</div>
 		</div>
 
 	</div>
@@ -67,14 +114,21 @@
 
   import { Table, TableColumn } from 'element-ui';
   import NButton from '../../../../components/Button';
+  import { mapState, mapGetters } from 'vuex';
 
   function getDefaultData () {
     return {
+      pagination    : {
+        perPage    : 25,
+        currentPage: 1,
+        total      : 0
+      },
+      loading       : false,
+      searchQuery   : '',
       creatingTodo  : false,
       showModal     : false,
       loadingStudies: true,
       loadingMore   : false,
-      groupStudies  : [],
       studies       : [],
       todoData      : [],
       todoPage      : 1,
@@ -100,34 +154,17 @@
       },
     },
     data      : getDefaultData,
-    watch     : {
-      'groupData' (to, from) {
-        this.groupStudies = this.groupData.studies;
+    computed  : {
+      ...mapState(['user', 'group']),
+      ...mapGetters('user', ['getUserById']),
+      ...mapGetters('group', ['isGroupAdmin', 'isGroupAdmin', 'getGroupMembers', 'getGroupAdmins']),
+      groupStudies() {
+        return this.group.group.studies;
       }
     },
     methods   : {
       getStudyIDs() {
         return this.groupStudies.map(study => study.id);
-      },
-      createTodo() {
-        if (!this.newTodo.name || !this.newTodo.description) {
-          Message.error('Please enter a name and description for your new group');
-          return;
-        }
-
-        this.creatingTodo = true;
-
-        this.$http.post('/wp-json/studychurch/v1/groups/', {
-          name       : this.newTodo.name,
-          description: this.newTodo.description,
-          user_id    : this.$root.userData.id,
-          status     : 'hidden',
-        })
-          .then(response => {
-            this.creatingTodo = false;
-            Message.success('Success! Taking your new group ...');
-          })
-
       },
       getStudies() {
         if (this.studies.length) {
@@ -145,25 +182,37 @@
       addStudy(id) {
         let studies = this.groupStudies.map(study => study.id);
         studies.push(id);
-        this.loadingStudies = true;
+        this.loading = true;
 
-        this.$http
-          .post('/wp-json/studychurch/v1/groups/' + this.groupData.id, {
-            studies: studies
-          })
-          .then(response => {
-            this.groupStudies = response.data[0].studies;
-          })
-          .finally(() => this.loadingStudies = false)
+        this.$store
+          .dispatch('group/update', {groupID: this.group.group.id, data: {studies}})
+          .then((response) => {
+            this.loading = false;
+          });
+      },
+      removeStudy(id) {
+        let studies = this.groupStudies.map(study => study.id);
+        let index = studies.indexOf(id);
+
+        if (index > -1) {
+          studies.splice(index, 1);
+        } else {
+          return;
+        }
+
+        this.loading = true;
+
+        this.$store
+          .dispatch('group/update', {groupID: this.group.group.id, data: {studies}})
+          .then(() => {
+            this.loading = false;
+          });
       },
       reset (keep) {
         let def = getDefaultData();
         def[keep] = this[keep];
         Object.assign(this.$data, def);
       }
-    },
-    mounted() {
-      this.groupStudies = this.groupData.studies;
     }
   }
 </script>

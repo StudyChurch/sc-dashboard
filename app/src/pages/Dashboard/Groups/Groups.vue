@@ -40,6 +40,8 @@
 						</li>
 					</ul>
 
+					<p v-if="!todoData.length && !loadingTodos">There are no upcoming todos.</p>
+
 				</card>
 
 				<card class="card-chart d-lg-block d-none" no-footer-line v-loading="loadingStudies">
@@ -133,19 +135,6 @@
       loadingMembers: true,
       showGroupDesc : false,
       todoData      : [],
-      groupData     : {
-        id         : 0,
-        name       : '',
-        slug       : '',
-        avatar_urls: {
-          full : '',
-          thumb: ''
-        },
-        description: {
-          rendered: ''
-        },
-        members    : [],
-      },
     }
   }
 
@@ -178,14 +167,17 @@
         return (
           undefined === this.$route.params.study
         ) ? this.$route.path : '/groups/' + this.$route.params.slug + '/studies/';
+      },
+      groupData() {
+        return this.group.group;
       }
+
     },
     methods   : {
       setupCurrentGroup () {
         this.$store
           .dispatch('group/fetchGroup', {id: this.$route.params.slug, key: 'slug'})
           .then(() => {
-            this.groupData = this.group.group;
             this.getGroupTodos();
             this.getMembers();
           });

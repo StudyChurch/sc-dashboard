@@ -4,13 +4,41 @@ export const namespaced = true;
 
 export const state = {
   organizations: [],
-  organization: {
-    id : 0
+  organization : {
+    id         : 0,
+    name       : '',
+    slug       : '',
+    avatar_urls: {
+      full : '',
+      thumb: ''
+    },
+    description: {
+      rendered: ''
+    },
+    members    : {
+      members : [],
+      admins : []
+    },
+    studies    : [],
   },
-  groups     : [],
-  groupsTotal: 0,
-  group      : {
-    id : 0
+  groups       : [],
+  groupsTotal  : 0,
+  group        : {
+    id         : 0,
+    name       : '',
+    slug       : '',
+    avatar_urls: {
+      full : '',
+      thumb: ''
+    },
+    description: {
+      rendered: ''
+    },
+    members    : {
+      members : [],
+      admins : []
+    },
+    studies    : [],
   },
 };
 
@@ -92,37 +120,57 @@ export const actions = {
   upgradeUser({commit, dispatch, state}, {userID, groupID}) {
     return GroupService.upgradeUser(userID, groupID)
       .then(response => {
-        let action = ('organization' === response.data[0].group_type) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
+        let action = (
+          'organization' === response.data[0].group_type
+        ) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
         commit(action, response.data[0]);
         return response.data[0];
       })
       .catch(error => {
         console.log(error);
-      })
+      });
   },
 
   demoteUser({commit, dispatch, state}, {userID, groupID}) {
     return GroupService.demoteUser(userID, groupID)
       .then(response => {
-        let action = ('organization' === response.data[0].group_type) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
+        let action = (
+          'organization' === response.data[0].group_type
+        ) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
         commit(action, response.data[0]);
         return response.data[0];
       })
       .catch(error => {
         console.log(error);
-      })
+      });
   },
 
   removeUser({commit, dispatch, state}, {userID, groupID}) {
     return GroupService.removeUser(userID, groupID)
       .then(response => {
-        let action = ('organization' === response.data[0].group_type) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
+        let action = (
+          'organization' === response.data[0].group_type
+        ) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
         commit(action, response.data[0]);
         return response.data[0];
       })
       .catch(error => {
         console.log(error);
+      });
+  },
+
+  update({commit, dispatch, state}, {groupID, data}) {
+    return GroupService.update(groupID, data)
+      .then(response => {
+        let action = (
+          'organization' === response.data[0].group_type
+        ) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
+        commit(action, response.data[0]);
+        return response.data[0];
       })
+      .catch(error => {
+        console.log(error);
+      });
   },
 
   /**
@@ -163,7 +211,9 @@ export const actions = {
       return state.group;
     }
 
-    let group = ('id' === key) ? getters.getGroupById(id) : getters.getGroupBySlug(id);
+    let group = (
+      'id' === key
+    ) ? getters.getGroupById(id) : getters.getGroupBySlug(id);
 
     if (group) {
       commit('SET_GROUP', group);
@@ -175,7 +225,6 @@ export const actions = {
       });
     }
   },
-
 
   /**
    * Fetch organization groups
@@ -214,7 +263,9 @@ export const actions = {
       return state.organization;
     }
 
-    let group = ('id' === key) ? getters.getOrgById(id) : getters.getOrgBySlug(id);
+    let group = (
+      'id' === key
+    ) ? getters.getOrgById(id) : getters.getOrgBySlug(id);
 
     if (group) {
       commit('SET_ORGANIZATION', group);
@@ -330,7 +381,9 @@ export const getters = {
    * @returns {boolean}
    */
   isOrgAdmin: (state, getters, rootState) => id => {
-    let organization = (undefined !== id) ? getters.getOrgById(id) : state.organization;
+    let organization = (
+      undefined !== id
+    ) ? getters.getOrgById(id) : state.organization;
     return organization.members.admins.includes(rootState.user.me.id);
   },
 
@@ -343,9 +396,11 @@ export const getters = {
    * @returns {boolean}
    */
   isGroupAdmin: (state, getters, rootState) => id => {
-    let group = (undefined !== id) ? getters.getGroupById(id) : state.group;
+    let group = (
+      undefined !== id
+    ) ? getters.getGroupById(id) : state.group;
 
-    if (group.parent_id && getters.isOrgAdmin(group.parent_id)){
+    if (group.parent_id && getters.isOrgAdmin(group.parent_id)) {
       return true;
     }
 

@@ -36,11 +36,11 @@
         :href="link.path">
         <template v-if="addLink">
           <span class="sidebar-mini-icon">{{linkPrefix}}</span>
-          <span class="sidebar-normal">{{link.name}}</span>
+          <span class="sidebar-normal">{{link.name | decode}}</span>
         </template>
         <template v-else>
           <font-awesome-icon :icon="link.icon"></font-awesome-icon>
-          <p>{{link.name}}</p>
+          <p>{{link.name | decode}}</p>
         </template>
       </component>
     </slot>
