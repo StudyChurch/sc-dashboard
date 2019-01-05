@@ -8,7 +8,6 @@
     "serve": "vue-cli-service serve --open",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
-    "build-pilgrimage": "NODE_ENV=pilgrimage vue-cli-service build",
     "test": "vue-cli-service test --watch",
     "lint": "vue-cli-service lint",
     "watch": "NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",

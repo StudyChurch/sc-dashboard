@@ -2,7 +2,7 @@
 
 	<div class="sc-group--studies">
 		<div class="text-right col-md-12" v-if="isGroupAdmin()">
-			<n-button type="primary"  @click.native="getStudies(); showModal = true">Add Study</n-button>
+			<n-button type="primary" @click.native="getStudies(); showModal = true">Add Study</n-button>
 		</div>
 
 		<modal :show.sync="showModal" headerclasses="justify-content-center">
@@ -36,11 +36,12 @@
 					label="Actions"
 					width="75">
 					<template slot-scope="scope">
-						<n-button @click.native="addStudy(scope.row.id)"
-								  class="add"
-								  type="primary"
-								  :disabled="getStudyIDs().includes(scope.row.id.toString()) || getStudyIDs().includes(scope.row.id)"
-								  size="sm" round icon>
+						<n-button
+							@click.native="addStudy(scope.row.id)"
+							class="add"
+							type="primary"
+							:disabled="getStudyIDs().includes(scope.row.id.toString()) || getStudyIDs().includes(scope.row.id)"
+							size="sm" round icon>
 							<i class="fa fa-plus"></i>
 						</n-button>
 					</template>
@@ -55,10 +56,11 @@
 				<card card-body-classes="table-full-width" no-footer-line>
 					<div>
 
-						<el-table stripe
-								  style="width: 100%;"
-								  :show-header="false"
-								  :data="groupStudies">
+						<el-table
+							stripe
+							style="width: 100%;"
+							:show-header="false"
+							:data="groupStudies">
 
 							<el-table-column type="expand">
 								<template slot-scope="props">
@@ -87,10 +89,11 @@
 								label="Actions"
 								width="110">
 								<template slot-scope="scope">
-									<n-button @click.native="removeStudy(scope.row.id)"
-											  class="remove"
-											  type="danger"
-											  size="sm" round icon>
+									<n-button
+										@click.native="removeStudy(scope.row.id)"
+										class="remove"
+										type="danger"
+										size="sm" round icon>
 										<i class="fa fa-times"></i>
 									</n-button>
 								</template>
@@ -186,7 +189,7 @@
 
         this.$store
           .dispatch('group/update', {groupID: this.group.group.id, data: {studies}})
-          .then((response) => {
+          .then(() => {
             this.loading = false;
           });
       },

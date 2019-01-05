@@ -15,7 +15,7 @@ Vue.prototype.$http = Axios;
 
 
 /* eslint-disable no-new */
-let vm = new Vue({
+new Vue({
   el     : '#app',
   render : h => h(App),
   router,
@@ -24,8 +24,8 @@ let vm = new Vue({
     store
       .dispatch('user/fetchMe')
       .then(() => {
-        store.dispatch('group/fetchGroups');
         store.dispatch('group/fetchOrgs');
+        store.dispatch('group/fetchGroups');
         store.dispatch('study/fetchStudies');
       })
   },
