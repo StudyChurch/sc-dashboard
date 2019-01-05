@@ -8,10 +8,10 @@
     "serve": "vue-cli-service serve --open",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
-    "build-pilgrimage": "NODE_ENV=pilgrimage vue-cli-service build --mode pilgrimage",
+    "build-pilgrimage": "NODE_ENV=pilgrimage vue-cli-service build",
     "test": "vue-cli-service test --watch",
     "lint": "vue-cli-service lint",
-    "watch": "webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
+    "watch": "NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
     "watch-pilgrimage": "NODE_ENV=pilgrimage webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
   },
   "dependencies": {
