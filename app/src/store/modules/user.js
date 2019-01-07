@@ -9,6 +9,7 @@ export const state = {
     id : 0,
     can : {},
     avatar_urls: {},
+    studies: [],
   },
   user      : {},
   perPage   : 3
@@ -32,6 +33,22 @@ export const mutations = {
   },
   SET_ME(state, user) {
     state.me = user;
+  },
+  UPDATE_USER(state, user) {
+    if (state.user.id === user.id) {
+      state.user = user;
+    }
+
+    if (state.me.id === user.id) {
+      state.me = user;
+    }
+
+    for (let i = 0; i < state.users.length; i++) {
+      if (state.users[i].id === user.id) {
+        state.users[i] = user;
+        break;
+      }
+    }
   }
 };
 
@@ -54,6 +71,16 @@ export const actions = {
         };
         dispatch('notification/add', notification, {root: true});
         throw error;
+      });
+  },
+  updateUser({commit, dispatch, state}, {userID, data}) {
+    return UserService.updateUser(userID, data)
+      .then(response => {
+        commit('UPDATE_USER', response.data);
+        return response.data[0];
+      })
+      .catch(error => {
+        console.log(error);
       });
   },
   fetchUsers({commit, dispatch, state}, {page}) {

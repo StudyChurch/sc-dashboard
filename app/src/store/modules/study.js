@@ -41,14 +41,14 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem creating your study: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('notification/add', notification, {root: true});
         throw error;
       });
   },
-  fetchStudies({commit, dispatch, state, rootState}) {
-    return StudyService.getStudies(rootState.user.me.id)
+  fetchStudies({commit, dispatch, rootState}, data) {
+    return StudyService.getStudies(rootState.user.me.id, data)
       .then(response => {
-//        commit('SET_STUDIES_TOTAL', parseInt(response.headers['x-total-count']));
+        commit('SET_STUDIES_TOTAL', parseInt(response.headers['x-wp-total']));
         commit('SET_STUDIES', response.data);
       })
       .catch(error => {
@@ -56,7 +56,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching studies: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('notification/add', notification, {root: true});
       });
   },
   fetchStudy({commit, getters, state}, id) {
@@ -64,7 +64,7 @@ export const actions = {
       return state.study;
     }
 
-    var study = getters.getStudyById(id);
+    let study = getters.getStudyById(id);
 
     if (study) {
       commit('SET_STUDY', study);

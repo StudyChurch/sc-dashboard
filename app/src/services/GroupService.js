@@ -40,7 +40,7 @@ export default {
     return apiClient.post(base, group)
   },
 
-  update(groupID, data) {
+  updateGroup(groupID, data) {
     return apiClient.post(base + groupID, data);
   },
 

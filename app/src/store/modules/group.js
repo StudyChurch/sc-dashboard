@@ -2,44 +2,31 @@ import GroupService from '@/services/GroupService.js';
 
 export const namespaced = true;
 
+function defaultGroupData () {
+  return {
+    id         : 0,
+    name       : '',
+    slug       : '',
+    avatar_urls: {
+      full : '',
+      thumb: ''
+    },
+    description: {
+      rendered: ''
+    },
+    members    : {
+      members: [],
+      admins : []
+    },
+    studies    : [],
+  };
+}
 export const state = {
   organizations: [],
-  organization : {
-    id         : 0,
-    name       : '',
-    slug       : '',
-    avatar_urls: {
-      full : '',
-      thumb: ''
-    },
-    description: {
-      rendered: ''
-    },
-    members    : {
-      members : [],
-      admins : []
-    },
-    studies    : [],
-  },
+  organization : defaultGroupData(),
   groups       : [],
   groupsTotal  : 0,
-  group        : {
-    id         : 0,
-    name       : '',
-    slug       : '',
-    avatar_urls: {
-      full : '',
-      thumb: ''
-    },
-    description: {
-      rendered: ''
-    },
-    members    : {
-      members : [],
-      admins : []
-    },
-    studies    : [],
-  },
+  group        : defaultGroupData(),
 };
 
 export const mutations = {
@@ -160,7 +147,7 @@ export const actions = {
   },
 
   update({commit, dispatch, state}, {groupID, data}) {
-    return GroupService.update(groupID, data)
+    return GroupService.updateGroup(groupID, data)
       .then(response => {
         let action = (
           'organization' === response.data[0].group_type
@@ -171,6 +158,14 @@ export const actions = {
       .catch(error => {
         console.log(error);
       });
+  },
+
+  /**
+   * Zero out group data. For use when viewing the user dashboard.
+   * @param commit
+   */
+  setupDefaultGroup({commit}) {
+    commit('SET_GROUP', defaultGroupData());
   },
 
   /**

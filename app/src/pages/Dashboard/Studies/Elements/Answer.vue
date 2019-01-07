@@ -1,7 +1,7 @@
 <template>
 	<div class="sc-answer" v-loading="loading">
 		<activity-form
-			v-if="this.groupData.id && ! answer.content.raw"
+			v-if="! answer.content.raw"
 			ref="answerForm"
 			elClass="sc-activity--answer"
 			component="groups"
@@ -49,36 +49,40 @@
     data      : getDefaultData,
     props     : {
       questionData: Object,
-      groupData   : {
-        default: {
-          id     : 0,
-          studies: []
-        }
-      },
     },
     computed  : {
       ...mapState(['user', 'group']),
       ...mapGetters('group', ['isOrgAdmin', 'isGroupAdmin']),
 
-	  showGroupAnswers() {
+      groupData() {
+        return this.group.group;
+      },
+      showGroupAnswers() {
+        if (!this.groupData.id) {
+          return false;
+        }
+
         return Boolean(this.answer.content.raw) || this.isGroupAdmin();
-	  },
+      },
 
       groupAnswerText() {
+        if (!this.groupData.id) {
+          return '';
+        }
 
         if (this.questionData.is_private) {
-		  return 'This question is private, your answer will not be shared with the group.';
-		}
+          return 'This question is private, your answer will not be shared with the group.';
+        }
 
-        if (! this.groupAnswers.length) {
-		  return 'No Group Answers Yet';
-		} else if (1 === this.groupAnswers.length) {
+        if (!this.groupAnswers.length) {
+          return 'No Group Answers Yet';
+        } else if (1 === this.groupAnswers.length) {
           return this.groupAnswers.length + ' Group Answer';
-		} else {
+        } else {
           return this.groupAnswers.length + ' Group Answers';
-		}
-	  },
-	},
+        }
+      },
+    },
     watch     : {
       '$route' () {
         this.reset();

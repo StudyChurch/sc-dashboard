@@ -32,7 +32,7 @@
 							placeholder="This study is in preview mode."
 							:primaryItem="0"></activity-form>
 					</div>
-					<answer v-else :questionData="data" :groupData="groupData"></answer>
+					<answer v-else :questionData="data"></answer>
 				</div>
 			</div>
 		</card>
@@ -63,6 +63,7 @@
 
   import { Select, Option } from 'element-ui';
   import Answer from './Elements/Answer.vue';
+  import { mapState, mapGetters } from 'vuex';
 
   function getDefaultData () {
     return {
@@ -127,19 +128,10 @@
         }
       }
     },
-    props     : {
-      groupData: {
-        default() {
-          return {
-            id     : 0,
-            studies: []
-          }
-        }
-      },
-    },
     computed  : {
+      ...mapState(['group']),
       navPrefix() {
-        if (!this.groupData.id) {
+        if (!this.group.group.id) {
           return '';
         }
 

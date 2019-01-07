@@ -1,14 +1,22 @@
 import apiClient from './apiClient'
 
+let base = '/wp-json/studychurch/v1/studies/';
+
 export default {
-  getStudies(user = 0) {
-    let path = '/wp-json/studychurch/v1/studies/?status=any&per_page=100&orderby=title&order=asc';
+  getStudies(data) {
+    let config = Object.assign({
+      params : {
+        status : 'any',
+        per_page : 100,
+        orderby : 'title',
+        order : 'asc',
+        _embed : true
+      },
+    }, data);
 
-    if (user) {
-      path += '&author=' + user;
-    }
+    config = Object.assign(config, data);
 
-    return apiClient.get(path)
+    return apiClient.get(base, config)
   },
   getStudy(id) {
     return apiClient.get('/events/' + id)

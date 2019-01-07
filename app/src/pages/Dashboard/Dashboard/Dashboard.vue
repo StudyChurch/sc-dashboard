@@ -28,7 +28,7 @@
 					<el-menu-item :index="'/assignments/'">
 						<font-awesome-icon icon="list"></font-awesome-icon>&nbsp;&nbsp;<span>Todos</span></el-menu-item>
 					<el-menu-item :index="'/studies/'">
-						<font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Studies</span>
+						<font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Library</span>
 					</el-menu-item>
 					<el-menu-item v-if="false" :index="'/notifications/'">
 						<font-awesome-icon icon="bell"></font-awesome-icon>&nbsp;&nbsp;<span>Notifications</span>
@@ -65,7 +65,12 @@
     },
     computed  : {
       ...mapState(['user'])
-	},
+    },
+    mounted() {
+      this.$store
+        .dispatch('group/setupDefaultGroup')
+        .then();
+    },
     methods   : {}
   }
 </script>
