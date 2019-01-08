@@ -15,7 +15,7 @@
 						:show-header="false"
 						:data="myStudies">
 
-						<el-table-column width="220">
+						<el-table-column width="150">
 							<div slot-scope="{row}" class="img-container">
 								<router-link :to="$root.cleanLink(row.link)">
 									<img :src="row.thumbnail" /></router-link>
@@ -23,29 +23,38 @@
 						</el-table-column>
 
 						<el-table-column min-width="220" key="title" label="Title">
-							<div slot-scope="{row}" style="word-break:break-word;">
+							<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
 								<h6>
 									<router-link :to="$root.cleanLink(row.link)">{{ row.title | decode }}</router-link>
 								</h6>
 								<div class="desc-more" :class="{open : true === showDesc[row.id]}">
 									<div v-html="row.description" class="desc-more--text"></div>
-									<a href="#" class="desc-more--show" @click.prevent="$set(showDesc, row.id, true !== showDesc[row.id])" ></a>
+									<a href="#" class="desc-more--show" @click.prevent="$set(showDesc, row.id, true !== showDesc[row.id])"></a>
 								</div>
 							</div>
 						</el-table-column>
 
 						<el-table-column
 							fixed="right"
+							align="right"
 							label="Actions"
 							width="110">
 							<template slot-scope="scope">
 								<n-button
 									@click.native="removeStudy(scope.row.id)"
-									class="remove"
+									class="remove btn-neutral"
 									type="danger"
-									size="sm" round icon>
-									<i class="fa fa-times"></i>
+									size="sm" icon>
+									<font-awesome-icon icon="times"></font-awesome-icon>
 								</n-button>
+								<a :href="'/study-edit/?study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+									<n-button
+										class="edit btn-neutral"
+										type="info"
+										size="sm" icon>
+										<font-awesome-icon icon="edit"></font-awesome-icon>
+									</n-button>
+								</a>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -60,22 +69,24 @@
 		<div class="row" v-loading="!tableData.length">
 			<div class="col-12">
 				<card card-body-classes="table-full-width" no-footer-line>
-					<div>
-						<div class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
-							<fg-input>
-								<el-input
-									type="search"
-									class="mb-3"
-									clearable
-									prefix-icon="el-icon-search"
-									style="width: 200px"
-									placeholder="Search groups"
-									v-model="searchQuery"
-									aria-controls="datatables">
-								</el-input>
-							</fg-input>
+					<div slot="header" class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
+						<h4 class="card-title">All Studies</h4>
+						<fg-input>
+							<el-input
+								type="search"
+								class="mb-3"
+								clearable
+								prefix-icon="el-icon-search"
+								style="width: 200px"
+								placeholder="Search library"
+								v-model="searchQuery"
+								aria-controls="datatables">
+							</el-input>
+						</fg-input>
 
-						</div>
+					</div>
+
+					<div>
 						<el-table
 							stripe
 							:show-header="false"
@@ -84,7 +95,7 @@
 
 							<el-table-column
 								label="Thumb"
-								width="220">
+								width="150">
 
 								<template slot-scope="scope">
 									<img
@@ -98,24 +109,37 @@
 								key="title"
 								style="word-break:break-word;"
 								label="Title">
-								<div slot-scope="scope" style="word-break:break-word;">
-									<h6 v-html="scope.row.title.rendered"></h6>
-									<div v-html="scope.row.excerpt.rendered"></div>
+								<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
+									<h6 v-html="row.title.rendered"></h6>
+									<div class="desc-more" :class="{open : true === showLibDesc[row.id]}">
+										<div v-html="row.excerpt.rendered" class="desc-more--text"></div>
+										<a href="#" class="desc-more--show" @click.prevent="$set(showLibDesc, row.id, true !== showLibDesc[row.id])"></a>
+									</div>
 								</div>
 							</el-table-column>
 
 							<el-table-column
+								fixed="right"
 								label="Actions"
-								width="75">
+								align="right"
+								width="135">
 								<template slot-scope="scope">
 									<n-button
 										@click.native="addStudy(scope.row.id)"
-										class="add"
+										class="add btn-neutral"
 										type="primary"
 										:disabled="myStudyIDs.includes(scope.row.id.toString()) || myStudyIDs.includes(scope.row.id)"
-										size="sm" round icon>
-										<i class="fa fa-plus"></i>
+										size="sm" icon>
+										<font-awesome-icon icon="plus"></font-awesome-icon>
 									</n-button>
+									<a :href="'/study-edit/?study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+										<n-button
+											class="edit btn-neutral"
+											type="info"
+											size="sm" icon>
+											<font-awesome-icon icon="edit"></font-awesome-icon>
+										</n-button>
+									</a>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -186,12 +210,11 @@
       searchQuery  : '',
       searchedData : [],
       fuseSearch   : null,
-      loading      : true,
+      loading      : {},
       creatingStudy: false,
       showModal    : false,
-      loadingMore  : false,
-	  showDesc     : {},
-      todoData     : [],
+      showDesc     : {},
+      showLibDesc  : {},
       todoPage     : 1,
       newStudy     : {
         name       : '',
@@ -249,9 +272,10 @@
       }
     },
     methods   : {
-      handleShowDesc(id) {
-        Vue.set(this.showDesc, id, true !== tthis.showDesc[id])
-	  },
+      canEditStudy() {
+
+      },
+      canDeleteStudy() {},
       createStudy() {
         if (!this.newStudy.name || !this.newStudy.description) {
           Message.error('Please enter a name and description for your new study');
@@ -275,12 +299,12 @@
       addStudy(id) {
         let studies = this.myStudies.map(study => study.id);
         studies.push(id);
-        this.loading = true;
+        this.$set(this.loading, id, true);
 
         this.$store
           .dispatch('user/updateUser', {userID: this.user.me.id, data: {studies}})
           .then(() => {
-            this.loading = false;
+            this.$set(this.loading, id, false);
           });
       },
       removeStudy(id) {
@@ -293,19 +317,19 @@
           return;
         }
 
-        this.loading = true;
+        this.$set(this.loading, id, true);
 
         this.$store
           .dispatch('user/updateUser', {userID: this.user.me.id, data: {studies}})
           .then(() => {
-            this.loading = false;
+            this.$set(this.loading, id, false);
           });
       }
     },
     watch     : {
       tableData(value) {
         this.searchedData = value;
-        this.fuseSearch = new Fuse(this.tableData, {keys: ['title.rendered'], threshold: 0.3})
+        this.fuseSearch = new Fuse(this.tableData, {keys: ['title.rendered', 'slug'], threshold: 0.3})
       },
 
       /**
@@ -320,6 +344,9 @@
         }
         this.searchedData = result;
       }
+    },
+    mounted() {
+      this.searchedData = this.tableData;
     }
   }
 </script>

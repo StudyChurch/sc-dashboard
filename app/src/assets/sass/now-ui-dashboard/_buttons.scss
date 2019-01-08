@@ -38,7 +38,7 @@
         font-size: $btn-icon-font-size-regular;
         overflow: hidden;
         position: relative;
-        line-height: normal;
+        //line-height: normal;
 
         &.btn-simple{
             padding: 0;
@@ -52,7 +52,8 @@
             .fa,
             .far,
             .fas,
-            .now-ui-icons{
+            .now-ui-icons,
+            svg {
                 font-size: $btn-icon-font-size-small;
             }
         }
@@ -83,7 +84,7 @@
         }
 
         &:not(.btn-footer) svg {
-            height: 2.375rem;
+            //height: 2.375rem;
         }
 
     }

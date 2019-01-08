@@ -19,11 +19,31 @@ import {
   faTrash,
   faEye,
   faEyeSlash,
-  faChurch
+  faChurch,
+  faArchive,
+  faTimes,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faBook, faUsers, faChevronRight, faComments, faList, faUser, faCogs, faBell, faEdit, faTrash, faEye, faEyeSlash, faChurch);
+library.add(
+  faBook,
+  faUsers,
+  faChevronRight,
+  faComments,
+  faList,
+  faUser,
+  faCogs,
+  faBell,
+  faEdit,
+  faTrash,
+  faEye,
+  faEyeSlash,
+  faChurch,
+  faArchive,
+  faTimes,
+  faPlus
+);
 
 /**
  * You can register global components here and use them as a plugin in your main Vue instance
