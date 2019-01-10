@@ -47,7 +47,7 @@
 									size="sm" icon>
 									<font-awesome-icon icon="times"></font-awesome-icon>
 								</n-button>
-								<a :href="'/study-edit/?study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+								<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
 									<n-button
 										class="edit btn-neutral"
 										type="info"
@@ -98,9 +98,7 @@
 								width="150">
 
 								<template slot-scope="scope">
-									<img
-										v-if="undefined !== scope.row._embedded['wp:featuredmedia']"
-										:src="scope.row._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url" />
+									<img :src="scope.row.thumbnail" />
 								</template>
 
 							</el-table-column>
@@ -215,7 +213,6 @@
       showModal    : false,
       showDesc     : {},
       showLibDesc  : {},
-      todoPage     : 1,
       newStudy     : {
         name       : '',
         description: '',

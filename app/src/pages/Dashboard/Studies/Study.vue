@@ -14,8 +14,8 @@
 					</el-select>
 				</div>
 				<div>
-					<h5 class="title" v-html="studyData.name"></h5>
-					<h1 class="title" v-html="chapterData.title.rendered"></h1>
+					<h6 class="title" v-html="studyData.name"></h6>
+					<h5 class="title" v-html="chapterData.title.rendered"></h5>
 				</div>
 			</div>
 
@@ -131,7 +131,7 @@
     computed  : {
       ...mapState(['group']),
       navPrefix() {
-        if (!this.group.group.id) {
+        if (!this.group.group.id && ! this.isOrganization) {
           return '';
         }
 
@@ -147,6 +147,7 @@
         return this.$route.path.includes('organizations');
       },
 	  isPreview() {
+
         return this.isOrganization;
 	  }
     },

@@ -28,7 +28,7 @@
                 </router-link>
               </li>
               <li>
-                <a href="/log-out">
+                <a href="/wp-login.php?action=logout">
                   <span class="sidebar-mini-icon">LO</span>
                   <span class="sidebar-normal">Log Out</span>
                 </a>

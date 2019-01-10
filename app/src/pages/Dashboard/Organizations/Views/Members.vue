@@ -2,10 +2,6 @@
 
 	<div class="sc-group--members">
 
-		<div class="text-right">
-			<n-button type="primary" @click.native="addMember" v-if="isOrgAdmin()">Add Member</n-button>
-		</div>
-
 		<div class="row" v-loading="loading">
 			<div class="col-12">
 				<card card-body-classes="table-full-width" no-footer-line>
@@ -22,6 +18,10 @@
 										  aria-controls="datatables">
 								</el-input>
 							</fg-input>
+
+							<div class="text-right">
+								<n-button type="primary" @click.native="addMember" v-if="isOrgAdmin()">Add Member</n-button>
+							</div>
 
 						</div>
 						<el-table stripe
@@ -49,12 +49,12 @@
 							<el-table-column
 								v-if="isOrgAdmin()"
 								fixed="right"
-								label="Remove">
+								align="right">
 								<div slot-scope="props" class="table-actions">
 									<n-button v-if="props.row.id !== group.organization.creator_id" @click.native="handleDelete(props.$index, props.row)"
-											  class="remove"
+											  class="remove btn-neutral"
 											  type="danger"
-											  size="sm" round icon>
+											  size="sm" icon>
 										<i class="fa fa-times"></i>
 									</n-button>
 								</div>

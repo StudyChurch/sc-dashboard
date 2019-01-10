@@ -146,7 +146,7 @@ export const actions = {
       });
   },
 
-  update({commit, dispatch, state}, {groupID, data}) {
+  updateGroup({commit, dispatch, state}, {groupID, data}) {
     return GroupService.updateGroup(groupID, data)
       .then(response => {
         let action = (

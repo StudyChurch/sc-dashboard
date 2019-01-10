@@ -27,21 +27,20 @@ export const actions = {
   createStudy({commit, dispatch}, study) {
     return StudyService.postStudy(study)
       .then(response => {
-        commit('ADD_STUDY', response.data[0]);
-        commit('SET_STUDY', response.data[0]);
+        commit('ADD_STUDY', response.data);
+        commit('SET_STUDY', response.data);
         const notification = {
           type   : 'success',
           message: 'Your study has been created!'
         };
-        return response.data[0];
-//        dispatch('notification/add', notification, {root: true});
+        return response.data;
       })
       .catch(error => {
         const notification = {
           type   : 'error',
           message: 'There was a problem creating your study: ' + error.message
         };
-        dispatch('notification/add', notification, {root: true});
+//        dispatch('notification/add', notification, {root: true});
         throw error;
       });
   },

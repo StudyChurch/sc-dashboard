@@ -28,7 +28,7 @@
 				<el-menu :default-active="defaultActiveTab" class="el-menu-demo" mode="horizontal" :router="true">
 					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/'"><font-awesome-icon icon="comments"></font-awesome-icon>&nbsp;&nbsp;<span>Discussion</span></el-menu-item>
 					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/groups/'"><font-awesome-icon icon="users"></font-awesome-icon>&nbsp;&nbsp;<span>Groups</span></el-menu-item>
-					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/studies/'"><font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Studies</span></el-menu-item>
+					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/studies/'"><font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Library</span></el-menu-item>
 					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/members/'"><font-awesome-icon icon="user"></font-awesome-icon>&nbsp;&nbsp;<span>Members</span></el-menu-item>
 					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/settings/'" v-if="isOrgAdmin()"><font-awesome-icon icon="cogs"></font-awesome-icon>&nbsp;&nbsp;<span>Settings</span></el-menu-item>
 				</el-menu>

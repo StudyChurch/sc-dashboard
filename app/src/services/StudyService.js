@@ -6,11 +6,9 @@ export default {
   getStudies(data) {
     let config = Object.assign({
       params : {
-        status : 'any',
         per_page : 100,
         orderby : 'title',
-        order : 'asc',
-        _embed : true
+        order : 'asc'
       },
     }, data);
 
@@ -22,6 +20,6 @@ export default {
     return apiClient.get('/events/' + id)
   },
   postStudy(study) {
-    return apiClient.post('/wp-json/studychurch/v1/studies/', study)
+    return apiClient.post(base, study)
   }
 }

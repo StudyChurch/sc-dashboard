@@ -2,10 +2,6 @@
 
 	<div class="sc-dashboard--groups sc-group">
 
-		<div class="text-right" v-if="isOrgAdmin()">
-			<n-button type="primary" @click.native="handleShowModal">Create Group</n-button>
-		</div>
-
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="loadingModal" v-if="isOrgAdmin()">
 			<h4 slot="header" class="title title-up">Create a new group</h4>
 			<p>
@@ -65,13 +61,19 @@
 								</el-input>
 							</fg-input>
 
+							<div class="text-right" v-if="isOrgAdmin()">
+								<n-button type="primary" @click.native="handleShowModal">Create Group</n-button>
+							</div>
+
 						</div>
 						<el-table stripe
 								  style="width: 100%;"
 								  :data="queriedData">
 
 							<el-table-column min-width="180" key="name" label="Name" prop="name">
-								<span slot-scope="{row}" v-html="row.name"></span>
+								<template slot-scope="{row}">
+									<router-link :to="'/groups/' + row.slug" v-html="row.name"></router-link>
+								</template>
 							</el-table-column>
 
 							<el-table-column width="150" key="leader" label="Leader">
@@ -82,15 +84,6 @@
 								<template slot-scope="{row}">
 									{{ row.members.members.length }}
 								</template>
-							</el-table-column>
-
-							<el-table-column
-								:min-width="135"
-								fixed="right"
-								label="Actions">
-								<div slot-scope="props" class="table-actions">
-									<router-link :to="'/groups/' + props.row.slug">View</router-link>
-								</div>
 							</el-table-column>
 						</el-table>
 					</div>
@@ -231,50 +224,6 @@
 
           });
       },
-      handleLike (index, row) {
-        swal({
-          title             : `You liked ${row.name}`,
-          buttonsStyling    : false,
-          type              : 'success',
-          confirmButtonClass: 'btn btn-success btn-fill'
-        })
-      },
-      handleEdit (index, row) {
-        swal({
-          title             : `You want to edit ${row.name}`,
-          buttonsStyling    : false,
-          confirmButtonClass: 'btn btn-info btn-fill'
-        });
-      },
-      handleDelete (index, row) {
-        swal({
-          title             : 'Are you sure?',
-          text              : `You won't be able to revert this!`,
-          type              : 'warning',
-          showCancelButton  : true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass : 'btn btn-danger btn-fill',
-          confirmButtonText : 'Yes, delete it!',
-          buttonsStyling    : false
-        }).then((result) => {
-          if (result.value) {
-            this.deleteRow(row);
-            swal({
-              title             : 'Deleted!',
-              text              : `You deleted ${row.name}`,
-              type              : 'success',
-              confirmButtonClass: 'btn btn-success btn-fill',
-              buttonsStyling    : false
-            })
-          }
-        });
-      },
-      deleteRow(row){
-        let indexToDelete = this.tableData.findIndex((tableRow) => tableRow.id === row.id);
-        if (indexToDelete >= 0) {
-          this.tableData.splice(indexToDelete, 1)
-        }
-      }
     },
     created () {
       this.loading = true;

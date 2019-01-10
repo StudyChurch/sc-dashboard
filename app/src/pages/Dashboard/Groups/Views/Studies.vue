@@ -19,9 +19,7 @@
 					width="80">
 
 					<template slot-scope="scope">
-						<img
-							v-if="undefined !== scope.row._embedded['wp:featuredmedia']"
-							:src="scope.row._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url" />
+						<img :src="scope.row.thumbnail" />
 					</template>
 
 				</el-table-column>
@@ -188,7 +186,7 @@
         this.loading = true;
 
         this.$store
-          .dispatch('group/update', {groupID: this.group.group.id, data: {studies}})
+          .dispatch('group/updateGroup', {groupID: this.group.group.id, data: {studies}})
           .then(() => {
             this.loading = false;
           });
@@ -206,7 +204,7 @@
         this.loading = true;
 
         this.$store
-          .dispatch('group/update', {groupID: this.group.group.id, data: {studies}})
+          .dispatch('group/updateGroup', {groupID: this.group.group.id, data: {studies}})
           .then(() => {
             this.loading = false;
           });
