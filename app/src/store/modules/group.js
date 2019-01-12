@@ -5,6 +5,7 @@ export const namespaced = true;
 function defaultGroupData () {
   return {
     id         : 0,
+    parent_id  : 0,
     name       : '',
     slug       : '',
     avatar_urls: {
@@ -201,7 +202,7 @@ export const actions = {
    * @param key
    * @returns {*}
    */
-  fetchGroup({commit, getters, state}, {id, key = 'id'}) {
+  fetchGroup({commit, dispatch, getters, state}, {id, key = 'id'}) {
     if (id === state.group[key]) {
       return state.group;
     }
@@ -212,10 +213,20 @@ export const actions = {
 
     if (group) {
       commit('SET_GROUP', group);
+
+      if (group.parent_id) {
+        dispatch('fetchOrg', {id: state.group.parent_id});
+      }
+
       return group;
     } else {
       return GroupService.getGroup(id).then(response => {
         commit('SET_GROUP', response.data[0]);
+
+        if (state.group.parent_id) {
+          dispatch('fetchOrg', {id: state.group.parent_id});
+        }
+
         return response.data;
       });
     }

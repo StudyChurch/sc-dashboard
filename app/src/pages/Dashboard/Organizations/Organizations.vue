@@ -23,7 +23,7 @@
 
 			</div>
 
-			<div class="col-lg-8">
+			<div class="col-lg-8" v-loading="!group.organization.id" style="min-height: 500px;">
 
 				<el-menu :default-active="defaultActiveTab" class="el-menu-demo" mode="horizontal" :router="true">
 					<el-menu-item :index="'/organizations/' + this.$route.params.slug + '/'"><font-awesome-icon icon="comments"></font-awesome-icon>&nbsp;&nbsp;<span>Discussion</span></el-menu-item>
@@ -35,7 +35,7 @@
 
 				<br />
 
-				<router-view :groupData.sync="group.organization"></router-view>
+				<router-view :groupData.sync="group.organization" v-if="group.organization.id"></router-view>
 
 			</div>
 		</div>

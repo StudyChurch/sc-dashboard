@@ -61,7 +61,9 @@ class SC_Dashboard {
 	/**
 	 * Wire up actions
 	 */
-	protected function add_actions() {}
+	protected function add_actions() {
+		add_action( 'init', [ $this, 'rewrite_rules' ] );
+	}
 
 	protected function add_filters() {
 		add_filter( 'template_include', array( $this, 'app_template' ), 11 );
@@ -111,6 +113,11 @@ class SC_Dashboard {
 		}
 
 		return $template;
+	}
+
+	public function rewrite_rules() {
+		add_rewrite_rule( 'organizations/(.?.+?)(?:/([0-9]+))?/?$', 'index.php?pagename=groups', 'top' );
+		flush_rewrite_rules( true );
 	}
 }
 

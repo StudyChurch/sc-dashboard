@@ -10,6 +10,7 @@
 					<div>
 						<div class="author">
 							<font-awesome-icon icon="users" class="avatar border-gray"></font-awesome-icon>
+							<h6 class="title" v-if="groupData.parent_id" v-html="group.organization.name"></h6>
 							<router-link :to="'/groups/' + $route.params.slug + '/'">
 								<h5 class="title" v-html="groupData.name"></h5></router-link>
 							<p class="description" v-show="showGroupDesc" v-html="groupData.description.rendered"></p>
@@ -54,7 +55,7 @@
 						<n-table :data="groupData.studies">
 							<template slot-scope="{row}">
 								<td>
-									<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(row.link)" v-html="row.title"></router-link>
+									<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(row.link)" v-html="row.title.rendered"></router-link>
 								</td>
 							</template>
 						</n-table>
@@ -90,7 +91,7 @@
 				</card>
 			</div>
 
-			<div class="col-lg-8">
+			<div class="col-lg-8" v-loading="!loaded" style="min-height: 300px;">
 
 				<el-menu :default-active="defaultActiveTab" class="el-menu-demo" mode="horizontal" :router="true">
 					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/'">
@@ -111,7 +112,7 @@
 
 				<br />
 
-				<router-view :groupData.sync="groupData" v-if="group.group.id"></router-view>
+				<router-view :groupData.sync="groupData" v-if="loaded"></router-view>
 
 			</div>
 		</div>
@@ -168,9 +169,14 @@
           undefined === this.$route.params.study
         ) ? this.$route.path : '/groups/' + this.$route.params.slug + '/studies/';
       },
+
       groupData() {
         return this.group.group;
-      }
+      },
+
+      loaded() {
+        return this.groupData.id && (!this.groupData.parent_id || this.group.organization.id === this.groupData.parent_id);
+	  }
 
     },
     methods   : {

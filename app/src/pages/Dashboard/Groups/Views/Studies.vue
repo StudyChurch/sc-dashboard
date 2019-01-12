@@ -1,120 +1,205 @@
 <template>
 
 	<div class="sc-group--studies">
-		<div class="text-right col-md-12" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="getStudies(); showModal = true">Add Study</n-button>
+
+		<div class="row">
+			<div class="col-12">
+				<div class="text-right" v-if="isGroupAdmin()">
+					<n-button type="primary" @click.native="handleShowModal">Create Study</n-button>
+				</div>
+
+				<card card-body-classes="table-full-width" no-footer-line>
+					<div slot="header">
+						<h4 class="card-title">Group Studies</h4>
+					</div>
+
+					<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin()" v-loading="creatingStudy">
+						<h4 slot="header" class="title title-up">Create a new study</h4>
+						<p>
+							<label for="name">Study Name</label>
+							<el-input
+								ref="name"
+								type="text"
+								label="Study Name"
+								id="name"
+								v-model="newStudy.name"></el-input>
+						</p>
+
+						<p>
+							<label for="name">Study Description</label>
+							<el-input
+								ref="description"
+								type="textarea"
+								id="description"
+								:autosize="{ minRows: 4 }"
+								resize="none"
+								label="Study Description"
+								v-model="newStudy.description"></el-input>
+						</p>
+						<template slot="footer">
+							<n-button type="primary" @click.native="createStudy">Create</n-button>
+						</template>
+					</modal>
+
+					<el-table
+						stripe
+						style="width: 100%;"
+						:show-header="false"
+						:data="groupStudies">
+
+						<el-table-column width="150">
+							<div slot-scope="{row}" class="img-container">
+								<router-link :to="$root.cleanLink(row.link)">
+									<img :src="row.thumbnail" /></router-link>
+							</div>
+						</el-table-column>
+
+						<el-table-column min-width="220" key="title" label="Title">
+							<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
+								<h6>
+									<router-link :to="'/groups/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title.rendered | decode }}</router-link>
+								</h6>
+								<div class="desc-more" :class="{open : true === showDesc[row.id]}">
+									<div v-html="row.excerpt.rendered" class="desc-more--text"></div>
+									<a href="#" class="desc-more--show" @click.prevent="$set(showDesc, row.id, true !== showDesc[row.id])"></a>
+								</div>
+							</div>
+						</el-table-column>
+
+						<el-table-column
+							fixed="right"
+							align="right"
+							label="Actions"
+							v-if="isGroupAdmin"
+							width="110">
+							<template slot-scope="scope">
+								<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+									<n-button
+										class="edit btn-neutral"
+										type="info"
+										size="sm" icon>
+										<font-awesome-icon icon="edit"></font-awesome-icon>
+									</n-button>
+								</a>
+								<n-button
+									@click.native="removeStudy(scope.row.id)"
+									class="remove btn-neutral"
+									type="danger"
+									size="sm" icon>
+									<font-awesome-icon icon="times"></font-awesome-icon>
+								</n-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</card>
+			</div>
 		</div>
 
-		<modal :show.sync="showModal" headerclasses="justify-content-center">
-			<h4 slot="header" class="title title-up">Add a study</h4>
-			<el-table
-				:data="studies"
-				style="width:100%"
-				:show-header="false"
-				height="400"
-				v-loading="loadingStudies"
-			>
-				<el-table-column
-					label="Thumb"
-					width="80">
-
-					<template slot-scope="scope">
-						<img :src="scope.row.thumbnail" />
-					</template>
-
-				</el-table-column>
-
-				<el-table-column
-					label="Title">
-					<template slot-scope="scope">
-						<span style="word-break:break-word;" v-html="scope.row.title.rendered"></span></template>
-				</el-table-column>
-
-				<el-table-column
-					label="Actions"
-					width="75">
-					<template slot-scope="scope">
-						<n-button
-							@click.native="addStudy(scope.row.id)"
-							class="add"
-							type="primary"
-							:disabled="getStudyIDs().includes(scope.row.id.toString()) || getStudyIDs().includes(scope.row.id)"
-							size="sm" round icon>
-							<i class="fa fa-plus"></i>
-						</n-button>
-					</template>
-				</el-table-column>
-
-			</el-table>
-
-		</modal>
-
-		<div class="row" v-loading="loading">
+		<div class="row" v-loading="!tableData.length" v-if="isGroupAdmin()">
 			<div class="col-12">
 				<card card-body-classes="table-full-width" no-footer-line>
-					<div>
+					<div slot="header" class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
+						<h4 class="card-title">All Studies</h4>
+						<fg-input>
+							<el-input
+								type="search"
+								class="mb-3"
+								clearable
+								prefix-icon="el-icon-search"
+								style="width: 200px"
+								placeholder="Search library"
+								v-model="searchQuery"
+								aria-controls="datatables">
+							</el-input>
+						</fg-input>
 
+					</div>
+
+					<div>
 						<el-table
 							stripe
-							style="width: 100%;"
 							:show-header="false"
-							:data="groupStudies">
+							style="width: 100%;"
+							:data="queriedData">
 
-							<el-table-column type="expand">
-								<template slot-scope="props">
-									<div v-html="props.row.description"></div>
+							<el-table-column
+								label="Thumb"
+								width="150">
+
+								<template slot-scope="scope">
+									<img :src="scope.row.thumbnail" />
 								</template>
-							</el-table-column>
 
-							<el-table-column width="220px">
-								<div slot-scope="{row}" class="img-container">
-									<router-link :to="'/groups/' + groupData.slug + $root.cleanLink(row.link)">
-										<img :src="row.thumbnail" /></router-link>
-								</div>
-							</el-table-column>
-
-							<el-table-column min-width="220" key="title" label="Title">
-								<template slot-scope="{row}">
-									<p>
-										<router-link :to="'/groups/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title | decode }}</router-link>
-									</p>
-								</template>
 							</el-table-column>
 
 							<el-table-column
-								v-if="isGroupAdmin()"
+								key="title"
+								style="word-break:break-word;"
+								label="Title">
+								<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
+									<h6>
+										{{ row.title.rendered | decode }}
+									</h6>
+									<div class="desc-more" :class="{open : true === showLibDesc[row.id]}">
+										<div v-html="row.excerpt.rendered" class="desc-more--text"></div>
+										<a href="#" class="desc-more--show" @click.prevent="$set(showLibDesc, row.id, true !== showLibDesc[row.id])"></a>
+									</div>
+								</div>
+							</el-table-column>
+
+							<el-table-column
 								fixed="right"
 								label="Actions"
-								width="110">
+								align="right"
+								width="135">
 								<template slot-scope="scope">
+									<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+										<n-button
+											class="edit btn-neutral"
+											type="info"
+											size="sm" icon>
+											<font-awesome-icon icon="edit"></font-awesome-icon>
+										</n-button>
+									</a>
 									<n-button
-										@click.native="removeStudy(scope.row.id)"
-										class="remove"
-										type="danger"
-										size="sm" round icon>
-										<i class="fa fa-times"></i>
+										@click.native="addStudy(scope.row.id)"
+										class="add btn-neutral"
+										type="primary"
+										:disabled="myStudyIDs.includes(scope.row.id.toString()) || myStudyIDs.includes(scope.row.id)"
+										size="sm" icon>
+										<font-awesome-icon icon="plus"></font-awesome-icon>
 									</n-button>
 								</template>
 							</el-table-column>
 						</el-table>
 					</div>
+					<div slot="footer" class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
+						<div class="">
+							<p class="card-category">Showing {{from + 1}} to {{to}} of {{total}} entries</p>
+						</div>
+						<n-pagination
+							class="pagination-no-border"
+							v-model="pagination.currentPage"
+							:per-page="pagination.perPage"
+							:total="total">
+						</n-pagination>
+					</div>
 				</card>
 			</div>
 		</div>
+
 
 	</div>
 
 </template>
 <script>
+  import { Input, Message, Table, TableColumn } from 'element-ui';
   import {
     StudyCard,
-    Table as NTable,
-    Button,
+    Pagination as NPagination,
     Modal
   } from 'src/components'
-
-  import { Table, TableColumn } from 'element-ui';
-  import NButton from '../../../../components/Button';
+  import Fuse from 'fuse.js'
   import { mapState, mapGetters } from 'vuex';
 
   function getDefaultData () {
@@ -124,72 +209,116 @@
         currentPage: 1,
         total      : 0
       },
-      loading       : false,
       searchQuery   : '',
-      creatingTodo  : false,
+      searchedData  : [],
+      fuseSearch    : null,
+      loading       : {},
+      creatingStudy : false,
       showModal     : false,
+      showDesc      : {},
+      showLibDesc   : {},
+      newStudy      : {
+        name       : '',
+        description: '',
+      },
       loadingStudies: true,
       loadingMore   : false,
       studies       : [],
       todoData      : [],
-      todoPage      : 1,
     }
   }
 
   export default {
     components: {
-      NButton,
       StudyCard,
-      NTable,
-      Button,
+      Input,
       Modal,
+      NPagination,
+      Message,
       'el-table'       : Table,
       'el-table-column': TableColumn
     },
-    props     : {
-      groupData: {
-        default: {
-          id     : 0,
-          studies: []
-        }
-      },
-    },
     data      : getDefaultData,
     computed  : {
-      ...mapState(['user', 'group']),
-      ...mapGetters('user', ['getUserById']),
-      ...mapGetters('group', ['isGroupAdmin', 'isGroupAdmin', 'getGroupMembers', 'getGroupAdmins']),
+      ...mapState(['study', 'user', 'group']),
+      ...mapGetters('user', ['currentUserCan']),
+      ...mapGetters('group', ['isOrgAdmin', 'isGroupAdmin']),
+
+      groupOrgID() {
+        return this.groupData.parent_id;
+      },
+
       groupStudies() {
-        return this.group.group.studies;
+        return this.groupData.studies;
+      },
+
+      myStudyIDs() {
+        return this.groupStudies.map(study => study.id);
+      },
+
+      tableData() {
+        return this.groupOrgID ? this.group.organization.studies : this.study.studies;
+      },
+
+      groupData() {
+        return this.group.group;
+      },
+
+      /***
+       * Returns a page from the searched data or the whole data. Search is performed in the watch section below
+       */
+      queriedData () {
+        let result = this.tableData;
+        result = this.searchedData;
+        return result.slice(this.from, this.to)
+      },
+      to () {
+        let highBound = this.from + this.pagination.perPage
+        if (this.total < highBound) {
+          highBound = this.total
+        }
+        return highBound
+      },
+      from () {
+        return this.pagination.perPage * (
+            this.pagination.currentPage - 1
+          )
+      },
+      total () {
+        return this.searchedData.length > 0 ? this.searchedData.length : this.tableData.length;
+      }
+
+    },
+    watch     : {
+      tableData(value) {
+        this.searchedData = value;
+        this.fuseSearch = new Fuse(this.tableData, {keys: ['title.rendered', 'slug'], threshold: 0.3})
+      },
+
+      /**
+       * Searches through the table data by a given query.
+       * NOTE: If you have a lot of data, it's recommended to do the search on the Server Side and only display the results here.
+       * @param value of the query
+       */
+      searchQuery(value){
+        let result = this.tableData;
+        if (value !== '') {
+          result = this.fuseSearch.search(this.searchQuery)
+        }
+        this.searchedData = result;
       }
     },
     methods   : {
-      getStudyIDs() {
-        return this.groupStudies.map(study => study.id);
-      },
-      getStudies() {
-        if (this.studies.length) {
-          return;
-        }
-
-        this.loadingStudies = true;
-        this.$http
-          .get('/wp-json/studychurch/v1/studies/?per_page=100&status=publish,private&_embed=true')
-          .then(response => {
-            this.studies = response.data;
-          })
-          .finally(() => this.loadingStudies = false)
-      },
       addStudy(id) {
         let studies = this.groupStudies.map(study => study.id);
         studies.push(id);
-        this.loading = true;
+        this.$set(this.loading, id, true);
 
-        this.$store
-          .dispatch('group/updateGroup', {groupID: this.group.group.id, data: {studies}})
+        return this.$store
+          .dispatch('group/updateGroup', {groupID: this.groupData.id, data: {studies}})
           .then(() => {
-            this.loading = false;
-          });
+            this.$set(this.loading, id, false);
+          })
       },
       removeStudy(id) {
         let studies = this.groupStudies.map(study => study.id);
@@ -201,19 +330,45 @@
           return;
         }
 
-        this.loading = true;
+        this.$set(this.loading, id, true);
 
         this.$store
-          .dispatch('group/updateGroup', {groupID: this.group.group.id, data: {studies}})
+          .dispatch('group/updateGroup', {groupID: this.groupData.id, data: {studies}})
           .then(() => {
-            this.loading = false;
+            this.$set(this.loading, id, false);
           });
       },
-      reset (keep) {
-        let def = getDefaultData();
-        def[keep] = this[keep];
-        Object.assign(this.$data, def);
-      }
+      handleShowModal() {
+        this.showModal = true;
+      },
+      createStudy() {
+        if (!this.newStudy.name || !this.newStudy.description) {
+          Message.error('Please enter a name and description for your new study');
+          return;
+        }
+
+        this.creatingStudy = true;
+
+        this.$store
+          .dispatch('study/createStudy', {
+            title   : this.newStudy.name,
+            content : this.newStudy.description,
+            author  : this.user.me.id,
+            status  : 'private',
+            sc_group: [this.groupOrgID + ''],
+          })
+          .then(response => {
+            this.addStudy(response.id)
+              .then(() => {
+                window.location = '/study-edit/?action=edit&study=' + response.id;
+                Message.success('Study created! Taking you to the study edit page.');
+              })
+          })
+
+      },
+    },
+    mounted() {
+      this.searchedData = this.tableData;
     }
   }
 </script>

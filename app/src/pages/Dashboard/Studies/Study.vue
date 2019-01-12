@@ -147,7 +147,6 @@
         return this.$route.path.includes('organizations');
       },
 	  isPreview() {
-
         return this.isOrganization;
 	  }
     },

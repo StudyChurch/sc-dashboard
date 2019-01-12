@@ -38,8 +38,8 @@
 
 							<el-table-column width="150" label="Role" prop="role">
 								<template slot-scope="{row}">
-									<el-select class="select-default" v-model="row.role" v-if="isGroupAdmin() && row.id !== group.organization.creator_id" @change="handleRoleChange(row.id, row)">
-										<el-option class="select-default" value="Leader" label="Admin"></el-option>
+									<el-select class="select-default" v-model="row.role" v-if="isGroupAdmin() && row.id !== group.group.creator_id" @change="handleRoleChange(row.id, row)">
+										<el-option class="select-default" value="Leader" label="Leader"></el-option>
 										<el-option class="select-default" value="Member" label="Member"></el-option>
 									</el-select>
 									<span v-else>{{ row.role }}</span>
@@ -51,7 +51,7 @@
 								fixed="right"
 								label="Remove">
 								<div slot-scope="props" class="table-actions">
-									<n-button v-if="props.row.id !== group.organization.creator_id" @click.native="handleDelete(props.$index, props.row)"
+									<n-button v-if="props.row.id !== group.group.creator_id" @click.native="handleDelete(props.$index, props.row)"
 											  class="remove"
 											  type="danger"
 											  size="sm" round icon>
@@ -202,7 +202,7 @@
         ) ? 'group/demoteUser' : 'group/upgradeUser';
 
         this.$store
-          .dispatch(action, {userID, groupID: this.group.organization.id})
+          .dispatch(action, {userID, groupID: this.group.group.id})
           .then(() => {
             this.loading = false;
           });
@@ -219,7 +219,7 @@
           showLoaderOnConfirm: true,
           preConfirm         : () => {
             return this.$store
-              .dispatch('group/removeUser', {userID: row.id, groupID: this.group.organization.id})
+              .dispatch('group/removeUser', {userID: row.id, groupID: this.group.group.id})
               .then(() => {
                 this.deleteRow(row);
               });

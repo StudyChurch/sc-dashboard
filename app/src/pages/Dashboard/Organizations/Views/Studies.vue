@@ -58,10 +58,10 @@
 						<el-table-column min-width="220" key="title" label="Title">
 							<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
 								<h6>
-									<router-link :to="'/organizations/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title | decode }}</router-link>
+									<router-link :to="'/organizations/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title.rendered | decode }}</router-link>
 								</h6>
 								<div class="desc-more" :class="{open : true === showDesc[row.id]}">
-									<div v-html="row.description" class="desc-more--text"></div>
+									<div v-html="row.excerpt.rendered" class="desc-more--text"></div>
 									<a href="#" class="desc-more--show" @click.prevent="$set(showDesc, row.id, true !== showDesc[row.id])"></a>
 								</div>
 							</div>

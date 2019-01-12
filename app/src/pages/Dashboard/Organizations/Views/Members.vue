@@ -38,7 +38,8 @@
 
 							<el-table-column width="150" label="Role" prop="role">
 								<template slot-scope="{row}">
-									<el-select class="select-default" v-model="row.role" v-if="isOrgAdmin() && row.id !== group.organization.creator_id" @change="handleRoleChange(row.id, row)">
+									<span v-if="row.id === group.organization.creator_id">Owner</span>
+									<el-select class="select-default" v-model="row.role" v-else-if="isOrgAdmin()" @change="handleRoleChange(row.id, row)">
 										<el-option class="select-default" value="Leader" label="Admin"></el-option>
 										<el-option class="select-default" value="Member" label="Member"></el-option>
 									</el-select>
