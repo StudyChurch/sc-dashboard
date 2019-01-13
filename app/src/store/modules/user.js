@@ -6,10 +6,10 @@ export const state = {
   users     : [],
   usersTotal: 0,
   me        : {
-    id : 0,
-    can : {},
+    id         : 0,
+    can        : {},
     avatar_urls: {},
-    studies: [],
+    studies    : [],
   },
   user      : {},
   perPage   : 3
@@ -77,7 +77,7 @@ export const actions = {
     return UserService.updateUser(userID, data)
       .then(response => {
         commit('UPDATE_USER', response.data);
-        return response.data[0];
+        return response.data;
       })
       .catch(error => {
         console.log(error);
@@ -106,7 +106,7 @@ export const actions = {
       }
     }
 
-    if (! idsToFetch.length) {
+    if (!idsToFetch.length) {
       return;
     }
 
@@ -147,25 +147,25 @@ export const actions = {
   }
 };
 export const getters = {
-  getMyId: state => {
+  getMyId       : state => {
     return state.me.id;
   },
-  getUserById: (state, getters) => id => {
+  getUserById   : (state, getters) => id => {
     if (id === getters.getMyId) {
       return state.me;
     }
 
     return state.users.find(user => user.id === id);
   },
-  getAvatar: (state, getters) => id => {
+  getAvatar     : (state, getters) => id => {
     let user = getters.getUserById(id);
     return user.avatar_urls !== undefined ? user.avatar_urls.full : '';
   },
-  getName: (state, getters) => id => {
+  getName       : (state, getters) => id => {
     let user = getters.getUserById(id);
     return user !== undefined ? user.name : '';
   },
-  getUsername: (state, getters) => id => {
+  getUsername   : (state, getters) => id => {
     let user = getters.getUserById(id);
     return user !== undefined ? user.user_login : '';
   },

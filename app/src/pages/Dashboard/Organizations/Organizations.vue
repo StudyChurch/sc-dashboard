@@ -55,19 +55,6 @@
     return {
       loading : false,
       showGroupDesc : true,
-      groupData     : {
-        id         : 0,
-        name       : '',
-        slug       : '',
-        avatar_urls: {
-          full : '',
-          thumb: ''
-        },
-        description: {
-          rendered: ''
-        },
-        members    : [],
-      },
     }
   }
 
@@ -95,6 +82,9 @@
       ...mapState(['user', 'group']),
       ...mapGetters('group', ['isOrgAdmin', 'isGroupAdmin']),
 
+	  groupData() {
+        return this.group.organization;
+	  },
       defaultActiveTab() {
         return this.$route.path;
       }
@@ -103,9 +93,7 @@
       setupCurrentGroup () {
         this.$store
           .dispatch('group/fetchOrg', {id: this.$route.params.slug, key: 'slug'})
-          .then(() => {
-            this.groupData = this.group.organization;
-          });
+          .then();
       },
       /**
        * Fetch

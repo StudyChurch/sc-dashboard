@@ -1,34 +1,33 @@
 <template>
 
-	<div class="sc-group--settings">
+	<div class="sc-group--settings" v-loading="loading">
 		<card>
-			<h5 slot="header" class="title">Group Settings</h5>
-			<form>
+			<h5 slot="header" class="title">Settings</h5>
 
-				<fg-input type="text"
-						  label="Group Name"
-						  v-model="group.name">
-				</fg-input>
+			<fg-input type="text"
+					  label="Name"
+					  v-model="groupSettings.name">
+			</fg-input>
 
-				<div class="form-group has-label">
-					<label>Description</label>
-					<el-input
-						ref="description"
-						type="textarea"
-						:autosize="{ minRows: 4 }"
-						resize="none"
-						v-model="group.description"></el-input>
-				</div>
+			<div class="form-group has-label">
+				<label>Description</label>
+				<el-input
+					ref="description"
+					type="textarea"
+					:autosize="{ minRows: 4 }"
+					resize="none"
+					v-model="groupSettings.description"></el-input>
+			</div>
 
-				<n-button type="primary" native-type="submit">Save</n-button>
+			<n-button type="primary" @click.native="updateGroup">Save</n-button>
 
-			</form>
 		</card>
 	</div>
 
 </template>
 <script>
   import { Input } from 'element-ui';
+  import { mapState } from 'vuex';
 
   import {
     Card,
@@ -43,15 +42,19 @@
       Button,
       Input
     },
-    props     : {
-      groupData: {id: 0},
-    },
     data() {
       return {
-        group: {
-          name       : this.groupData.name,
-          description: this.groupData.description.raw
+        loading      : false,
+        groupSettings: {
+          name       : '',
+          description: ''
         }
+      }
+    },
+    computed  : {
+      ...mapState(['group', 'user']),
+      groupData() {
+        return this.group.organization;
       }
     },
     watch     : {
@@ -62,13 +65,28 @@
           return;
         }
 
-        this.group = {
+        this.groupSettings = {
           name       : this.groupData.name,
           description: this.groupData.description.raw
         };
       }
     },
-    methods   : {}
+    mounted() {
+      this.groupSettings = {
+        name       : this.groupData.name,
+        description: this.groupData.description.raw
+      };
+    },
+    methods   : {
+      updateGroup() {
+        this.loading = true;
+        return this.$store
+          .dispatch('group/updateGroup', {groupID: this.groupData.id, data: this.groupSettings})
+          .then(() => {
+            this.loading = false;
+          })
+      }
+    }
   }
 </script>
 <style>

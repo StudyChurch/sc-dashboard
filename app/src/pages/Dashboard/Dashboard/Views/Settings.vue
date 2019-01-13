@@ -1,60 +1,60 @@
 <template>
-  <card>
-    <h5 slot="header" class="title">Edit Profile</h5>
-    <form>
-      <div class="row">
-        <div class="col-md-3">
+	<card v-loading="loading">
+		<h5 slot="header" class="title">Edit Profile</h5>
+		<div class="row">
+			<div class="col-md-4">
+				<fg-input type="email"
+						  label="Email"
+						  placeholder="Email"
+						  v-model="userSettings.email">
+				</fg-input>
+			</div>
+		</div>
 
-          <fg-input type="text"
-                    label="Username"
-                    placeholder="Username"
-                    :disabled="true"
-                    v-model="user.username">
-          </fg-input>
-        </div>
-        <div class="col-md-4">
-          <fg-input type="email"
-                    label="Email"
-                    placeholder="Email"
-                    v-model="user.email">
-          </fg-input>
-        </div>
-      </div>
+		<div class="row">
+			<div class="col-md-6">
+				<fg-input type="text"
+						  label="Name"
+						  placeholder="Name"
+						  v-model="userSettings.name">
+				</fg-input>
+			</div>
+		</div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <fg-input type="text"
-                    label="First Name"
-                    placeholder="First Name"
-                    v-model="user.firstName">
-          </fg-input>
-        </div>
-        <div class="col-md-6">
-          <fg-input type="text"
-                    label="Last Name"
-                    placeholder="Last Name"
-                    v-model="user.lastName">
-          </fg-input>
-        </div>
-      </div>
-    </form>
-  </card>
+		<n-button type="primary" @click.native="updateProfile">Save</n-button>
+
+	</card>
 </template>
 <script>
+  import { mapState } from 'vuex';
+
   export default {
     data() {
       return {
-        user: {
-          username: this.$store.state.user.me.username,
-          email: this.$store.state.user.me.email,
-          firstName: this.$store.state.user.me.firstName,
-          lastName: this.$store.state.user.me.lastName,
+        loading     : false,
+        userSettings: {
+          email    : '',
+          firstName: '',
+          lastName : ''
         }
       }
     },
-    methods: {
+    computed: {
+      ...mapState(['user']),
+    },
+    methods : {
       updateProfile() {
-        alert('Your data: ' + JSON.stringify(this.user))
+        this.loading = true;
+
+        return this.$store
+          .dispatch('user/updateUser', {userID: this.user.me.id, data: this.userSettings})
+          .then(() => this.loading = false);
+      }
+    },
+    mounted() {
+      this.userSettings = {
+        email: this.user.me.email,
+        name : this.user.me.name,
       }
     }
   }

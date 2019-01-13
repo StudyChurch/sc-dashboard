@@ -13,7 +13,8 @@ function defaultGroupData () {
       thumb: ''
     },
     description: {
-      rendered: ''
+      rendered: '',
+      raw: ''
     },
     members    : {
       members: [],
