@@ -162,6 +162,20 @@ export const actions = {
       });
   },
 
+  updateAvatar({commit}, {groupID, data}) {
+    return GroupService.updateAvatar(groupID, data)
+      .then(response => {
+        let action = (
+          'organization' === response.data[0].group_type
+        ) ? 'UPDATE_ORGANIZATION' : 'UPDATE_GROUP';
+        commit(action, response.data[0]);
+        return response.data[0];
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },
+
   /**
    * Zero out group data. For use when viewing the user dashboard.
    * @param commit
@@ -412,6 +426,22 @@ export const getters = {
     }
 
     return group.members.admins.includes(rootState.user.me.id);
+  },
+
+  /**
+   * Return whether or not the current user is an admin of the current Org
+   *
+   * @param state
+   * @param getters
+   * @param rootState
+   * @returns {boolean}
+   */
+  isGroupMember: (state, getters, rootState) => id => {
+    let group = (
+      undefined !== id
+    ) ? getters.getGroupById(id) : state.group;
+
+    return group.members.members.includes(rootState.user.me.id);
   }
 
 };

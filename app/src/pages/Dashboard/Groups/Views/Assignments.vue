@@ -3,10 +3,10 @@
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
 		<div class="text-right" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="getStudies();showModal = true">Create Todo</n-button>
+			<n-button type="primary" @click.native="getStudies();showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
-			<h4 slot="header" class="title title-up">Create a new Todo</h4>
+			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
 
 			<div v-for="study in newTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title"></label>
@@ -59,7 +59,7 @@
 			<p v-html="data.content"></p>
 		</card>
 
-		<p v-if="!todoData.length && !loadingTodos" class="text-center">There are no upcoming todos.</p>
+		<p v-if="!todoData.length && !loadingTodos" class="text-center">There are no upcoming to-dos.</p>
 
 	</div>
 
@@ -129,7 +129,7 @@
     methods   : {
       createTodo() {
         if (!this.newTodo.date || !this.newTodo.description) {
-          Message.error('Please enter a date and description for your new todo item');
+          Message.error('Please enter a date and description for your new to-do item');
           return;
         }
 

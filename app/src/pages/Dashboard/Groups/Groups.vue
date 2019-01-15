@@ -10,9 +10,8 @@
 					<div>
 						<div class="author">
 							<font-awesome-icon icon="users" class="avatar border-gray"></font-awesome-icon>
-							<h6 class="title" v-if="groupData.parent_id" v-html="group.organization.name"></h6>
-							<router-link :to="'/groups/' + $route.params.slug + '/'">
-								<h5 class="title" v-html="groupData.name"></h5></router-link>
+							<router-link :to="'/organizations/' + group.organization.slug" v-if="groupData.parent_id"><h6 class="title" v-html="group.organization.name"></h6></router-link>
+							<h5 class="title" v-html="groupData.name"></h5>
 							<p class="description" v-show="showGroupDesc" v-html="groupData.description.rendered"></p>
 							<p class="description" v-show="showGroupDesc">
 								<a href="#" @click.stop="showGroupDesc=false">Hide details</a></p>
@@ -25,7 +24,7 @@
 				<card class="card-chart d-lg-block d-none" no-footer-line v-loading="loadingTodos" style="min-height: 200px;">
 
 					<div slot="header">
-						<h5 class="card-title">Upcoming Todos</h5>
+						<h5 class="card-title">Upcoming To-Dos</h5>
 					</div>
 
 					<ul slot="raw-content" class="list-group list-group-flush">
@@ -41,7 +40,7 @@
 						</li>
 					</ul>
 
-					<p v-if="!todoData.length && !loadingTodos">There are no upcoming todos.</p>
+					<p v-if="!todoData.length && !loadingTodos">There are no upcoming to-dos.</p>
 
 				</card>
 
@@ -98,14 +97,14 @@
 						<font-awesome-icon icon="comments"></font-awesome-icon>&nbsp;&nbsp;<span>Discussion</span>
 					</el-menu-item>
 					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/assignments/'">
-						<font-awesome-icon icon="list"></font-awesome-icon>&nbsp;&nbsp;<span>Todos</span></el-menu-item>
+						<font-awesome-icon icon="list"></font-awesome-icon>&nbsp;&nbsp;<span>To-Dos</span></el-menu-item>
 					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/studies/'">
 						<font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Studies</span>
 					</el-menu-item>
 					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/members/'">
 						<font-awesome-icon icon="user"></font-awesome-icon>&nbsp;&nbsp;<span>Members</span>
 					</el-menu-item>
-					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/settings/'">
+					<el-menu-item :index="'/groups/' + this.$route.params.slug + '/settings/'" v-if="isGroupAdmin()">
 						<font-awesome-icon icon="cogs"></font-awesome-icon>&nbsp;&nbsp;<span>Settings</span>
 					</el-menu-item>
 				</el-menu>

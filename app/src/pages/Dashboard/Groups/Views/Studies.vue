@@ -70,7 +70,7 @@
 							fixed="right"
 							align="right"
 							label="Actions"
-							v-if="isGroupAdmin"
+							v-if="isGroupAdmin()"
 							width="110">
 							<template slot-scope="scope">
 								<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">

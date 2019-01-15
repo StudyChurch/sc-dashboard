@@ -7449,6 +7449,10 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
+vue-avatar-cropper@^0.0.28:
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/vue-avatar-cropper/-/vue-avatar-cropper-0.0.28.tgz#57015bcd1601347f134ef2974327a6f9529395e2"
+
 vue-chartjs@^3.1.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/vue-chartjs/-/vue-chartjs-3.4.0.tgz#669e4453be0676605fc9290b3b581867ccd15c88"

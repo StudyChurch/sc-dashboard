@@ -9,7 +9,8 @@
 					</div>
 					<div>
 						<div class="author">
-							<font-awesome-icon icon="church" class="avatar border-gray"></font-awesome-icon>
+							<img class="avatar border-gray" :src="groupData.avatar_urls.full" alt="..." v-if="hasAvatar" style="background: white;">
+							<font-awesome-icon icon="church" class="avatar border-gray" v-else></font-awesome-icon>
 							<router-link :to="'/groups/' + $route.params.slug + '/'">
 								<h5 class="title" v-html="groupData.name"></h5></router-link>
 							<p class="description" v-show="showGroupDesc" v-html="groupData.description.rendered"></p>
@@ -81,7 +82,9 @@
     computed  : {
       ...mapState(['user', 'group']),
       ...mapGetters('group', ['isOrgAdmin', 'isGroupAdmin']),
-
+	  hasAvatar() {
+        return -1 === this.groupData.avatar_urls.full.indexOf('mystery-group');
+	  },
 	  groupData() {
         return this.group.organization;
 	  },

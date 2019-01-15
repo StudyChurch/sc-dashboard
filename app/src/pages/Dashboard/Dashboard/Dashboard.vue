@@ -26,7 +26,7 @@
 						<font-awesome-icon icon="users"></font-awesome-icon>&nbsp;&nbsp;<span>Groups</span>
 					</el-menu-item>
 					<el-menu-item :index="'/assignments/'">
-						<font-awesome-icon icon="list"></font-awesome-icon>&nbsp;&nbsp;<span>Todos</span></el-menu-item>
+						<font-awesome-icon icon="list"></font-awesome-icon>&nbsp;&nbsp;<span>To-Dos</span></el-menu-item>
 					<el-menu-item :index="'/studies/'">
 						<font-awesome-icon icon="book"></font-awesome-icon>&nbsp;&nbsp;<span>Library</span>
 					</el-menu-item>

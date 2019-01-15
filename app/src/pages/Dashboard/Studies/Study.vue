@@ -8,7 +8,7 @@
 							v-for="option in studyData.navigation"
 							class="select-primary"
 							:value="getChapterLink(option)"
-							:label="option.title.rendered"
+							:label="decode(option.title.rendered)"
 							:key="option.id">
 						</el-option>
 					</el-select>
@@ -58,7 +58,7 @@
     AnimatedNumber,
     TimeLine,
     TimeLineItem,
-	ActivityForm
+    ActivityForm
   } from 'src/components';
 
   import { Select, Option } from 'element-ui';
@@ -92,6 +92,8 @@
     }
   }
 
+  let he = require('he');
+
   export default {
     components: {
       Card,
@@ -101,7 +103,7 @@
       TimeLine,
       TimeLineItem,
       Answer,
-	  ActivityForm,
+      ActivityForm,
       'el-select': Select,
       'el-option': Option
     },
@@ -131,7 +133,7 @@
     computed  : {
       ...mapState(['group']),
       navPrefix() {
-        if (!this.group.group.id && ! this.isOrganization) {
+        if (!this.group.group.id && !this.isOrganization) {
           return '';
         }
 
@@ -146,11 +148,14 @@
       isOrganization() {
         return this.$route.path.includes('organizations');
       },
-	  isPreview() {
+      isPreview() {
         return this.isOrganization;
-	  }
+      }
     },
     methods   : {
+      decode(html) {
+        return he.decode(html);
+	  },
       getChapterLink(chapter) {
         return this.navPrefix + this.$root.cleanLink(chapter.link);
       },

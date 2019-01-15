@@ -83,6 +83,16 @@ export const actions = {
         console.log(error);
       });
   },
+  updateAvatar({commit}, {userID, data}) {
+    return UserService.updateAvatar(userID, data)
+      .then(response => {
+        commit('UPDATE_USER', response.data);
+        return response.data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },
   fetchUsers({commit, dispatch, state}, {page}) {
     return UserService.getUsers(state.perPage, page)
       .then(response => {

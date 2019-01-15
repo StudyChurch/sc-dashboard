@@ -4,6 +4,21 @@
 		<card>
 			<h5 slot="header" class="title">Settings</h5>
 
+			<p><img :src="groupData.avatar_urls.full"></p>
+			<p>
+				<n-button type="primary" simple="" id="pick-avatar">change logo</n-button>
+			</p>
+
+			<avatar-cropper
+				ref="avatar"
+				@uploading="handleUploading"
+				@uploaded="handleUploaded"
+				@completed="handleCompleted"
+				@error="handlerError"
+				:uploadHandler="uploadHandler"
+				:labels="{ submit: 'save', cancel: 'cancel'}"
+				trigger="#pick-avatar" />
+
 			<fg-input type="text"
 					  label="Name"
 					  v-model="groupSettings.name">
@@ -28,6 +43,7 @@
 <script>
   import { Input } from 'element-ui';
   import { mapState } from 'vuex';
+  import AvatarCropper from "vue-avatar-cropper"
 
   import {
     Card,
@@ -40,11 +56,13 @@
       Card,
       NTable,
       Button,
-      Input
+      Input,
+      'avatar-cropper': AvatarCropper
     },
     data() {
       return {
         loading      : false,
+        imgDataUrl   : '',
         groupSettings: {
           name       : '',
           description: ''
@@ -85,6 +103,40 @@
           .then(() => {
             this.loading = false;
           })
+      },
+      uploadHandler(cropper) {
+        console.log(this.$refs.avatar.filename.indexOf('png'));
+        cropper.getCroppedCanvas(this.outputOptions).toBlob((blob) => {
+          let formData = new FormData();
+
+          formData.append('file', blob, this.$refs.avatar.filename);
+          formData.append('title', this.groupData.name + ' avatar');
+          formData.append('action', 'bp_avatar_upload');
+
+          this.$store
+            .dispatch('group/updateAvatar', {groupID: this.groupData.id, data: formData})
+            .then((response) => {
+              console.log(response);
+            });
+        }, -1 === this.$refs.avatar.filename.indexOf('png') ? 'image/jpeg' : 'image/png', 0.9)
+      },
+      handleUploading(form, xhr) {
+        this.message = "uploading...";
+      },
+      handleUploaded(response) {
+        if (response.status == "success") {
+          this.imgDataUrl = response.url;
+          // Maybe you need call vuex action to
+          // update user avatar, for example:
+          // this.$dispatch('updateUser', {avatar: response.url})
+          this.message = "user avatar updated.";
+        }
+      },
+      handleCompleted(response, form, xhr) {
+        this.message = "upload completed.";
+      },
+      handlerError(message, type, xhr) {
+        this.message = "Oops! Something went wrong...";
       }
     }
   }

@@ -44,6 +44,14 @@ export default {
     return apiClient.post(base + groupID, data);
   },
 
+  updateAvatar(groupID, data) {
+    return apiClient.post(base + groupID + '/avatar', data, {
+      headers: {
+        'Content-Type' : 'multipart/form-data',
+      }
+    });
+  },
+
   upgradeUser(userID, groupID) {
     return apiClient.post(base + groupID + '/promote/' + userID);
   },

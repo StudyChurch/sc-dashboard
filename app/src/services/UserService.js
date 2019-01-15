@@ -21,6 +21,13 @@ export default {
   updateUser(userID, data) {
     return apiClient.post(base + userID, data);
   },
+  updateAvatar(userID, data) {
+    return apiClient.post(base + userID + '/avatar', data, {
+      headers: {
+        'Content-Type' : 'multipart/form-data',
+      }
+    });
+  },
   getMe() {
     return apiClient.get(base + 'me/');
   },

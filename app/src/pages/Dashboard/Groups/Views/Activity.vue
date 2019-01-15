@@ -33,6 +33,8 @@
     ActivityForm
   } from 'src/components'
 
+import { mapState, mapGetters } from 'vuex';
+
   function getDefaultData () {
     return {
       loadingActivity    : true,
@@ -64,6 +66,8 @@
         this.getGroupActivity();
       }
     },
+	computed : {
+	},
     mounted() {
       this.getGroupActivity();
     },
