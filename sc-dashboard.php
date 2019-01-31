@@ -528,6 +528,10 @@ class StudyChurch {
 			return $this->get_dir() . 'app.php';
 		}
 
+		if ( strpos( $_SERVER['REQUEST_URI'], 'studio/' ) ) {
+			return $this->get_dir() . 'app.php';
+		}
+
 		return $template;
 	}
 

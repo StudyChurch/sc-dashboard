@@ -31,6 +31,13 @@ import OrgStudies       from 'src/pages/Dashboard/Organizations/Views/Studies.vu
 
 import Study     from 'src/pages/Dashboard/Studies/Study.vue';
 
+import Studio              from 'src/pages/Dashboard/Studio/Studio.vue';
+import StudioHeader              from 'src/pages/Dashboard/Studio/StudioHeader.vue';
+import StudioStudies       from 'src/pages/Dashboard/Studio/Views/Studies.vue';
+import StudioStudyEdit     from 'src/pages/Dashboard/Studio/Views/StudyEdit.vue';
+import StudioChapterEdit   from 'src/pages/Dashboard/Studio/Views/ChapterEdit.vue';
+import StudioStudySettings from 'src/pages/Dashboard/Studio/Views/StudyEditSettings.vue';
+
 Vue.use(Router);
 
 const router = new Router({
@@ -90,6 +97,26 @@ const router = new Router({
             }
           ]
         },
+        {
+          path      : 'studio',
+          name      : 'Studio',
+          components: {default: Studio, header: StudioHeader},
+          children  : [
+            {path: '', component: StudioStudies},
+            {
+              path     : 'studies/:study_id/',
+              component: StudioStudyEdit
+            },
+            {
+              path     : 'studies/:study_id/:chapter_id',
+              component: StudioChapterEdit
+            },
+            {
+              path     : 'studies/:study_id/settings',
+              component: StudioStudySettings
+            },
+          ]
+        }
       ]
     },
 

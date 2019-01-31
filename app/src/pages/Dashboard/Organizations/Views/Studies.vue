@@ -74,7 +74,7 @@
 							v-if="isOrgAdmin"
 							width="110">
 							<template slot-scope="scope">
-								<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+								<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 									<n-button
 										class="edit btn-neutral"
 										type="info"
@@ -154,7 +154,7 @@
 								align="right"
 								width="135">
 								<template slot-scope="scope">
-									<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+									<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 										<n-button
 											class="edit btn-neutral"
 											type="info"
@@ -353,7 +353,7 @@
           .then(response => {
             this.addStudy(response.id)
               .then(() => {
-                window.location = '/study-edit/?action=edit&study=' + response.id;
+                window.location = '/studio/studies/' + response.id;
                 Message.success('Study created! Taking you to the study edit page.');
               })
           })

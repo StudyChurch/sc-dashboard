@@ -22,7 +22,9 @@ import {
   faChurch,
   faArchive,
   faTimes,
-  faPlus
+  faPlus,
+  faBars,
+  faArrowsAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -42,7 +44,9 @@ library.add(
   faChurch,
   faArchive,
   faTimes,
-  faPlus
+  faPlus,
+  faBars,
+  faArrowsAlt
 );
 
 /**

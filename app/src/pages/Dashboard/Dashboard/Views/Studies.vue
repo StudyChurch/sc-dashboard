@@ -47,7 +47,7 @@
 									size="sm" icon>
 									<font-awesome-icon icon="times"></font-awesome-icon>
 								</n-button>
-								<a :href="'/study-edit/?action=edit&study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+								<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 									<n-button
 										class="edit btn-neutral"
 										type="info"
@@ -130,7 +130,7 @@
 										size="sm" icon>
 										<font-awesome-icon icon="plus"></font-awesome-icon>
 									</n-button>
-									<a :href="'/study-edit/?study=' + scope.row.id" v-if="scope.row.author === user.me.id">
+									<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 										<n-button
 											class="edit btn-neutral"
 											type="info"
@@ -288,7 +288,7 @@
           status : 'private',
         })
           .then(response => {
-            window.location = '/study-edit/?action=edit&study=' + response.data.id;
+            window.location = '/studio/studies/' + response.data.id;
             Message.success('Study created! Taking you to the study edit page.');
           })
 

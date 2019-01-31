@@ -5,7 +5,7 @@
 				<img class="card-img-top" :src="thumbnail" alt="Card image cap">
 			</router-link>
 			<div class="actions" v-if="editable">
-				<n-button :tag="'a'" :nativeType="'text/html'" :href="'/study-edit/?action=edit&study=' + id" class="dropdown-toggle no-caret" type="neutral" round icon>
+				<n-button :tag="'a'" :nativeType="'text/html'" :href="'/studio/studies/' + id" class="dropdown-toggle no-caret" type="neutral" round icon>
 					<font-awesome-icon icon="edit"></font-awesome-icon>
 				</n-button>
 			</div>

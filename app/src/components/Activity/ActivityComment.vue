@@ -2,7 +2,7 @@
 	<div class="sc-activity--comment--container">
 
 		<div class="sc-activity--comment" v-if="!showUpdateForm">
-			<a href="#" v-if="showEditButton" @click.stop="editActivity" class="sc-activity--card--edit">Edit</a>
+			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>
 			<img class="avatar border-gray" :src="item.user_avatar.full">
 			<p class="category" style="margin-bottom:0;">
 				{{ item.date | dateFormat }} | <span v-html="item.title"></span>
@@ -26,10 +26,12 @@
 </template>
 <script>
   import ActivityForm from './ActivityForm.vue';
+  import { Input } from 'element-ui';
 
   export default {
     components: {
-      ActivityForm
+      ActivityForm,
+      Input
     },
     data() {
       return {

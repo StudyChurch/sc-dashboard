@@ -16,10 +16,29 @@ export default {
 
     return apiClient.get(base, config)
   },
-  getStudy(id) {
-    return apiClient.get('/events/' + id)
+  getStudy(id, data = {}) {
+    return apiClient.get(base + id, data)
   },
   postStudy(study) {
     return apiClient.post(base, study)
+  },
+  getStudyChapters(id) {
+    return apiClient.get(base + id + '/chapters/');
+  },
+  getStudyChapter(study, chapter) {
+    return apiClient.get(base + study + '/chapters/' + chapter, {
+      params : {
+        context : 'edit'
+      }
+    });
+  },
+  getStudyNavigation(study) {
+    return apiClient.get(base + study + '/navigation');
+  },
+  updateStudyNavigation(chapterID, data) {
+    return apiClient.post(base + chapterID + '/navigation', data);
+  },
+  updateStudyChapter(chapterID, data) {
+    return apiClient.post(base + chapterID, data);
   }
 }

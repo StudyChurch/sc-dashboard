@@ -42,6 +42,16 @@ class Studies extends WP_REST_Posts_Controller {
 			],
 		) );
 
+		register_rest_field( 'sc_study', 'elements', array(
+			'update_callback' => array( $this, 'update_elements' ),
+			'get_callback'    => array( $this, 'get_elements' ),
+			'schema'          => [
+				'context'     => [ 'view', 'edit' ],
+				'description' => __( 'The chapter elements', studychurch()->get_id() ),
+				'type'        => 'array',
+			],
+		) );
+
 		$posts_args = array(
 			'context'  => array(
 				'default' => 'view',
@@ -57,12 +67,18 @@ class Studies extends WP_REST_Posts_Controller {
 			'filter'   => array(),
 		);
 
-		register_rest_route( $this->namespace, $this->base . '/(?P<study_id>[a-zA-Z0-9-]+)/navigation', array(
+		register_rest_route( $this->namespace, $this->base . '/(?P<id>[a-zA-Z0-9-]+)/navigation', array(
 			array(
 				'methods'  => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_navigation' ),
 				'args'     => $posts_args,
 				//				'permission_callback' => array( $this, 'get_item_permissions_check' ),
+			),
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'update_navigation' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'args'                => $this->get_endpoint_args_for_item_schema( false ),
 			),
 		) );
 
@@ -173,82 +189,87 @@ class Studies extends WP_REST_Posts_Controller {
 		}
 
 		$chapter = $this->prepare_item_for_response( $chapter, $request );
+		$chapter = $this->prepare_response_for_collection( $chapter );
 
-		$query = array(
-			'post_type'      => 'sc_study',
-			'order'          => 'ASC',
-			'orderby'        => 'menu_order',
-			'post_parent'    => $chapter_id,
-			'post_status'    => array( 'draft', 'pending', 'publish' ),
-			'posts_per_page' => 10000,
-		);
+		if ( empty( $chapter['elements'] ) ) {
+			$query = array(
+				'post_type'      => 'sc_study',
+				'order'          => 'ASC',
+				'orderby'        => 'menu_order',
+				'post_parent'    => $chapter_id,
+				'post_status'    => array( 'draft', 'pending', 'publish' ),
+				'posts_per_page' => 10000,
+			);
 
-		$chapter_query = new WP_Query();
-		$chapter_parts = $chapter_query->query( $query );
+			$chapter_query = new WP_Query();
+			$chapter_parts = $chapter_query->query( $query );
 
-		$struct = array();
+			$struct = array();
 
-		foreach ( $chapter_parts as $part ) {
-
-			// Do we have permission to read this post?
-			if ( ! $this->check_read_permission( $part ) ) {
-				continue;
-			}
-
-			$part_data = $this->prepare_item_for_response( $part, $request );
-			$part_data = $this->prepare_response_for_collection( $part_data );
-
-			// @todo patch real issue later. See class-wp-json-post.php line 906
-			if ( is_wp_error( $part_data ) ) {
-				continue;
-			}
-
-			/** Now get children for this chapter */
-			$query['post_parent'] = $part->ID;
-			$child_query          = new WP_Query();
-			$children             = $child_query->query( $query );
-
-			$part_data['elements'] = array();
-			$part_data['sections'] = array();
-
-			foreach ( $children as $child ) {
+			foreach ( $chapter_parts as $part ) {
 
 				// Do we have permission to read this post?
-				if ( ! $this->check_read_permission( $child ) ) {
+				if ( ! $this->check_read_permission( $part ) ) {
 					continue;
 				}
 
-				$child_data = $this->prepare_item_for_response( $child, $request );
-				$child_data = $this->prepare_response_for_collection( $child_data );
+				$request['context'] = 'edit';
+				$part_data          = $this->prepare_item_for_response( $part, $request );
+				$part_data          = $this->prepare_response_for_collection( $part_data );
 
-				if ( is_wp_error( $child_data ) ) {
+				// @todo patch real issue later. See class-wp-json-post.php line 906
+				if ( is_wp_error( $part_data ) ) {
 					continue;
 				}
 
-				if ( sc_get_data_type( $child_data['id'] ) ) {
-					$part_data['elements'][] = array(
-						'id'         => $child_data['id'],
-						'content'    => $child_data['content'],
-						'data_type'  => esc_html( sc_get_data_type( $child['id'] ) ),
-						'is_private' => sc_answer_is_private( $child['id'] ),
-						'parent'     => $part['id'],
-					);
-				} else {
-					$part_data['sections'][] = array(
-						'id'     => $child_data['id'],
-						'title'  => $child_data['title'],
-						'parent' => $part['id'],
-					);
+				/** Now get children for this chapter */
+				$query['post_parent'] = $part->ID;
+				$child_query          = new WP_Query();
+				$children             = $child_query->query( $query );
+
+				$part_data['elements'] = array();
+				$part_data['sections'] = array();
+
+				foreach ( $children as $child ) {
+
+					// Do we have permission to read this post?
+					if ( ! $this->check_read_permission( $child ) ) {
+						continue;
+					}
+
+					$child_data = $this->prepare_item_for_response( $child, $request );
+					$child_data = $this->prepare_response_for_collection( $child_data );
+
+					if ( is_wp_error( $child_data ) ) {
+						continue;
+					}
+
+					if ( sc_get_data_type( $child_data['id'] ) ) {
+						$part_data['elements'][] = array(
+							'id'         => $child_data['id'],
+							'title'      => $child_data['title'],
+							'content'    => $child_data['content'],
+							'data_type'  => esc_html( sc_get_data_type( $child['id'] ) ),
+							'is_private' => sc_answer_is_private( $child['id'] ),
+							'parent'     => $part['id'],
+						);
+					} else {
+						$part_data['sections'][] = array(
+							'id'     => $child_data['id'],
+							'title'  => $child_data['title'],
+							'parent' => $part['id'],
+						);
+					}
+
 				}
 
+				$struct[] = $part_data;
 			}
 
-			$struct[] = $part_data;
+			$chapter['elements'] = $struct;
 		}
 
-		$chapter             = $this->prepare_response_for_collection( $chapter );
-		$chapter['elements'] = $struct;
-		$chapter['study']    = get_the_title( sc_get_study_id( $chapter_id ) );
+		$chapter['study'] = get_the_title( sc_get_study_id( $chapter_id ) );
 
 		$response = rest_ensure_response( $chapter );
 
@@ -320,6 +341,7 @@ class Studies extends WP_REST_Posts_Controller {
 				if ( sc_get_data_type( $child_data['id'] ) ) {
 					$chapter_data['elements'][] = array(
 						'id'         => $child_data['id'],
+						'title'      => $child_data['title'],
 						'content'    => $child_data['content'],
 						'data_type'  => esc_html( sc_get_data_type( $child_data['id'] ) ),
 						'is_private' => sc_answer_is_private( $child_data['id'] ),
@@ -432,7 +454,7 @@ class Studies extends WP_REST_Posts_Controller {
 	 */
 	public function get_navigation( $request ) {
 		$args     = (array) $request->get_params();
-		$study_id = $args['study_id'];
+		$study_id = $args['id'];
 
 		if ( ! is_numeric( $study_id ) ) {
 			$study_id = get_page_by_path( $study_id, OBJECT, 'sc_study' )->ID;
@@ -440,6 +462,8 @@ class Studies extends WP_REST_Posts_Controller {
 
 		$query_result = sc_study_get_navigation( $study_id );
 		$posts        = [];
+
+		$request['context'] = 'edit';
 
 		foreach ( $query_result as $post ) {
 			if ( ! $this->check_read_permission( $post ) ) {
@@ -451,6 +475,41 @@ class Studies extends WP_REST_Posts_Controller {
 		}
 
 		return rest_ensure_response( $posts );
+	}
+
+	/**
+	 * @param $request
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function update_navigation( $request ) {
+		$chapters = $request->get_json_params();
+
+		add_filter( 'wp_insert_post_empty_content', '__return_false' );
+		
+		foreach ( $chapters as $index => $chapter ) {
+			if ( $index == $chapter['menu_order'] && ! empty( $chapter['id'] ) ) {
+				continue;
+			}
+
+			if ( empty( $chapter['id'] ) ) {
+				wp_insert_post( [
+					'post_type'   => 'sc_study',
+					'post_status' => 'publish',
+					'post_title'  => $chapter['title']['raw'],
+					'menu_order'  => $index,
+					'post_parent' => $request['id'],
+				] );
+			} else {
+				wp_update_post( [
+					'ID'         => $chapter['id'],
+					'menu_order' => $index,
+				] );
+			}
+		}
+
+		return $this->get_navigation( $request );
 	}
 
 	public function save_data_type( $value, $object, $field_name, $request ) {
@@ -475,6 +534,46 @@ class Studies extends WP_REST_Posts_Controller {
 	public function get_is_private( $object, $field_name, $request ) {
 		return sc_answer_is_private( $object['id'] );
 	}
+
+	public function update_elements( $value, $object, $field_name, $request ) {
+		return update_post_meta( $object->ID, '_sc_elements', $this->sanitize_elements( $value ) );
+	}
+
+	protected function sanitize_elements( $raw_elements ) {
+		$elements = [];
+
+		foreach ( $raw_elements as $element ) {
+			$elements[] = array(
+				'id'         => absint( $element['id'] ),
+				'title'      => sanitize_text_field( $element['title']['raw'] ),
+				'content'    => wp_kses_post( $element['content']['raw'] ),
+				'data_type'  => sanitize_text_field( $element['data_type'] ),
+				'is_private' => boolval( $element['is_private'] ),
+			);
+		}
+
+		return $elements;
+	}
+
+	public function get_elements( $object, $field_name, $request ) {
+		if ( ! $elements = get_post_meta( $object['id'], '_sc_elements', true ) ) {
+			$elements = [];
+		}
+
+		foreach ( $elements as &$element ) {
+			if ( empty( $element['content'] ) && empty( $element['title'] ) ) {
+				$element['editing'] = true;
+			}
+
+			$element['content'] = [
+				'rendered' => apply_filters( 'the_content', $element['content'] ),
+				'raw'      => $element['content']
+			];
+		}
+
+		return $elements;
+	}
+
 
 	/**
 	 * Get the Study Thumbnail

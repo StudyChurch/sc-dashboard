@@ -5,7 +5,30 @@ export const namespaced = true;
 export const state = {
   studies     : [],
   studiesTotal: 0,
-  study      : {},
+  study       : {
+    id        : 0,
+    thumbnail : '',
+    title     : {
+      rendered: '',
+    },
+    excerpt   : {
+      rendered: '',
+    },
+    navigation: []
+  },
+  chapter     : {
+    id      : 0,
+    title   : {
+      rendered: '',
+      raw     : '',
+    },
+    excerpt : {
+      rendered: '',
+      raw     : '',
+    },
+    elements: [],
+  },
+  navigation  : [],
 };
 
 export const mutations = {
@@ -20,6 +43,12 @@ export const mutations = {
   },
   SET_STUDY(state, study) {
     state.study = study;
+  },
+  SET_CHAPTER(state, chapter) {
+    state.chapter = chapter;
+  },
+  SET_NAVIGATION(state, navigation) {
+    state.study.navigation = navigation;
   }
 };
 
@@ -58,7 +87,7 @@ export const actions = {
         dispatch('notification/add', notification, {root: true});
       });
   },
-  fetchStudy({commit, getters, state}, id) {
+  fetchStudy({commit, getters, state}, {id, params = {}}) {
     if (id === state.study.id) {
       return state.study;
     }
@@ -69,15 +98,58 @@ export const actions = {
       commit('SET_STUDY', study);
       return study;
     } else {
-      return StudyService.getStudy(id).then(response => {
+      return StudyService.getStudy(id, params).then(response => {
         commit('SET_STUDY', response.data);
         return response.data;
       });
     }
+  },
+  updateStudy({commit, getters, state}, {studyID, data}) {
+    return StudyService.updateStudyChapter(studyID, data)
+      .then(response => {
+        commit('SET_STUDY', response.data);
+        return response.data;
+      });
+  },
+  fetchNavigation({commit, getters, state}) {
+    if (state.study.id && undefined !== state.study.navigation) {
+      return state.study.navigation;
+    }
+
+    return StudyService.getStudyNavigation(state.study.id).then(response => {
+      commit('SET_NAVIGATION', response.data);
+      return response.data;
+    });
+  },
+  updateNavigation({commit, getters, state}, {studyID, data}) {
+    return StudyService.updateStudyNavigation(studyID, data)
+      .then(response => {
+        commit('SET_NAVIGATION', response.data);
+        return response.data;
+      });
+  },
+  updateStudyChapter({commit, getters, state}, {chapterID, data}) {
+    return StudyService.updateStudyChapter(chapterID, data)
+      .then(response => {
+        commit('SET_CHAPTER', response.data);
+        return response.data;
+      });
+  },
+  getStudyChapters({commit, getters, state}, id) {
+    return StudyService.getStudyChapters(id).then();
+  },
+  getStudyChapter({commit, getters, state}, {study, chapter}) {
+    return StudyService.getStudyChapter(study, chapter).then(response => {
+      commit('SET_CHAPTER', response.data);
+      return response.data;
+    });
   }
 };
 export const getters = {
-  getStudyById: state => id => {
+  getStudyById      : state => id => {
     return state.studies.find(study => study.id === id);
+  },
+  getStudyNavigation: state => {
+    return undefined === state.study.navigation ? [] : state.study.navigation;
   }
 };
