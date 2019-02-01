@@ -33,7 +33,7 @@
     ActivityForm
   } from 'src/components'
 
-import { mapState, mapGetters } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
 
   function getDefaultData () {
     return {
@@ -66,8 +66,7 @@ import { mapState, mapGetters } from 'vuex';
         this.getGroupActivity();
       }
     },
-	computed : {
-	},
+    computed  : {},
     mounted() {
       this.getGroupActivity();
     },
@@ -87,11 +86,15 @@ import { mapState, mapGetters } from 'vuex';
 
             this.activityData = this.activityData.concat(response.data)
           })
-          .finally(() => this.loadingActivity = this.loadingMoreActivity = false)
+          .finally(() => {
+            this.loadingActivity = this.loadingMoreActivity = false;
+            this.$root.reftag();
+          })
       },
       addActivity(newActivity) {
         newActivity.comments = [];
         this.activityData.unshift(newActivity);
+        this.$root.reftag();
       },
       loadMoreActivity () {
         if (!this.activityPage) {

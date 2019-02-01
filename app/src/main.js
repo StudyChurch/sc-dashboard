@@ -28,6 +28,23 @@ Vue.use(DashboardPlugin);
 
 Vue.prototype.$http = Axios;
 
+window.refTagger = {
+  settings: {
+    bibleReader: "bible.faithlife",
+    bibleVersion      : 'ESV',
+    roundCorners      : true,
+    noSearchClassNames: ['study-meta', 'btn', 'el-select-dropdown'],
+    noSearchTagNames: [],
+    socialSharing     : []
+  }
+};
+(
+  function (d, t) {
+    var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+    g.src = '//api.reftagger.com/v2/RefTagger.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script')
+);
 
 /* eslint-disable no-new */
 new Vue({
@@ -77,6 +94,15 @@ new Vue({
         return link;
       }
       return link.replace(window.location.protocol + '//' + window.location.host, '');
+    },
+    reftag () {
+      if (undefined === window.refTagger.tag) {
+        return;
+      }
+
+      this.$nextTick(() => {
+        window.refTagger.tag();
+      });
     }
   }
 

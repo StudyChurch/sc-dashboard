@@ -73,7 +73,7 @@
 
       showGroupAnswers() {
         return this.hasGroupAnswers && this.showAnswers && (
-          Boolean(this.answer.content.raw) || this.isGroupAdmin
+            Boolean(this.answer.content.raw) || this.isGroupAdmin
           );
       },
 
@@ -144,7 +144,10 @@
               }
             }
           })
-          .finally(() => this.loading = false)
+          .finally(() => {
+            this.loading = false;
+            this.$root.reftag();
+          })
       },
       reset (keep) {
         let def = getDefaultData();

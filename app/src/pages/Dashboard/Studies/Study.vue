@@ -76,6 +76,9 @@
         title   : {
           rendered: '',
         },
+		content : {
+          rendered : '',
+		},
         elements: [
           {
             content: {
@@ -157,7 +160,7 @@
     methods   : {
       decode(html) {
         return he.decode(html);
-	  },
+      },
       getChapterLink(chapter) {
         return this.navPrefix + this.$root.cleanLink(chapter.link);
       },
@@ -192,7 +195,10 @@
             this.chapterData = response.data;
             this.studyData.name = this.chapterData.study;
           })
-          .finally(() => this.loading = false)
+          .finally(() => {
+            this.loading = false;
+            this.$root.reftag();
+          })
       },
       setupNavigation () {
         let i = 0;

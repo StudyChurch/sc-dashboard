@@ -156,18 +156,18 @@
           return;
         }
 
-		this.loading = this.disable = true;
+        this.loading = this.disable = true;
 
         ActivityService.addActivity({
-            id                   : this.activityID,
-            component            : this.component,
-            type                 : this.type,
-            user                 : this.user.me.id,
-            prime_association    : this.primaryItem,
-            secondary_association: this.secondaryItem,
-            content              : this.comment,
-            hidden               : true,
-          })
+          id                   : this.activityID,
+          component            : this.component,
+          type                 : this.type,
+          user                 : this.user.me.id,
+          prime_association    : this.primaryItem,
+          secondary_association: this.secondaryItem,
+          content              : this.comment,
+          hidden               : true,
+        })
           .then(response => {
             this.comment = '';
 
@@ -175,7 +175,10 @@
               this.$emit('activitySaved', response.data[0])
             }
           })
-          .finally(() => this.loading = this.disable = false)
+          .finally(() => {
+            this.loading = this.disable = false;
+            this.$root.reftag();
+          });
       },
       getTributeValues() {
         let members = this.getGroupMembers;

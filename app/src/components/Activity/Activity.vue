@@ -127,7 +127,7 @@
         this.$nextTick(() => {
           this.$refs.activityForm.updateComment(this.item.content.raw);
           this.$refs.activityForm.setFocus();
-        })
+        });
       },
       cancelUpdate(e) {
         this.update = false;

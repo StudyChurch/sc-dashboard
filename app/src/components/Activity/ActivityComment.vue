@@ -69,6 +69,7 @@
       },
       addComment(comment) {
         this.item.comments.push(comment);
+        this.$root.reftag();
       },
       updateActivity(activity) {
         this.item.content = activity.content;
