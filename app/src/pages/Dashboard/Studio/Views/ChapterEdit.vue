@@ -96,6 +96,7 @@
           heightMax       : 400,
           theme           : 'gray',
           charCounterCount: false,
+		  placeholderText: 'Chapter introduction, video, etc...',
           toolbarButtons  : [
             'bold',
             'italic',
@@ -141,10 +142,10 @@
           id     : Date.now(),
           editing: true,
           title  : {
-            rendered: '',
+            raw: '',
           },
           content: {
-            rendered: '',
+            raw: '',
           }
         });
 

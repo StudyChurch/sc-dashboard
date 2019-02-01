@@ -14,9 +14,13 @@
 
 		<activity v-if="answer.content.raw" :activity="answer" :showContent="true"></activity>
 
-		<p class="category" v-html="groupAnswerText"></p>
+		<p class="category">
+			<span v-html="groupAnswerText"></span>&nbsp;
+			<a href="#" @click.prevent="showAnswers = false" v-if="hasGroupAnswers && showAnswers">(hide)</a>
+			<a href="#" @click.prevent="showAnswers = true" v-if="!showAnswers && hasGroupAnswers">(show)</a>
+		</p>
 
-		<div v-if="showGroupAnswers && groupAnswers.length" class="sc-answer--group">
+		<div v-if="showGroupAnswers" class="sc-answer--group">
 			<activity v-for="gAnswer in groupAnswers" class="sc-question--group-answers--answer" :activity="gAnswer" :showContent="true" :showForm="true"></activity>
 		</div>
 	</div>
@@ -27,6 +31,7 @@
 
   function getDefaultData () {
     return {
+      showAnswers : true,
       update      : false,
       loading     : true,
       answer      : {
@@ -57,12 +62,19 @@
       groupData() {
         return this.group.group;
       },
-      showGroupAnswers() {
+
+      hasGroupAnswers() {
         if (!this.groupData.id) {
           return false;
         }
 
-        return Boolean(this.answer.content.raw) || this.isGroupAdmin();
+        return this.groupAnswers.length;
+      },
+
+      showGroupAnswers() {
+        return this.hasGroupAnswers && this.showAnswers && (
+          Boolean(this.answer.content.raw) || this.isGroupAdmin
+          );
       },
 
       groupAnswerText() {

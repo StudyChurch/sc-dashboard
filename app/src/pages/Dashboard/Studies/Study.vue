@@ -19,6 +19,8 @@
 				</div>
 			</div>
 
+			<div class="card-body" v-html="chapterData.content.rendered" v-if="chapterData.content.rendered"></div>
+
 			<div v-for="data in chapterData.elements" :id="'post-' + data.id">
 				<div class="card-body" v-html="data.content.rendered"></div>
 				<div v-if="data['data_type'] === 'question_short' ||  data['data_type'] === 'question_long'" class="card-footer">

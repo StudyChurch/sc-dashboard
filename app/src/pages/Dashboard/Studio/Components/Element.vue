@@ -34,7 +34,16 @@
 			<p v-if="0">
 				<el-input type="text"></el-input>
 			</p>
-			<froala tag="textarea" :config="config" v-model="content"></froala>
+			<froala tag="textarea" :config="config" v-model="model.content"></froala>
+
+			<div style="margin-top: 20px">
+				<el-checkbox v-model="model.isQuestion" label="Show a response field" border></el-checkbox>
+			</div>
+
+			<div style="margin-top: 20px" v-if="model.isQuestion">
+				<el-checkbox v-model="model.isPrivate" label="Make response private (don't share it with the group)" border></el-checkbox>
+			</div>
+
 			<n-button type="danger" class="float-right" @click.native="removeItem">Delete</n-button>
 			<n-button type="primary" @click.native="save">Save</n-button>
 			<n-button type="default" @click.native="cancelEdit">Cancel</n-button>
@@ -44,9 +53,10 @@
 <script>
   import { mapState, mapGetters } from 'vuex';
   import { ActivityForm } from 'src/components';
+  import { Checkbox } from 'element-ui';
 
   export default {
-    components: {ActivityForm},
+    components: {ActivityForm, 'el-checkbox': Checkbox},
     data      : function () {
       return {
         editing: false,
@@ -84,15 +94,11 @@
             'fullscreen',
           ]
         },
-        element: {
-          title  : {
-            raw: ''
-          },
-          content: {
-            raw: ''
-          }
+        model  : {
+          content   : '',
+          isQuestion: false,
+          isPrivate : false,
         },
-        content: ''
       }
     },
     props     : {
@@ -104,24 +110,12 @@
         }
       }
     },
-    watch     : {
-//      item (to, from) {
-//        this.element = this.item;
-//        this.editing = undefined === this.item.editing ? false : this.item.editing;
-//      }
-    },
+    watch     : {},
     computed  : {
       ...mapState(['study', 'user']),
       ...mapGetters('user', ['currentUserCan']),
-      getItem() {
-        return this.item;
-      },
-      getTitle () {
-        if (this.item.title.rendered) {
-          return this.item.title.rendered;
-        }
-
-        return this.item.data_type;
+      isQuestion() {
+        return this.item.data_type === 'question_short' || this.item.data_type === 'question_long';
       }
     },
     methods   : {
@@ -135,11 +129,18 @@
           .then(response => this.loading = false);
       },
       cancelEdit() {
-        this.editing = false;
-        this.content = this.item.content.raw;
+        if (!this.item.content.raw) {
+          this.removeItem();
+        } else {
+          this.editing = false;
+          this.setup();
+        }
       },
       save() {
-        this.item.content.raw = this.content;
+        this.item.content.raw = this.model.content;
+        this.item.data_type = this.model.isQuestion ? 'question_short' : 'content';
+        this.item.is_private = this.model.isPrivate;
+
         this.loading = true;
         this.$store
           .dispatch('study/updateStudyChapter',
@@ -147,11 +148,19 @@
           .then(response => {
             this.loading = false;
             this.editing = false;
+            this.setup();
           });
+      },
+      setup() {
+        this.model = {
+          content   : this.item.content.raw,
+          isQuestion: this.isQuestion,
+          isPrivate : this.item.is_private,
+        }
       }
     },
     mounted() {
-      this.content = this.item.content.raw;
+      this.setup();
       this.editing = undefined === this.item.editing ? false : this.item.editing;
     }
   }
