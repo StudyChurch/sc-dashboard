@@ -169,12 +169,12 @@ class Edit {
 					break;
 				}
 
-				$groups = get_the_terms( $study, 'sc_group' );
-
-				foreach( $groups as $group ) {
-					if ( groups_is_user_admin( get_current_user_id(), $group->name ) ) {
-						$caps = array( 'exist' );
-						break;
+				if ( $groups = get_the_terms( $study, 'sc_group' ) ) {
+					foreach ( $groups as $group ) {
+						if ( groups_is_user_admin( get_current_user_id(), $group->name ) ) {
+							$caps = array( 'exist' );
+							break;
+						}
 					}
 				}
 
