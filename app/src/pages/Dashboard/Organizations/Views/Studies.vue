@@ -74,7 +74,7 @@
 							v-if="isOrgAdmin"
 							width="110">
 							<template slot-scope="scope">
-								<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
+								<a :href="'/studio/studies/' + scope.row.id" v-if="canEditStudy(scope.row)">
 									<n-button
 										class="edit btn-neutral"
 										type="info"
@@ -334,6 +334,21 @@
       handleShowModal() {
         this.showModal = true;
       },
+	  canEditStudy(study) {
+        console.log(study);
+
+        if (this.user.me.id === study.author) {
+          return true;
+		}
+
+		for(let i = 0; i < study.sc_group.length; i ++) {
+          if (this.groupData.id == study.sc_group[i].slug) {
+            return true;
+		  }
+		}
+
+        return false;
+	  },
       createStudy() {
         if (!this.newStudy.name || !this.newStudy.description) {
           Message.error('Please enter a name and description for your new study');

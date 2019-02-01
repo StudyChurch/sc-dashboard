@@ -158,9 +158,26 @@ class Edit {
 			case 'edit_post' :
 			case 'delete_post' :
 			case 'read_post' :
-				if ( isset( $args[0] ) && get_post( $args[0] )->post_author == $user_id ) {
-					$caps = array( 'exist' );
+				if ( empty( $args[0] ) ) {
+					break;
 				}
+
+				$study = get_post( sc_get_study_id( $args[0] ) );
+
+				if ( $study->post_author == $user_id ) {
+					$caps = array( 'exist' );
+					break;
+				}
+
+				$groups = get_the_terms( $study, 'sc_group' );
+
+				foreach( $groups as $group ) {
+					if ( groups_is_user_admin( get_current_user_id(), $group->name ) ) {
+						$caps = array( 'exist' );
+						break;
+					}
+				}
+
 				break;
 		}
 
