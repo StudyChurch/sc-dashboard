@@ -21,9 +21,6 @@
 
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a href="/library" class="nav-link">Library</a>
-				</li>
-				<li class="nav-item">
 					<a href="/account" class="nav-link">Account</a>
 				</li>
 				<li class="nav-item">
