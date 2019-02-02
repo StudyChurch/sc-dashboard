@@ -2,6 +2,7 @@
 
 namespace StudyChurch\API;
 
+use StudyChurch\OrganizationSetup;
 use WP_REST_Posts_Controller;
 use WP_REST_Server;
 use WP_Error;
@@ -26,6 +27,10 @@ class Studies extends WP_REST_Posts_Controller {
 		register_rest_field( 'sc_study', 'data_type', array(
 			'update_callback' => array( $this, 'save_data_type' ),
 			'get_callback'    => array( $this, 'get_data_type' )
+		) );
+
+		register_rest_field( 'sc_study', 'organization', array(
+			'get_callback' => array( $this, 'get_organization' )
 		) );
 
 		register_rest_field( 'sc_study', 'is_private', array(
@@ -160,6 +165,20 @@ class Studies extends WP_REST_Posts_Controller {
 			),
 		) );
 
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/thumbnail', array(
+			'args'   => array(
+				'id' => array(
+					'description' => __( 'Unique identifier for the study.' ),
+					'type'        => 'integer',
+				),
+			),
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'update_item_thumbnail' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+			),
+			'schema' => array( $this, 'get_public_item_schema' ),
+		) );
 	}
 
 	public function create_item( $request ) {
@@ -487,7 +506,7 @@ class Studies extends WP_REST_Posts_Controller {
 		$chapters = $request->get_json_params();
 
 		add_filter( 'wp_insert_post_empty_content', '__return_false' );
-		
+
 		foreach ( $chapters as $index => $chapter ) {
 			if ( $index == $chapter['menu_order'] && ! empty( $chapter['id'] ) ) {
 				continue;
@@ -510,6 +529,40 @@ class Studies extends WP_REST_Posts_Controller {
 		}
 
 		return $this->get_navigation( $request );
+	}
+
+	public function update_item_thumbnail( $request ) {
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+		$args     = (array) $request->get_params();
+		$study_id = $args['id'];
+
+		$image = media_handle_upload( 'file', $study_id );
+
+		if ( is_wp_error( $image ) ) {
+			return $image;
+		}
+
+		set_post_thumbnail( $study_id, $image );
+
+		return $this->get_item( $request );
+	}
+
+	public function get_organization( $object ) {
+		$orgs       = get_the_terms( $object['id'], 'sc_group' );
+		$study_orgs = [];
+
+		foreach ( $orgs as $group ) {
+			if ( OrganizationSetup::TYPE !== bp_groups_get_group_type( $group->name, true ) ) {
+				continue;
+			}
+
+			$study_orgs[] = absint( $group->name );
+		}
+
+		return $study_orgs;
 	}
 
 	public function save_data_type( $value, $object, $field_name, $request ) {

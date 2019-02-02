@@ -111,6 +111,13 @@ export const actions = {
         return response.data;
       });
   },
+  updateStudyThumbnail({commit, getters, state}, {studyID, data}) {
+    return StudyService.updateStudyThumbnail(studyID, data)
+      .then(response => {
+        commit('SET_STUDY', response.data);
+        return response.data;
+      });
+  },
   fetchNavigation({commit, getters, state}) {
     if (state.study.id && undefined !== state.study.navigation) {
       return state.study.navigation;

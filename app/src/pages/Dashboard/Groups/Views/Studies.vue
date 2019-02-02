@@ -257,7 +257,8 @@
       },
 
       tableData() {
-        return this.groupOrgID ? this.group.organization.studies : this.study.studies;
+        let studies = this.groupOrgID ? this.group.organization.studies : this.study.studies;
+        return studies.filter(study => study.status === 'publish' || study.author === this.user.me.id);
       },
 
       groupData() {

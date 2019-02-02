@@ -8,39 +8,39 @@
 					<n-button type="primary" @click.native="handleShowModal">Create Study</n-button>
 				</div>
 
+				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isOrgAdmin()" v-loading="creatingStudy">
+					<h4 slot="header" class="title title-up">Create a new study</h4>
+					<p>
+						<label for="name">Study Name</label>
+						<el-input
+							ref="name"
+							type="text"
+							label="Study Name"
+							id="name"
+							v-model="newStudy.name"></el-input>
+					</p>
+
+					<p>
+						<label for="name">Study Description</label>
+						<el-input
+							ref="description"
+							type="textarea"
+							id="description"
+							:autosize="{ minRows: 4 }"
+							resize="none"
+							label="Study Description"
+							v-model="newStudy.description"></el-input>
+					</p>
+					<template slot="footer">
+						<n-button type="primary" @click.native="createStudy">Create</n-button>
+					</template>
+				</modal>
+
 				<card card-body-classes="table-full-width" no-footer-line>
 					<div slot="header">
 						<h4 class="card-title">Enabled Studies</h4>
 						<p class="description">Studies enabled from the study library or created by your leaders.</p>
 					</div>
-
-					<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isOrgAdmin()" v-loading="creatingStudy">
-						<h4 slot="header" class="title title-up">Create a new study</h4>
-						<p>
-							<label for="name">Study Name</label>
-							<el-input
-								ref="name"
-								type="text"
-								label="Study Name"
-								id="name"
-								v-model="newStudy.name"></el-input>
-						</p>
-
-						<p>
-							<label for="name">Study Description</label>
-							<el-input
-								ref="description"
-								type="textarea"
-								id="description"
-								:autosize="{ minRows: 4 }"
-								resize="none"
-								label="Study Description"
-								v-model="newStudy.description"></el-input>
-						</p>
-						<template slot="footer">
-							<n-button type="primary" @click.native="createStudy">Create</n-button>
-						</template>
-					</modal>
 
 					<el-table
 						stripe
@@ -57,9 +57,14 @@
 
 						<el-table-column min-width="220" key="title" label="Title">
 							<div slot-scope="{row}" style="word-break:break-word;" v-loading="loading[row.id]">
-								<h6>
+								<h6 v-if="row.status === 'publish' || !row.organization.includes(groupData.id)">
 									<router-link :to="'/organizations/' + groupData.slug + $root.cleanLink(row.link)">{{ row.title.rendered | decode }}</router-link>
 								</h6>
+
+								<h6 v-else>
+									{{ row.title.rendered | decode }} (pending)
+								</h6>
+
 								<div class="desc-more" :class="{open : true === showDesc[row.id]}">
 									<div v-html="row.excerpt.rendered" class="desc-more--text"></div>
 									<a href="#" class="desc-more--show" @click.prevent="$set(showDesc, row.id, true !== showDesc[row.id])"></a>
@@ -235,7 +240,7 @@
       Input,
       Modal,
       NPagination,
-	  Message,
+      Message,
       'el-table'       : Table,
       'el-table-column': TableColumn
     },
@@ -334,21 +339,21 @@
       handleShowModal() {
         this.showModal = true;
       },
-	  canEditStudy(study) {
+      canEditStudy(study) {
         console.log(study);
 
         if (this.user.me.id === study.author) {
           return true;
-		}
+        }
 
-		for(let i = 0; i < study.sc_group.length; i ++) {
-          if (this.groupData.id == study.sc_group[i].slug) {
+        for (let i = 0; i < study.organization.length; i++) {
+          if (this.groupData.id == study.organization[i]) {
             return true;
-		  }
-		}
+          }
+        }
 
         return false;
-	  },
+      },
       createStudy() {
         if (!this.newStudy.name || !this.newStudy.description) {
           Message.error('Please enter a name and description for your new study');
@@ -363,7 +368,7 @@
             content : this.newStudy.description,
             author  : this.user.me.id,
             status  : 'private',
-            sc_group: [ this.groupData.id + '' ],
+            sc_group: [this.groupData.id + ''],
           })
           .then(response => {
             this.addStudy(response.id)

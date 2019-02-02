@@ -18,15 +18,41 @@
 					<p>
 						<n-button type="primary" @click.native="saveStudy">Save</n-button>
 					</p>
-
-					<hr />
-					<div class="sc-studio--study-edit--navigation">
-						<img slot="image" :src="study.study.thumbnail">
-					</div>
 				</card>
 			</div>
 
 			<div class="col-lg-4">
+				<card v-loading="loadingChapters">
+					<h6>Details</h6>
+
+					<form @submit.prevent="saveStudy">
+						<div v-if="isOrgStudyAdmin">
+							<p><strong>Status</strong></p>
+							<el-radio-group v-model="studyData.status">
+								<el-radio-button label="publish">Publish</el-radio-button>
+								<el-radio-button label="private">Private</el-radio-button>
+								<el-radio-button label="draft">Draft</el-radio-button>
+								<el-radio-button label="future" disabled v-if="studyData.status === 'future'">Future</el-radio-button>
+							</el-radio-group>
+							<p class="card-category">
+								<span v-if="studyData.status === 'publish'">This study will be available to other group leaders.</span>
+								<span v-else-if="studyData.status === 'private'">This study will not be available to other group leaders.</span>
+								<span v-else>This study is not yet published.</span>
+							</p>
+						</div>
+
+						<p>
+							<strong v-if="isPublished">Published: </strong>
+							<strong v-else>Publish on: </strong>
+							<el-date-picker v-model="studyData.date" type="date" placeholder="Pick a day"></el-date-picker>
+						</p>
+
+						<n-button type="primary" @click.native="saveStudy">Save</n-button>
+
+					</form>
+
+				</card>
+
 				<card v-loading="loadingChapters">
 					<h6>Chapters</h6>
 					<draggable v-model="navigation" :options="{draggable: '.item', handle : '.drag-item'}" @end="saveNavigation">
@@ -49,6 +75,26 @@
 					</form>
 
 				</card>
+
+				<card v-loading="uploadingThumb">
+					<h6>Thumbnail</h6>
+
+					<avatar-cropper
+						ref="thumbnail"
+						@uploading="handleUploading"
+						@uploaded="handleUploaded"
+						@completed="handleCompleted"
+						@error="handlerError"
+						:uploadHandler="uploadHandler"
+						:cropperOptions="{aspectRatio: 16/9}"
+						:labels="{ submit: 'save', cancel: 'cancel'}"
+						trigger="#pick-thumbnail" />
+
+					<p><img :src="this.study.study.thumbnail"></p>
+					<n-button type="primary" simple="" id="pick-thumbnail">change thumbnail</n-button>
+
+				</card>
+
 			</div>
 		</div>
 
@@ -62,18 +108,17 @@
     AnimatedNumber,
     TimeLine,
     TimeLineItem,
-    ActivityForm
+    ActivityForm,
   } from 'src/components';
 
   import draggable from 'vuedraggable';
   import Chapter from '../Components/Chapter';
-  import { Select, Option } from 'element-ui';
+  import { Select, Option, RadioGroup, RadioButton, DatePicker, Input } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
-  import ElInput from '../../../../../node_modules/element-ui/packages/input/src/input';
+  import AvatarCropper from "vue-avatar-cropper";
 
   export default {
     components: {
-      ElInput,
       Card,
       NTable,
       NProgress,
@@ -81,15 +126,21 @@
       TimeLine,
       TimeLineItem,
       ActivityForm,
-      'el-select': Select,
-      'el-option': Option,
+      'el-select'      : Select,
+      'el-option'      : Option,
+      'el-radio-button': RadioButton,
+      'el-radio-group' : RadioGroup,
+      [Input.name]     : Input,
+      [DatePicker.name]: DatePicker,
       Chapter,
-      draggable
+      draggable,
+      'avatar-cropper' : AvatarCropper
     },
     data      : function () {
       return {
         loading        : true,
         loadingChapters: true,
+		uploadingThumb : false,
         navigation     : [],
         creatingChapter: false,
         newChapter     : '',
@@ -97,6 +148,7 @@
           id     : 0,
           title  : '',
           content: '',
+          status : '',
         },
         config         : {
           key             : process.env.VUE_APP_FROALA_LICENCE,
@@ -140,11 +192,7 @@
               });
 
             this.loading = false;
-            this.studyData = {
-              id     : response.id,
-              title  : response.title.raw,
-              content: response.content.raw
-            }
+            this.setStudyData(response);
           }
         );
 
@@ -154,10 +202,46 @@
       ...mapState(['study', 'user']),
       ...mapGetters('user', ['currentUserCan']),
       ...mapGetters('study', ['getStudyNavigation']),
+      ...mapGetters('group', ['isOrgAdmin']),
+      isOrgStudy() {
+        if (undefined === this.study.study.organization) {
+          return false;
+        }
+
+        return this.study.study.organization.length;
+      },
+      isOrgStudyAdmin() {
+        if (!this.isOrgStudy) {
+          return false;
+        }
+
+        for (let i = 0; i < this.isOrgStudy; i++) {
+          if (this.isOrgAdmin(this.study.study.organization[i])) {
+            return true;
+          }
+        }
+
+        return false;
+      },
+      isPublished() {
+        let date = new Date();
+        let pubdate = new Date(this.studyData.date);
+
+        return date > pubdate;
+      }
     },
     methods   : {
       getChapterLink(chapter) {
         return '/studio/studies/' + this.$route.params.study_id + '/' + chapter.id;
+      },
+      setStudyData(data) {
+        this.studyData = {
+          id     : data.id,
+          title  : data.title.raw,
+          content: data.content.raw,
+          status : data.status,
+          date   : data.date_gmt,
+        }
       },
       createChapter() {
         // only copy over the data
@@ -186,11 +270,7 @@
           })
           .then(response => {
             this.loading = false;
-            this.studyData = {
-              id     : response.id,
-              title  : response.title.raw,
-              content: response.content.raw
-            };
+            this.setStudyData(response);
           });
       },
       saveNavigation() {
@@ -201,6 +281,40 @@
             this.navigation = response;
             this.loadingChapters = false;
           })
+      },
+      uploadHandler(cropper) {
+        cropper.getCroppedCanvas(this.outputOptions).toBlob((blob) => {
+          let formData = new FormData();
+
+          formData.append('file', blob, this.$refs.thumbnail.filename);
+          formData.append('title', this.studyData.title + ' thumbnail');
+          formData.append('action', 'wp_handle_upload');
+
+          this.uploadingThumb = true;
+          this.$store
+            .dispatch('study/updateStudyThumbnail', {studyID: this.studyData.id, data: formData})
+            .then((response) => {
+	          this.uploadingThumb = false;
+            });
+        }, 'image/jpeg', 0.9)
+      },
+      handleUploading(form, xhr) {
+        this.message = "uploading...";
+      },
+      handleUploaded(response) {
+        if (response.status == "success") {
+          this.imgDataUrl = response.url;
+          // Maybe you need call vuex action to
+          // update user avatar, for example:
+          // this.$dispatch('updateUser', {avatar: response.url})
+          this.message = "user avatar updated.";
+        }
+      },
+      handleCompleted(response, form, xhr) {
+        this.message = "upload completed.";
+      },
+      handlerError(message, type, xhr) {
+        this.message = "Oops! Something went wrong...";
       }
 
     }

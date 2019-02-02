@@ -14,7 +14,7 @@ function defaultGroupData () {
     },
     description: {
       rendered: '',
-      raw: ''
+      raw     : ''
     },
     members    : {
       members: [],
@@ -405,6 +405,11 @@ export const getters = {
     let organization = (
       undefined !== id
     ) ? getters.getOrgById(id) : state.organization;
+
+    if (undefined === organization) {
+      return false;
+    }
+
     return organization.members.admins.includes(rootState.user.me.id);
   },
 
@@ -420,6 +425,10 @@ export const getters = {
     let group = (
       undefined !== id
     ) ? getters.getGroupById(id) : state.group;
+
+    if (undefined === group) {
+      return false;
+    }
 
     if (group.parent_id && getters.isOrgAdmin(group.parent_id)) {
       return true;

@@ -630,16 +630,17 @@ class Study {
 
 		setup_postdata( $post );
 
-		$groups = get_the_terms( $post->ID, 'sc_group' );
+		$groups = array_map( 'absint', wp_list_pluck( get_the_terms( $post->ID, 'sc_group' ), 'name' ) );
 
 		$data = [
-			'id'          => $post->ID,
-			'link'        => get_permalink( $post ),
-			'title'       => [ 'rendered' => get_the_title( $post ) ],
-			'excerpt'     => [ 'rendered' => apply_filters( 'the_excerpt', apply_filters( 'get_the_excerpt', $post->post_excerpt, $study ) ) ],
-			'thumbnail'   => has_post_thumbnail( $post ) ? get_the_post_thumbnail_url( $post, 'medium' ) : studychurch()->study->default_thumbnail(),
-			'author'      => absint(  $post->post_author ),
-			'sc_group'    => $groups ? $groups : [],
+			'id'           => $post->ID,
+			'status'       => $post->post_status,
+			'link'         => get_permalink( $post ),
+			'title'        => [ 'rendered' => get_the_title( $post ) ],
+			'excerpt'      => [ 'rendered' => apply_filters( 'the_excerpt', apply_filters( 'get_the_excerpt', $post->post_excerpt, $study ) ) ],
+			'thumbnail'    => has_post_thumbnail( $post ) ? get_the_post_thumbnail_url( $post, 'medium' ) : studychurch()->study->default_thumbnail(),
+			'author'       => absint( $post->post_author ),
+			'organization' => $groups ? $groups : [],
 		];
 
 		wp_reset_postdata();

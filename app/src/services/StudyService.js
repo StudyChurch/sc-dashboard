@@ -40,5 +40,12 @@ export default {
   },
   updateStudyChapter(chapterID, data) {
     return apiClient.post(base + chapterID, data);
+  },
+  updateStudyThumbnail(studyID, data) {
+    return apiClient.post(base + studyID + '/thumbnail', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
   }
 }
