@@ -139,8 +139,6 @@ class Join {
 		?>
 		<form action="" method="post" class="ajax-form">
 
-			<p class="text-center spinner hide"><i class="fa fa-circle-o-notch fa-spin"></i></p>
-
 			<p>
 				<label for="first-name"><?php _e( 'First Name', 'sc' ); ?></label>
 				<input type="text" name="rcp_user_first" id="first-name" placeholder="John" required />
@@ -205,9 +203,6 @@ class Join {
 		ob_start();
 		?>
 		<form action="" method="post" class="ajax-form">
-
-			<p class="text-center spinner hide"><i class="fa fa-circle-o-notch fa-spin"></i></p>
-
 
 			<p>
 				<label for="sc-login"><?php _e( 'Username or Email', 'sc' ); ?></label>
