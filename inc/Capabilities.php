@@ -36,23 +36,23 @@ class Capabilities {
 	}
 
 	public function member_caps() {
-		$customer = rcp_get_customer();
-
-		/**
-		 * Processes the billing card update. Individual gateways hook into here.
-		 *
-		 * @param \RCP_Membership $membership
-		 *
-		 * @since 3.0
-		 */
-		foreach ( $customer->get_memberships() as $membership ) {
-			if ( $membership->is_active() ) {
-				self::$_member_caps = [
-					'create_study' => true,
-					'create_group' => true,
-				];
-			}
-		}
+//		$customer = rcp_get_customer();
+//
+//		/**
+//		 * Processes the billing card update. Individual gateways hook into here.
+//		 *
+//		 * @param \RCP_Membership $membership
+//		 *
+//		 * @since 3.0
+//		 */
+//		foreach ( $customer->get_memberships() as $membership ) {
+//			if ( $membership->is_active() ) {
+//				self::$_member_caps = [
+//					'create_study' => true,
+//					'create_group' => true,
+//				];
+//			}
+//		}
 
 	}
 
