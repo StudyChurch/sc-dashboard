@@ -117,6 +117,11 @@ class StudyChurch {
 		StudyChurch\AjaxForms::get_instance();
 
 		/**
+		 * Capability mapping
+		 */
+		StudyChurch\Capabilities::get_instance();
+
+		/**
 		 * Functions for template components
 		 */
 		require $this->get_dir() . '/inc/template-helpers.php';

@@ -284,7 +284,7 @@
         this.$http.post('/wp-json/studychurch/v1/studies/', {
           title  : this.newStudy.name,
           content: this.newStudy.description,
-          author : this.$root.userData.id,
+          author : this.user.me.id,
           status : 'private',
         })
           .then(response => {
