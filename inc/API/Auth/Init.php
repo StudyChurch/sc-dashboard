@@ -302,8 +302,8 @@ class Init {
 		// convert \WP_User into Auth\User
 		$user = new User( $user );
 
-		wp_enqueue_style( 'sc-api-css', studychurch()->plugin_url() . '/assets/admin/css/admin.css', array() );
-		wp_enqueue_script( 'sc-api-js', studychurch()->plugin_url() . '/assets/admin/js/admin.js', array() );
+		wp_enqueue_style( 'sc-api-css', studychurch()->get_url() . '/assets/admin/css/admin.css', array() );
+		wp_enqueue_script( 'sc-api-js', studychurch()->get_url() . '/assets/admin/js/admin.js', array() );
 		wp_localize_script( 'sc-api-js', 'wpasAPI', array(
 			'root'       => esc_url_raw( rest_url() ),
 			'namespace'  => studychurch()->get_api_namespace(),
