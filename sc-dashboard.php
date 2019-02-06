@@ -13,6 +13,14 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+if ( ! defined( 'SC_VERSION' ) ) {
+	define( 'SC_VERSION', '0.2.0' );
+}
+
+if ( ! defined( 'BP_DEFAULT_COMPONENT' ) ) {
+	define( 'BP_DEFAULT_COMPONENT', 'profile' );
+}
+
 /**
  *
  * @since  1.0.0
@@ -23,6 +31,7 @@ defined( 'ABSPATH' ) || exit;
 function studychurch() {
 	return StudyChurch::get_instance();
 }
+
 studychurch();
 
 use StudyChurch\Settings;
@@ -103,9 +112,15 @@ class StudyChurch {
 		StudyChurch\Join::get_instance();
 
 		/**
+		 * Ajax forms
+		 */
+		StudyChurch\AjaxForms::get_instance();
+
+		/**
 		 * Functions for template components
 		 */
 		require $this->get_dir() . '/inc/template-helpers.php';
+		require $this->get_dir() . '/inc/form-classes.php';
 
 		/**
 		 * Study functions
@@ -134,7 +149,8 @@ class StudyChurch {
 
 	}
 
-	protected function sc_includes() {}
+	protected function sc_includes() {
+	}
 
 	/**
 	 * Wire up filters
@@ -147,6 +163,10 @@ class StudyChurch {
 
 		add_filter( 'slt_fsp_caps_check', array( $this, 'strong_password_check' ) );
 		add_filter( 'template_include', array( $this, 'app_template' ), 11 );
+
+		add_filter( 'bp_get_loggedin_user_link', function ( $link ) {
+			return get_home_url();
+		} );
 	}
 
 	/**
@@ -202,63 +222,12 @@ class StudyChurch {
 	/**
 	 * Enqueue Styles
 	 */
-	protected function enqueue_styles() {
-		$postfix = ( defined( 'SCRIPT_DEBUG' ) && true === SCRIPT_DEBUG ) ? '' : '.min';
-
-		wp_enqueue_style( 'sc', get_template_directory_uri() . "/dist/main.css", array(), SC_VERSION );
-//		wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:300italic,600italic,300,600' );
-//		wp_enqueue_style( 'railway', 'https://fonts.googleapis.com/css?family=Raleway' );
-	}
+	protected function enqueue_styles() {}
 
 	/**
 	 * Enqueue scripts
 	 */
-	protected function enqueue_scripts() {
-		$postfix = ( defined( 'SCRIPT_DEBUG' ) && true === SCRIPT_DEBUG ) ? '' : '.min';
-
-		/**
-		 * Libraries and performance scripts
-		 */
-		wp_enqueue_script( 'datepicker', get_template_directory_uri() . '/assets/js/lib/foundation-datepicker.min.js', array(), false, true );
-		wp_enqueue_script( 'navigation', get_template_directory_uri() . '/assets/js/lib/navigation.js', array(), '20120206', true );
-		wp_enqueue_script( 'skip-link-focus-fix', get_template_directory_uri() . '/assets/js/lib/skip-link-focus-fix.js', array(), '20130115', true );
-		wp_enqueue_script( 'foundation', get_template_directory_uri() . '/assets/js/lib/foundation' . $postfix . '.js', array( 'jquery' ), '01', true );
-		wp_enqueue_script( 'simplePageNav', get_template_directory_uri() . '/assets/js/lib/jquery.singlePageNav.min.js', array( 'jquery' ), '01', true );
-		wp_enqueue_script( 'scrollReveal', get_template_directory_uri() . '/assets/js/lib/scrollReveal.min.js', array( 'jquery' ) );
-		wp_enqueue_script( 'scrolltofixed', get_template_directory_uri() . '/assets/js/lib/scrolltofixed.js', array( 'jquery' ) );
-
-		wp_enqueue_style( 'froala-content', get_template_directory_uri() . '/assets/css/froala/froala_content.css' );
-		wp_enqueue_style( 'froala-editor', get_template_directory_uri() . '/assets/css/froala/froala_editor.css' );
-		wp_enqueue_style( 'froala-style', get_template_directory_uri() . '/assets/css/froala/froala_style.css' );
-
-		wp_enqueue_script( 'froala-editor', get_template_directory_uri() . '/assets/js/lib/froala/froala_editor.min.js', array( 'jquery' ) );
-		wp_enqueue_script( 'froala-video', get_template_directory_uri() . '/assets/js/lib/froala/plugins/video.js', array( 'jquery' ) );
-		wp_enqueue_script( 'froala-fullscreen', get_template_directory_uri() . '/assets/js/lib/froala/plugins/fullscreen.min.js', array(
-			'jquery',
-			'froala-editor'
-		) );
-
-		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-			wp_enqueue_script( 'comment-reply' );
-		}
-
-		if ( is_singular() && wp_attachment_is_image() ) {
-			wp_enqueue_script( 'sc-keyboard-image-navigation', get_template_directory_uri() . '/js/keyboard-image-navigation.js', array( 'jquery' ), '20120202' );
-		}
-
-		wp_enqueue_script( 'sc', get_template_directory_uri() . "/assets/js/studychurch{$postfix}.js", array(
-			'jquery',
-			'foundation',
-			'wp-util',
-			'wp-backbone',
-			'wp-api',
-			'jquery-ui-sortable',
-			'froala-editor',
-			'datepicker',
-			'scrollReveal',
-			'scrolltofixed'
-		), SC_VERSION, true );
-	}
+	protected function enqueue_scripts() {}
 
 	/**
 	 * Is this a development environment?
@@ -301,7 +270,7 @@ class StudyChurch {
 			}
 		}
 
-		include( get_template_directory() . '/page-login.php' );
+		include( get_home_url() . '/join' );
 		exit();
 	}
 
@@ -539,4 +508,5 @@ class StudyChurch {
 		add_rewrite_rule( 'organizations/(.?.+?)(?:/([0-9]+))?/?$', 'index.php?pagename=groups', 'top' );
 		flush_rewrite_rules( true );
 	}
+
 }
