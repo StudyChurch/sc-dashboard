@@ -4,42 +4,42 @@
 
 		<div class="row">
 			<div class="col-12">
-				<div class="text-right" v-if="isGroupAdmin()">
+				<div class="text-right" v-if="isGroupAdmin() && groupOrgID">
 					<n-button type="primary" @click.native="handleShowModal">Create Study</n-button>
 				</div>
+
+				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin() && groupOrgID" v-loading="creatingStudy">
+					<h4 slot="header" class="title title-up">Create a new study</h4>
+					<p>
+						<label for="name">Study Name</label>
+						<el-input
+							ref="name"
+							type="text"
+							label="Study Name"
+							id="name"
+							v-model="newStudy.name"></el-input>
+					</p>
+
+					<p>
+						<label for="name">Study Description</label>
+						<el-input
+							ref="description"
+							type="textarea"
+							id="description"
+							:autosize="{ minRows: 4 }"
+							resize="none"
+							label="Study Description"
+							v-model="newStudy.description"></el-input>
+					</p>
+					<template slot="footer">
+						<n-button type="primary" @click.native="createStudy">Create</n-button>
+					</template>
+				</modal>
 
 				<card card-body-classes="table-full-width" no-footer-line>
 					<div slot="header">
 						<h4 class="card-title">Group Studies</h4>
 					</div>
-
-					<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin()" v-loading="creatingStudy">
-						<h4 slot="header" class="title title-up">Create a new study</h4>
-						<p>
-							<label for="name">Study Name</label>
-							<el-input
-								ref="name"
-								type="text"
-								label="Study Name"
-								id="name"
-								v-model="newStudy.name"></el-input>
-						</p>
-
-						<p>
-							<label for="name">Study Description</label>
-							<el-input
-								ref="description"
-								type="textarea"
-								id="description"
-								:autosize="{ minRows: 4 }"
-								resize="none"
-								label="Study Description"
-								v-model="newStudy.description"></el-input>
-						</p>
-						<template slot="footer">
-							<n-button type="primary" @click.native="createStudy">Create</n-button>
-						</template>
-					</modal>
 
 					<el-table
 						stripe
@@ -166,8 +166,19 @@
 										class="add btn-neutral"
 										type="primary"
 										:disabled="myStudyIDs.includes(scope.row.id.toString()) || myStudyIDs.includes(scope.row.id)"
+										v-if="canAccessStudy(scope.row)"
 										size="sm" icon>
 										<font-awesome-icon icon="plus"></font-awesome-icon>
+									</n-button>
+									<n-button
+										class="add btn-neutral"
+										type="primary"
+										:href="getStudyPurchaseLink(scope.row)"
+										:nativeType="'text/html'"
+										tag="a"
+										size="sm"
+										v-else>
+										Purchase
 									</n-button>
 								</template>
 							</el-table-column>
@@ -338,6 +349,17 @@
           .then(() => {
             this.$set(this.loading, id, false);
           });
+      },
+      canAccessStudy(study) {
+        if (null === study.restrictions || !study.restrictions.length) {
+          return true;
+        }
+
+        return this.group.group.premium_access.filter(
+          access => -1 !== study.restrictions.indexOf(access)).length;
+      },
+      getStudyPurchaseLink(study) {
+        return '/library/?sc_premium=' + study.restrictions.join(',');
       },
       handleShowModal() {
         this.showModal = true;

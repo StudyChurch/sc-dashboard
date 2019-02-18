@@ -172,8 +172,19 @@
 										class="add btn-neutral"
 										type="primary"
 										:disabled="myStudyIDs.includes(scope.row.id.toString()) || myStudyIDs.includes(scope.row.id)"
+										v-if="canAccessStudy(scope.row)"
 										size="sm" icon>
 										<font-awesome-icon icon="plus"></font-awesome-icon>
+									</n-button>
+									<n-button
+										class="add btn-neutral"
+										type="primary"
+										:href="getStudyPurchaseLink(scope.row)"
+										:nativeType="'text/html'"
+										tag="a"
+										size="sm"
+										v-else>
+										Purchase
 									</n-button>
 								</template>
 							</el-table-column>
@@ -340,8 +351,6 @@
         this.showModal = true;
       },
       canEditStudy(study) {
-        console.log(study);
-
         if (this.user.me.id === study.author) {
           return true;
         }
@@ -353,6 +362,17 @@
         }
 
         return false;
+      },
+      canAccessStudy(study) {
+        if (null === study.restrictions || !study.restrictions.length) {
+          return true;
+        }
+
+        return this.group.organization.premium_access.filter(
+          access => -1 !== study.restrictions.indexOf(access)).length;
+      },
+      getStudyPurchaseLink(study) {
+        return '/library/?sc_premium=' + study.restrictions.join(',');
       },
       createStudy() {
         if (!this.newStudy.name || !this.newStudy.description) {

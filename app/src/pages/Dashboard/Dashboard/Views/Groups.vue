@@ -2,10 +2,19 @@
 
 	<div class="sc-dashboard--groups sc-group">
 
-		<div class="text-right" v-if="currentUserCan('create_group')">
+		<div class="text-right" v-if="canCreateGroup">
 			<n-button type="primary" @click.native="showModal = true">Create Group</n-button>
 		</div>
-		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingGroup" v-if="currentUserCan('create_group')">
+
+		<el-alert type="info" v-if="isOrgOwner" style="margin-bottom: 1rem;">
+			<div slot="title">To create a group, go to the church/organization dashboard.</div>
+		</el-alert>
+
+		<el-alert type="warning" v-if="showDisabledAlert" style="margin-bottom: 1rem;">
+			<div slot="title" v-html="user.me.messages.group_limit"></div>
+		</el-alert>
+
+		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingGroup" v-if="canCreateGroup">
 			<h4 slot="header" class="title title-up">Create a new group</h4>
 			<p>
 				<label for="name">Group Name</label>
@@ -48,13 +57,16 @@
 					</div>
 				</card>
 			</router-link>
+
 		</div>
+
+		<el-alert type="info" v-if="!group.groups.length" title="No Groups" description="You are not currently a member of any groups." style="margin-bottom: 1rem;" :closable="false"></el-alert>
 
 	</div>
 
 </template>
 <script>
-  import { Input, Message } from 'element-ui';
+  import { Input } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
 
   import {
@@ -67,10 +79,6 @@
     return {
       creatingGroup      : false,
       showModal          : false,
-      loading            : true,
-      loadingMoreActivity: false,
-      activityData       : [],
-      activityPage       : 1,
       showGroupDesc      : false,
       newGroup           : {
         name       : '',
@@ -92,11 +100,46 @@
     computed  : {
       ...mapState(['user', 'group']),
       ...mapGetters('user', ['currentUserCan']),
+	  isOrgOwner() {
+        return this.group.organizations.filter(org => org.creator_id === this.user.me.id).length
+	  },
+      showDisabledAlert() {
+        if (this.canCreateGroup) {
+          return false;
+        }
+
+        // if this user is the organization owner, don't show a create study button, they should use the organization dashboard
+        if (this.isOrgOwner) {
+          return false;
+        }
+
+        // show if user has reached their limit
+        return this.user.me.can.create_group && this.user.me.messages.group_limit;
+      },
+      canCreateGroup() {
+        let count = this.user.me.can.create_group;
+        let myGroups = this.group.groups.filter(group => group.creator_id === this.user.me.id);
+
+        // if this user is the organization owner, don't show a create study button, they should use the organization dashboard
+        if (this.isOrgOwner) {
+          return false;
+        }
+
+        if (-1 === count || true === count) {
+          return true;
+        }
+
+        if (!count) {
+          return false;
+        }
+
+        return myGroups.length < count;
+      },
     },
     methods   : {
       createGroup() {
         if (!this.newGroup.name || !this.newGroup.description) {
-          Message.error('Please enter a name and description for your new group');
+          this.$message.error('Please enter a name and description for your new group');
           return;
         }
 
@@ -110,10 +153,8 @@
             status     : 'hidden',
           })
           .then(group => {
-            console.log(group);
             this.creatingGroup = false;
             this.$router.push('/groups/' + group.slug);
-            Message.success('Success! Taking your new group ...');
           })
 
       },

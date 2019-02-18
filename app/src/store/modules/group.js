@@ -93,15 +93,15 @@ export const actions = {
           type   : 'success',
           message: 'Your group has been created!'
         };
+        dispatch('alert/add', notification, {root: true});
         return response.data[0];
-//        dispatch('notification/add', notification, {root: true});
       })
       .catch(error => {
         const notification = {
           type   : 'error',
           message: 'There was a problem creating your group: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
         throw error;
       });
   },
@@ -203,7 +203,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching groups: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       });
   },
 
@@ -265,7 +265,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching groups: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       });
   },
 

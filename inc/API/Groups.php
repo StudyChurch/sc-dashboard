@@ -3,6 +3,7 @@
 namespace StudyChurch\API;
 
 use BP_REST_Groups_Endpoint;
+use StudyChurch\Organization;
 use WP_Error;
 use BP_Groups_Member;
 use WP_REST_Server;
@@ -359,6 +360,24 @@ class Groups extends BP_REST_Groups_Endpoint {
 			],
 		];
 
+		$fields['member_limit'] = [
+			'get_callback' => [ $this, 'get_member_limit' ],
+			'schema'       => [
+				'context'     => [ 'view', 'edit' ],
+				'description' => __( 'The member limit for this group.', studychurch()->get_id() ),
+				'type'        => 'integer',
+			],
+		];
+
+		$fields['premium_access'] = [
+			'get_callback' => [ $this, 'get_premium_access' ],
+			'schema'       => [
+				'context'     => [ 'view', 'edit' ],
+				'description' => __( 'The studies that this group has access to.', studychurch()->get_id() ),
+				'type'        => 'array',
+			],
+		];
+
 		return $fields;
 	}
 
@@ -397,6 +416,18 @@ class Groups extends BP_REST_Groups_Endpoint {
 		return $type;
 	}
 
+	/**
+	 * Get the member limit for the provided group
+	 *
+	 * @param $object
+	 *
+	 * @return int
+	 * @author Tanner Moushey
+	 */
+	public function get_member_limit( $object ) {
+		$org = new Organization( $object['id'] );
+		return $org->get_member_limit();
+	}
 
 	/**
 	 * Get the members for this group
@@ -454,6 +485,19 @@ class Groups extends BP_REST_Groups_Endpoint {
 
 		return $group_members;
 
+	}
+
+	/**
+	 * Return studies that this group has access to
+	 *
+	 * @param $object
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function get_premium_access( $object ) {
+		$org = new Organization( $object['id'] );
+		return $org->get_premium_access();
 	}
 
 	public function get_group_invite_link( $object ) {

@@ -48,16 +48,55 @@ class Study {
 		add_filter( 'get_page_uri', array( $this, 'allow_private_parent' ), 10, 2 );
 
 		// CPT
-		add_action( 'init', array( $this, 'study_cpt' ) );
+		add_action( 'init', array( $this, 'study_cpt' ), 2 );
 		add_action( 'wp_insert_post', [ $this, 'maybe_add_to_org' ], 999 );
 		add_action( 'rest_after_insert_sc_study', [ $this, 'maybe_add_to_org' ], 999 );
 		add_action( 'cmb2_init', array( $this, 'study_meta' ) );
+		add_filter( 'block_editor_preload_paths', [ $this, 'api_path' ], 10, 2 );
+		add_action( 'rest_api_init', [ $this, 'api_redirect' ] );
+		add_filter( 'use_block_editor_for_post_type', [ $this, 'disable_block_editor' ], 10, 2 );
 
 		// Groups
 		add_action( 'bp_init', array( $this, 'register_group_extension' ) );
 
-		$this->edit = Study\Edit::get_instance();
+		$this->edit    = Study\Edit::get_instance();
 		$this->answers = Study\Answers::get_instance();
+	}
+
+	/**
+	 * Catch wp calls to the default api
+	 *
+	 * @param $wp_rest_server
+	 *
+	 * @author Tanner Moushey
+	 */
+	public function api_redirect( $wp_rest_server ) {
+		$uri = $_SERVER['REQUEST_URI'];
+		$url = str_replace( 'wp/v2/studies', studychurch()->get_api_namespace() . '/studies', $_SERVER['REQUEST_URI'] );
+
+		if ( $uri == $url ) {
+			return;
+		}
+
+		wp_redirect( $url );
+		die();
+	}
+
+	/**
+	 * Disable editor for Studies
+	 *
+	 * @param $user_block_editor
+	 * @param $post_type
+	 *
+	 * @return bool
+	 * @author Tanner Moushey
+	 */
+	public function disable_block_editor( $user_block_editor, $post_type ) {
+		if ( 'sc_study' == $post_type ) {
+			return false;
+		}
+
+		return $user_block_editor;
 	}
 
 	public function register_group_extension() {
@@ -230,9 +269,9 @@ class Study {
 	}
 
 	public function study_archive( $query ) {
-		if ( is_admin() ) {
-			return;
-		}
+//		if ( is_admin() ) {
+//			return;
+//		}
 
 		if ( ! $query->is_main_query() ) {
 			return;
@@ -281,20 +320,20 @@ class Study {
 		);
 
 		$args = array(
-			'labels'        => $labels,
-			'public'        => true,
-			'rewrite'       => array(
+			'labels'                => $labels,
+			'public'                => true,
+			'rewrite'               => array(
 				'slug'       => 'studies',
 				'with_front' => false,
 			),
-			'hierarchical'  => true,
-			'has_archive'   => true,
-			'menu_position' => 5,
-			'menu_icon'     => 'dashicons-welcome-write-blog',
-			'show_in_rest'  => true,
-			'rest_base'     => 'studies',
+			'hierarchical'          => true,
+			'has_archive'           => true,
+			'menu_position'         => 5,
+			'menu_icon'             => 'dashicons-welcome-write-blog',
+			'show_in_rest'          => true,
+			'rest_base'             => 'studies',
 			'rest_controller_class' => '\StudyChurch\API\Studies',
-			'supports'      => array(
+			'supports'              => array(
 				'title',
 				'editor',
 				'author',
@@ -313,15 +352,53 @@ class Study {
 
 	}
 
+	/**
+	 * Custom API vars for Study
+	 *
+	 * @param $preload_paths
+	 * @param $post
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function api_path( $preload_paths, $post ) {
+		if ( 'sc_study' !== get_post_type( $post ) ) {
+			return $preload_paths;
+		}
+
+		$post_type = get_post_type_object( get_post_type( $post ) );
+
+		return [
+			'/',
+			'/wp/v2/types?context=edit',
+			'/wp/v2/taxonomies?per_page=-1&context=edit',
+			'/wp/v2/themes?status=active',
+			sprintf( '/' . studychurch()->get_api_namespace() . '/%s/%s?context=edit', $post_type->rest_base, $post->ID ),
+			sprintf( '/wp/v2/types/%s?context=edit', $post_type->name ),
+			sprintf( '/wp/v2/users/me?post_type=%s&context=edit', $post_type->name ),
+			array( '/wp/v2/media', 'OPTIONS' ),
+		];
+	}
+
 	public function study_meta() {
+
 		$cmb = new_cmb2_box( array(
-			'id'            => 'study_meta',
-			'title'         => __( 'Advanced', 'sc' ),
-			'object_types'  => array( 'sc_study' ), // Post type
-			'context'       => 'normal',
-			'priority'      => 'high',
-			'show_names'    => true, // Show field names on the left
+			'id'           => 'study_meta',
+			'title'        => __( 'Advanced', 'sc' ),
+			'object_types' => array( 'sc_study' ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true, // Show field names on the left
 		) );
+
+
+		if ( isset( $_GET['post'] ) ) {
+			$cmb->add_field( array(
+				'name' => '<a href="/studio/studies/' . absint( $_GET['post'] ) . '">Edit study</a>',
+				'id'   => self::$_prefix . 'edit_link',
+				'type' => 'title',
+			) );
+		}
 
 		$cmb->add_field( array(
 			'name'    => __( 'Data Type', 'sc' ),
@@ -337,10 +414,10 @@ class Study {
 		) );
 
 		$cmb->add_field( array(
-			'name'    => __( 'Privacy', 'sc' ),
-			'desc'    => __( 'This question is private.', 'sc' ),
-			'id'      => self::$_prefix . 'privacy',
-			'type'    => 'checkbox',
+			'name' => __( 'Privacy', 'sc' ),
+			'desc' => __( 'This question is private.', 'sc' ),
+			'id'   => self::$_prefix . 'privacy',
+			'type' => 'checkbox',
 		) );
 	}
 
@@ -351,8 +428,8 @@ class Study {
 			return;
 		}
 
-		foreach( (array) $groups as $group ) {
-			$studies = self::get_group_studies( $group->slug );
+		foreach ( (array) $groups as $group ) {
+			$studies   = self::get_group_studies( $group->slug );
 			$studies[] = $study->ID;
 			self::update_group_studies( $group->slug, $studies );
 		}
@@ -388,7 +465,7 @@ class Study {
 	/**
 	 * Update Group studies
 	 *
-	 * @param null $group_id
+	 * @param null  $group_id
 	 * @param array $studies
 	 *
 	 * @return array
@@ -429,7 +506,7 @@ class Study {
 	/**
 	 * Save any new studies to the group archive
 	 *
-	 * @param null $group_id
+	 * @param null  $group_id
 	 * @param array $studies
 	 *
 	 * @return array
@@ -437,6 +514,7 @@ class Study {
 	 */
 	public static function update_group_studies_archive( $group_id = null, $studies = [] ) {
 		$archive = array_merge( self::get_group_studies_archive( $group_id ), $studies );
+
 		return groups_update_groupmeta( $group_id, '_sc_study_all', array_unique( array_map( 'absint', $archive ) ) );
 	}
 
@@ -465,7 +543,7 @@ class Study {
 	}
 
 	/**
-	 * @param null $user_id
+	 * @param null  $user_id
 	 * @param array $studies
 	 *
 	 * @return array
@@ -477,6 +555,7 @@ class Study {
 		}
 
 		self::update_user_studies_archive( $user_id, $studies );
+
 		return update_user_meta( $user_id, '_sc_study', array_unique( array_map( 'absint', $studies ) ) );
 	}
 
@@ -501,7 +580,7 @@ class Study {
 	}
 
 	/**
-	 * @param null $user_id
+	 * @param null  $user_id
 	 * @param array $studies
 	 *
 	 * @return array
@@ -509,6 +588,7 @@ class Study {
 	 */
 	public static function update_user_studies_archive( $user_id = null, $studies = [] ) {
 		$archive = array_merge( self::get_user_studies_archive( $user_id ), $studies );
+
 		return update_user_meta( $user_id, '_sc_study_archive', array_unique( array_map( 'absint', $archive ) ) );
 	}
 
@@ -534,6 +614,7 @@ class Study {
 			return add_query_arg( 'sc-group', $group_id, get_permalink( $study_id ) );
 		} else {
 			$group = groups_get_group( $group_id );
+
 			// TODO: This is wrong
 			return str_replace( '/studies/', '/groups/' . bp_get_group_slug( $group ) . '/studies/', get_permalink( $study_id ) );
 		}
@@ -614,6 +695,7 @@ class Study {
 			if ( in_array( $study_id, studychurch()->study::get_group_studies( $group->id ) ) ) {
 				$study_access[] = $study_id;
 				update_user_meta( $user_id, '_studies', $study_access );
+
 				return true;
 			}
 		}
@@ -626,11 +708,13 @@ class Study {
 		global $post;
 
 		$orig_post = $post;
-		$post = get_post( $study );
+		$post      = get_post( $study );
 
 		setup_postdata( $post );
 
-		$groups = array_map( 'absint', wp_list_pluck( get_the_terms( $post->ID, 'sc_group' ), 'name' ) );
+		if ( $groups = get_the_terms( $post->ID, 'sc_group' ) ) {
+			$groups = array_map( 'absint', wp_list_pluck( $groups, 'name' ) );
+		}
 
 		$data = [
 			'id'           => $post->ID,

@@ -78,6 +78,33 @@ class Settings {
 		) );
 
 		$cmb->add_field( array(
+			'name' => __( 'Membership Messages', 'studychurch' ),
+			'id'   => 'membership_messages',
+			'type' => 'title',
+		) );
+
+		$cmb->add_field( array(
+			'name'    => 'Group Limit',
+			'desc'    => 'The message to show when a user has run out of groups. Use %upgrade_url% for the membership Upgrade URL.',
+			'id'      => 'message_group_limit',
+			'type'    => 'textarea_small'
+		) );
+
+		$cmb->add_field( array(
+			'name'    => 'Group Member Limit',
+			'desc'    => 'The message to show when a group or organization has reached the member limit. Use %upgrade_url% for the membership Upgrade URL.',
+			'id'      => 'message_member_limit',
+			'type'    => 'textarea_small'
+		) );
+
+		$cmb->add_field( array(
+			'name'    => 'Study Limit',
+			'desc'    => 'The message to show when a user has reached the study limit. Use %upgrade_url% for the membership Upgrade URL.',
+			'id'      => 'message_study_limit',
+			'type'    => 'textarea_small'
+		) );
+
+		$cmb->add_field( array(
 			'name' => __( 'Froala Settings', 'studychurch' ),
 			'id'   => 'froala',
 			'type' => 'title',

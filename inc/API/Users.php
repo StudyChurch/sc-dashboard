@@ -5,9 +5,10 @@ namespace StudyChurch\API;
 use BP_REST_Members_Endpoint;
 use WP_Error;
 use WP_REST_Server;
-use StudyChurch\API\Auth\User;
+use StudyChurch\Settings;
 use WP_REST_Request;
 use stdClass;
+use StudyChurch\Member;
 
 class Users extends BP_REST_Members_Endpoint {
 
@@ -95,8 +96,19 @@ class Users extends BP_REST_Members_Endpoint {
 	protected function add_additional_fields_to_object( $object, $request ) {
 		$object = parent::add_additional_fields_to_object( $object, $request );
 
-		$object['can']['create_study'] = user_can( $object['id'], 'create_study' );
-		$object['can']['create_group'] = user_can( $object['id'], 'create_group' );
+		$member = new Member( $object['id'] );
+
+		$object['can']['create_study'] = $member->can_create_study();
+		$object['can']['create_group'] = $member->can_create_group();
+
+		$object['messages'] = [
+			'group_limit' => str_replace( '%upgrade_url%', $member->get_upgrade_link(), Settings::get( 'message_group_limit' ) ),
+			'group_member_limit' => str_replace( '%upgrade_url%', $member->get_upgrade_link(), Settings::get( 'message_member_limit' ) ),
+			'study_limit' => str_replace( '%upgrade_url%', $member->get_upgrade_link(), Settings::get( 'message_study_limit' ) ),
+		];
+
+		$object['upgrade_url'] = $member->get_upgrade_link();
+		$object['premium_access'] = $member->get_premium_access();
 
 		return $object;
 	}
@@ -188,6 +200,12 @@ class Users extends BP_REST_Members_Endpoint {
 		$gstudies = [];
 
 		foreach ( $studies as $study ) {
+			$post = get_post( $study );
+
+			if ( ! $post || 'trash' == $post->post_status ) {
+				continue;
+			}
+
 			$gstudies[] = studychurch()->study::get_data( $study );
 		}
 

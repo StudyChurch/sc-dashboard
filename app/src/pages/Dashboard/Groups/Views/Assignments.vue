@@ -9,7 +9,7 @@
 			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
 
 			<div v-for="study in newTodo.studies">
-				<label :for="'study-' + study.id" v-html="study.title"></label>
+				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
 					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
 						<el-option

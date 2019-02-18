@@ -44,7 +44,7 @@ class Query {
 	public function parse_query() {
 
 		// remove legacy assignments
- 		if ( $assignments = groups_get_groupmeta( $this->query_args['group_id'], Query::$_key, true ) ) {
+ 		if ( ! is_array( $this->query_args['group_id'] ) && $assignments = groups_get_groupmeta( $this->query_args['group_id'], Query::$_key, true ) ) {
 			remove_action( 'sc_assignment_create', array(
 				Notifications::get_instance(),
 				'new_assignment'
@@ -66,7 +66,7 @@ class Query {
 
 		if ( ! empty( $this->query_args['id'] ) ) {
 			$this->assignments = get_posts( 'id=' . $this->query_args['id'] );
-		} else {
+		} elseif ( ! empty( $this->query_args['group_id'] ) ) {
 			$args = array(
 				'order'          => $order,
 				'post_type'      => 'sc_assignment',

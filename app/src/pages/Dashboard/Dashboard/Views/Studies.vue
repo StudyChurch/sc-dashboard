@@ -62,9 +62,13 @@
 			</div>
 		</div>
 
-		<div class="text-right" v-if="currentUserCan('create_study')">
+		<div class="text-right" v-if="canCreateStudy">
 			<n-button type="primary" @click.native="showModal = true">Create Study</n-button>
 		</div>
+
+		<el-alert type="warning" v-if="showDisabledAlert" style="margin-bottom: 1rem;">
+			<div slot="title" v-html="user.me.messages.study_limit"></div>
+		</el-alert>
 
 		<div class="row" v-loading="!tableData.length">
 			<div class="col-12">
@@ -83,7 +87,6 @@
 								aria-controls="datatables">
 							</el-input>
 						</fg-input>
-
 					</div>
 
 					<div>
@@ -127,8 +130,19 @@
 										class="add btn-neutral"
 										type="primary"
 										:disabled="myStudyIDs.includes(scope.row.id.toString()) || myStudyIDs.includes(scope.row.id)"
+										v-if="canAccessStudy(scope.row)"
 										size="sm" icon>
 										<font-awesome-icon icon="plus"></font-awesome-icon>
+									</n-button>
+									<n-button
+										class="add btn-neutral"
+										type="primary"
+										:href="getStudyPurchaseLink(scope.row)"
+										:nativeType="'text/html'"
+										tag="a"
+										size="sm"
+										v-else>
+										Purchase
 									</n-button>
 									<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 										<n-button
@@ -157,7 +171,7 @@
 			</div>
 		</div>
 
-		<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="currentUserCan('create_study')" v-loading="creatingStudy">
+		<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="canCreateStudy" v-loading="creatingStudy">
 			<h4 slot="header" class="title title-up">Create a new study</h4>
 			<p>
 				<label for="name">Study Name</label>
@@ -233,7 +247,6 @@
     data      : getDefaultData,
     computed  : {
       ...mapState(['study', 'user']),
-      ...mapGetters('user', ['currentUserCan']),
       myStudies() {
         return this.user.me.studies;
       },
@@ -266,13 +279,31 @@
       },
       total () {
         return this.searchedData.length > 0 ? this.searchedData.length : this.tableData.length;
-      }
+      },
+      showDisabledAlert() {
+        if (this.canCreateStudy) {
+          return false;
+        }
+
+        // show if user has reached their limit
+        return this.user.me.can.create_study && this.user.me.messages.study_limit;
+      },
+      canCreateStudy() {
+        let count = this.user.me.can.create_study;
+        let myStudies = this.study.studies.filter(study => study.author === this.user.me.id);
+
+        if (-1 === count) {
+          return true;
+        }
+
+        if (!count) {
+          return false;
+        }
+
+        return myStudies.length < count;
+      },
     },
     methods   : {
-      canEditStudy() {
-
-      },
-      canDeleteStudy() {},
       createStudy() {
         if (!this.newStudy.name || !this.newStudy.description) {
           Message.error('Please enter a name and description for your new study');
@@ -321,6 +352,17 @@
           .then(() => {
             this.$set(this.loading, id, false);
           });
+      },
+      canAccessStudy(study) {
+        if (null === study.restrictions || !study.restrictions.length) {
+          return true;
+        }
+
+        return this.user.me.premium_access.filter(
+          access => -1 !== study.restrictions.indexOf(access)).length;
+      },
+      getStudyPurchaseLink(study) {
+        return '/library/?sc_premium=' + study.restrictions.join(',');
       }
     },
     watch     : {

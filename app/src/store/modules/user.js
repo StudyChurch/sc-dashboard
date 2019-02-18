@@ -62,14 +62,14 @@ export const actions = {
           type   : 'success',
           message: 'Your user has been created!'
         };
-        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       })
       .catch(error => {
         const notification = {
           type   : 'error',
           message: 'There was a problem creating your user: ' + error.message
         };
-        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
         throw error;
       });
   },
@@ -104,7 +104,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching users: ' + error.message
         };
-        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       });
   },
   fetchUsersByID({commit, getters, dispatch}, ids) {
@@ -129,7 +129,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching users: ' + error.message
         };
-        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       });
   },
   fetchUser({commit, getters, state}, id) {
@@ -180,6 +180,6 @@ export const getters = {
     return user !== undefined ? user.user_login : '';
   },
   currentUserCan: (state) => cap => {
-    return true === state.me.can[cap];
+    return state.me.can[cap];
   }
 };

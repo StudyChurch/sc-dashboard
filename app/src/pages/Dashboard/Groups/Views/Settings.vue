@@ -66,14 +66,14 @@
         }
 
         this.groupSettings = {
-          name       : this.groupData.name,
+          name       : this.$decode(this.groupData.name),
           description: this.groupData.description.raw
         };
       }
     },
     mounted() {
       this.groupSettings = {
-        name       : this.groupData.name,
+        name       : this.$decode(this.groupData.name),
         description: this.groupData.description.raw
       };
     },

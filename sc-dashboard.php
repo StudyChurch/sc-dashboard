@@ -122,6 +122,11 @@ class StudyChurch {
 		StudyChurch\Capabilities::get_instance();
 
 		/**
+		 * Setup Private Studies
+		 */
+		StudyChurch\PremiumStudies::get_instance();
+
+		/**
 		 * Functions for template components
 		 */
 		require $this->get_dir() . '/inc/template-helpers.php';
@@ -151,6 +156,8 @@ class StudyChurch {
 		 * Initialize Library / EDD customizations
 		 */
 		$this->library = StudyChurch\Library::get_instance();
+
+		StudyChurch\RCP\Settings::get_instance();
 
 	}
 

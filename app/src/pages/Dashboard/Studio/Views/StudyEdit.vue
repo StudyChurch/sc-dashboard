@@ -22,7 +22,7 @@
 			</div>
 
 			<div class="col-lg-4">
-				<card v-loading="loadingChapters">
+				<card>
 					<h6>Details</h6>
 
 					<form @submit.prevent="saveStudy">
@@ -47,7 +47,19 @@
 							<el-date-picker v-model="studyData.date" type="date" placeholder="Pick a day"></el-date-picker>
 						</p>
 
-						<n-button type="primary" @click.native="saveStudy">Save</n-button>
+						<el-popover
+							placement="top"
+							width="230"
+							v-model="deleteModal">
+							<p>Are you sure you want to delete this study?</p>
+							<div>
+								<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
+								<n-button type="danger" size="sm" @click.native="deleteStudy()">delete</n-button>
+							</div>
+							<n-button slot="reference" type="danger" class="float-right">Delete</n-button>
+						</el-popover>
+
+						<n-button type="primary" @click.native="saveStudy" v-loading="loading">Save</n-button>
 
 					</form>
 
@@ -138,9 +150,10 @@
     },
     data      : function () {
       return {
+        deleteModal    : false,
         loading        : true,
         loadingChapters: true,
-		uploadingThumb : false,
+        uploadingThumb : false,
         navigation     : [],
         creatingChapter: false,
         newChapter     : '',
@@ -273,6 +286,19 @@
             this.setStudyData(response);
           });
       },
+      deleteStudy() {
+        this.loading = true;
+        this.$store
+          .dispatch('study/deleteStudy', this.studyData.id)
+          .then(response => {
+            this.$store.dispatch('alert/add', {
+              message: 'Taking you to your dashboard.',
+              type   : 'success',
+            });
+            window.location = '/';
+          })
+		  .finally(() => this.loading = false);
+      },
       saveNavigation() {
         this.loadingChapters = true;
         this.$store
@@ -294,7 +320,7 @@
           this.$store
             .dispatch('study/updateStudyThumbnail', {studyID: this.studyData.id, data: formData})
             .then((response) => {
-	          this.uploadingThumb = false;
+              this.uploadingThumb = false;
             });
         }, 'image/jpeg', 0.9)
       },

@@ -62,6 +62,7 @@ export const actions = {
           type   : 'success',
           message: 'Your study has been created!'
         };
+        dispatch('alert/add', notification, {root: true});
         return response.data;
       })
       .catch(error => {
@@ -69,7 +70,26 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem creating your study: ' + error.message
         };
-//        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
+        throw error;
+      });
+  },
+  deleteStudy({commit, dispatch}, study) {
+    return StudyService.deleteStudy(study)
+      .then(response => {
+        const notification = {
+          type   : 'success',
+          message: 'Your study has been deleted!'
+        };
+        dispatch('alert/add', notification, {root: true});
+        return response.data;
+      })
+      .catch(error => {
+        const notification = {
+          type   : 'error',
+          message: 'There was a problem deleting your study: ' + error.message
+        };
+        dispatch('alert/add', notification, {root: true});
         throw error;
       });
   },
@@ -84,7 +104,7 @@ export const actions = {
           type   : 'error',
           message: 'There was a problem fetching studies: ' + error.message
         };
-        dispatch('notification/add', notification, {root: true});
+        dispatch('alert/add', notification, {root: true});
       });
   },
   fetchStudy({commit, getters, state}, {id, params = {}}) {
@@ -104,17 +124,27 @@ export const actions = {
       });
     }
   },
-  updateStudy({commit, getters, state}, {studyID, data}) {
+  updateStudy({commit, getters, state, dispatch}, {studyID, data}) {
     return StudyService.updateStudyChapter(studyID, data)
       .then(response => {
         commit('SET_STUDY', response.data);
+        const notification = {
+          type   : 'success',
+          message: 'Your study has been updated'
+        };
+        dispatch('alert/add', notification, {root: true});
         return response.data;
       });
   },
-  updateStudyThumbnail({commit, getters, state}, {studyID, data}) {
+  updateStudyThumbnail({commit, getters, state, dispatch}, {studyID, data}) {
     return StudyService.updateStudyThumbnail(studyID, data)
       .then(response => {
         commit('SET_STUDY', response.data);
+        const notification = {
+          type   : 'success',
+          message: 'Your study has been updated'
+        };
+        dispatch('alert/add', notification, {root: true});
         return response.data;
       });
   },

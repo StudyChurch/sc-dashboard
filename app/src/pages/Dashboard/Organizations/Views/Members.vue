@@ -4,6 +4,12 @@
 
 		<div class="row" v-loading="loading">
 			<div class="col-12">
+
+				<el-alert type="warning" v-if="disableMembers" style="margin-bottom: 1rem;">
+					<div slot="title" v-if="user.me.id === group.organization.creator_id" v-html="user.me.messages.group_member_limit">You have reached the maximum number of members for your account.</div>
+					<div slot="title" v-else>You have reached the maximum number of members for your account.</div>
+				</el-alert>
+
 				<card card-body-classes="table-full-width" no-footer-line>
 					<div>
 						<div class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
@@ -20,7 +26,7 @@
 							</fg-input>
 
 							<div class="text-right">
-								<n-button type="primary" @click.native="addMember" v-if="isOrgAdmin()">Add Member</n-button>
+								<n-button type="primary" :disabled="disableMembers" @click.native="addMember" v-if="isOrgAdmin()">Add Member</n-button>
 							</div>
 
 						</div>
@@ -128,7 +134,13 @@
       ...mapState(['user', 'group']),
       ...mapGetters('user', ['getUserById']),
       ...mapGetters('group', ['isOrgAdmin', 'isGroupAdmin', 'getOrgMembers', 'getOrgAdmins']),
+	  disableMembers() {
+        if (! this.group.organization.member_limit) {
+          return false;
+		}
 
+        return this.group.organization.member_limit <= this.group.organization.members.members.length;
+	  },
       /***
        * Returns a page from the searched data or the whole data. Search is performed in the watch section below
        */

@@ -2,6 +2,8 @@
 
 namespace StudyChurch;
 
+use StudyChurch\RCP\Settings;
+
 class Capabilities {
 
 	/**
@@ -39,23 +41,16 @@ class Capabilities {
 			return;
 		}
 
-		$customer = rcp_get_customer();
-
-		/**
-		 * Processes the billing card update. Individual gateways hook into here.
-		 *
-		 * @param \RCP_Membership $membership
-		 *
-		 * @since 3.0
-		 */
-		foreach ( $customer->get_memberships() as $membership ) {
-			if ( $membership->is_active() ) {
-				self::$_member_caps = [
-					'create_study' => true,
-					'create_group' => true,
-				];
-			}
+		if ( ! $customer = rcp_get_customer() ) {
+			return;
 		}
+
+		$member = new Member();
+
+		self::$_member_caps = [
+			'create_study' => $member->can_create_study(),
+			'create_group' => $member->can_create_group(),
+		];
 
 	}
 

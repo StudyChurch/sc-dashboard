@@ -72,7 +72,8 @@
 
 							<el-table-column min-width="180" key="name" label="Name" prop="name">
 								<template slot-scope="{row}">
-									<router-link :to="'/groups/' + row.slug" v-html="row.name"></router-link>
+									<router-link :to="'/groups/' + row.slug" v-html="row.name" v-if="showGroupLink(row)"></router-link>
+									<span v-html="row.name" v-else></span>
 								</template>
 							</el-table-column>
 
@@ -174,6 +175,9 @@
       }
     },
     methods   : {
+      showGroupLink(group) {
+        return this.isOrgAdmin() || this.group.groups.filter(g => g.id === group.id).length;
+      },
       createGroup() {
         if (!this.newGroup.name || !this.newGroup.description || !this.newGroup.leader) {
           Message.error('Please enter a name, leader, and description for your new group');

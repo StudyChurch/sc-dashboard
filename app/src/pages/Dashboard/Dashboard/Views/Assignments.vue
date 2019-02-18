@@ -13,6 +13,8 @@
 			<p v-html="data.content"></p>
 		</card>
 
+		<el-alert type="info" v-if="!todoData.length && !loadingTodos" title="No To-Dos" description="There are no To-Dos to report. If you are a group leader, you can create new To-Dos from your group dashboard." style="margin-bottom: 1rem;" :closable="false"></el-alert>
+
 	</div>
 
 </template>

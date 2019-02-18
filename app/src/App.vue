@@ -13,8 +13,20 @@
       return {}
     },
     computed: {
-      ...mapState(['user'])
+      ...mapState(['user', 'alert']),
+      getAlert() {
+        return this.alert.alert;
+      }
     },
-    methods : {}
+    watch   : {
+      getAlert (value) {
+        if ('error' === value.type) {
+//          value.type = 'danger';
+        }
+
+        this.$message(value);
+      }
+    },
+    methods : {},
   }
 </script>

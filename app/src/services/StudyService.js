@@ -8,7 +8,8 @@ export default {
       params : {
         per_page : 100,
         orderby : 'title',
-        order : 'asc'
+        order : 'asc',
+        status : ['publish', 'private']
       },
     }, data);
 
@@ -21,6 +22,9 @@ export default {
   },
   postStudy(study) {
     return apiClient.post(base, study)
+  },
+  deleteStudy(id) {
+    return apiClient.delete(base + id)
   },
   getStudyChapters(id) {
     return apiClient.get(base + id + '/chapters/');

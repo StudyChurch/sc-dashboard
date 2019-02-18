@@ -33,6 +33,10 @@ class Studies extends WP_REST_Posts_Controller {
 			'get_callback' => array( $this, 'get_organization' )
 		) );
 
+		register_rest_field( 'sc_study', 'restrictions', array(
+			'get_callback' => array( $this, 'get_restrictions' )
+		) );
+
 		register_rest_field( 'sc_study', 'is_private', array(
 			'update_callback' => array( $this, 'save_is_private' ),
 			'get_callback'    => array( $this, 'get_is_private' )
@@ -554,6 +558,10 @@ class Studies extends WP_REST_Posts_Controller {
 		$orgs       = get_the_terms( $object['id'], 'sc_group' );
 		$study_orgs = [];
 
+		if ( ! $orgs ) {
+			return $study_orgs;
+		}
+
 		foreach ( $orgs as $group ) {
 			if ( OrganizationSetup::TYPE !== bp_groups_get_group_type( $group->name, true ) ) {
 				continue;
@@ -646,6 +654,18 @@ class Studies extends WP_REST_Posts_Controller {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Get the restrictions for this study
+	 *
+	 * @param $object
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function get_restrictions( $object ) {
+		return apply_filters( 'sc_study_restrictions', [], $object['id'] );
 	}
 
 	/**

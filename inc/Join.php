@@ -65,10 +65,28 @@ class Join {
 			$valid = 'beta';
 		}
 
+		$this->group = $group;
+		$this->valid = $valid;
+
 		/**
 		 * if the user is already logged in, add them to the group and carry on
 		 */
 		if ( is_user_logged_in() && 'group' == $valid ) {
+
+			if ( $group->parent_id ) {
+				$org = new Organization( $group->parent_id );
+			} else {
+				$org = new Organization( $group->id );
+			}
+
+			$member_limit = $org->get_member_limit();
+
+			if ( $member_limit && $member_limit <= groups_get_total_member_count( $group->id ) ) {
+				$this->valid = 'member_limit';
+				$this->group = $org;
+				return;
+			}
+
 			groups_join_group( $group_id, get_current_user_id() );
 
 			wp_safe_redirect( bp_get_group_permalink( $group ) );
@@ -79,9 +97,6 @@ class Join {
 			wp_safe_redirect( bp_get_loggedin_user_link() );
 			die();
 		}
-
-		$this->group = $group;
-		$this->valid = $valid;
 
 	}
 
@@ -118,6 +133,12 @@ class Join {
 						<p><a href="#" class="switch"><?php _e( 'Already have an account? Login' ); ?> &rarr;</a></p>
 						<?php echo $this->template_register(); ?>
 					</div>
+				</div>
+			<?php elseif ( 'member_limit' == $valid ) : ?>
+				<div>
+					<h1><?php _e( 'Member limit reached for ', 'sc' ); ?><?php echo bp_get_group_name( $group ); ?></h1>
+
+					<p><?php _e( sprintf( 'Please reach out to your group admin for assistance.', bp_get_group_name( $group ) ), 'sc' ); ?></p>
 				</div>
 			<?php else : ?>
 				<div>

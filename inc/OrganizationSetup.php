@@ -33,6 +33,7 @@ class OrganizationSetup {
 		add_action( 'bp_init', [ $this, 'organization_group_type' ] );
 		add_filter( 'bp_get_group_permalink', [ $this, 'org_permalink' ], 10, 2 );
 		add_action( 'groups_join_group', [ $this, 'join_org' ], 10, 2 );
+		add_action( 'admin_init', array( $this, 'add_roles' ) );
 	}
 
 	/**
@@ -78,16 +79,11 @@ class OrganizationSetup {
 	 */
 	public function org_meta_cb( $item ) {
 
-		if ( self::TYPE !== bp_groups_get_group_type( $item->id, true ) ) {
-			printf( '<p>This group is not an Organization</p>' );
-			return;
-		}
-
 		$org = new Organization( $item->id ); ?>
 
 		<div class="bp-groups-settings-section" id="bp-groups-settings-section-invite-status">
 			<fieldset>
-				<legend><?php _e( 'What is the member limit for this organization?', studychurch()->get_id() ); ?></legend>
+				<legend><?php _e( 'What is the member limit for this group/organization?', studychurch()->get_id() ); ?></legend>
 				<label for="sc-group-member-limit"><input type="number" name="group-member-limit" id="sc-group-member-limit" value="<?php echo $org->get_member_limit(); ?>" /></label>
 			</fieldset>
 		</div>
@@ -127,6 +123,24 @@ class OrganizationSetup {
 		}
 
 		groups_join_group( $group->parent_id, $user_id );
+	}
+
+	/**
+	 * Add custom roles
+	 *
+	 * @author Tanner Moushey
+	 */
+	public function add_roles() {
+
+		if ( 2 === get_option( 'sc_updated_roles' ) ) {
+			return;
+		}
+
+		add_role( 'leader', __( 'Leader', 'sc' ), array( 'read' => true ) );
+		add_role( 'organization', __( 'Organization', 'sc' ), array( 'read' => true ) );
+
+		update_option( 'sc_updated_roles', 2, 'no' );
+
 	}
 
 }

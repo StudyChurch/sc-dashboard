@@ -184,8 +184,9 @@
           dangerouslyUseHTMLString: true,
           inputValue              : self.groupData.invite,
           inputType               : 'textarea',
-          showCancelButton        : false
-        }).then().catch();
+          showCancelButton        : false,
+		  callback : action => {},
+        }).then();
       },
       getMemberRole(userID) {
         return this.getGroupAdmins.includes(userID) ? 'Leader' : 'Member';

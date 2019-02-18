@@ -158,7 +158,7 @@ class Edit {
 			case 'edit_post' :
 			case 'delete_post' :
 			case 'read_post' :
-				if ( empty( $args[0] ) ) {
+				if ( empty( $args[0] ) || 'sc_study' !== get_post_type( $args[0] ) ) {
 					break;
 				}
 

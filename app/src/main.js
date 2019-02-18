@@ -4,7 +4,9 @@ import DashboardPlugin from './dashboard-plugin';
 import Axios from 'axios';
 import router from './router';
 import store from './store/store';
+import { Message } from 'element-ui';
 
+const he = require('he');
 const $ = require('jquery');
 window.$ = $;
 
@@ -27,6 +29,8 @@ Vue.config.devtools = true;
 Vue.use(DashboardPlugin);
 
 Vue.prototype.$http = Axios;
+Vue.prototype.$message = Message;
+Vue.prototype.$decode = he.decode;
 
 window.refTagger = {
   settings: {
