@@ -32,10 +32,6 @@ class PremiumStudies {
 	 */
 	protected function __construct() {
 		add_action( 'init', [ $this, 'premium_cat' ], 5 );
-		add_action( 'edd_complete_purchase', [ $this, 'save_premium_access' ], 10, 3 );
-		add_action( 'edd_after_price_option', [ $this, 'price_description' ], 10, 3 );
-		add_filter( 'edd_purchase_variable_prices', [ $this, 'variable_prices' ], 10, 2 );
-		add_filter( 'sc_study_restrictions', [ $this, 'get_restrictions' ], 10, 2 );
 	}
 
 	/**
@@ -48,6 +44,15 @@ class PremiumStudies {
 			'label'        => 'Premium Categories',
 			'hierarchical' => true
 		] );
+
+		if ( ! get_terms( [ 'taxonomy' => self::$_tax, 'hide_empty' => false ] ) ) {
+			return;
+		}
+
+		add_action( 'edd_complete_purchase', [ $this, 'save_premium_access' ], 10, 3 );
+		add_action( 'edd_after_price_option', [ $this, 'price_description' ], 10, 3 );
+		add_filter( 'edd_purchase_variable_prices', [ $this, 'variable_prices' ], 10, 2 );
+		add_filter( 'sc_study_restrictions', [ $this, 'get_restrictions' ], 10, 2 );
 	}
 
 	public function price_description( $key, $price, $download_id ) {
@@ -110,14 +115,14 @@ class PremiumStudies {
 	 * @author Tanner Moushey
 	 */
 	public function save_premium_access( $payment_id, $payment, $customer ) {
-		$org_cats = $member_cats = []; // get_the_terms();
+		$org_cats = $member_cats = [];
 		$member = new Member( $customer->user_id );
 
 		foreach( $payment->downloads as $download ) {
 			if ( '2' !== $download['options']['price_id'] ) {
 				$member_cats = array_merge( wp_list_pluck( get_the_terms( $download['id'], self::$_tax ), 'slug' ), $member_cats );
 			} else {
-				$org_cats = array_merge( wp_list_pluck( get_the_terms( $download['id'], 'sc_premium' ), 'slug' ), $org_cats );
+				$org_cats = array_merge( wp_list_pluck( get_the_terms( $download['id'], self::$_tax ), 'slug' ), $org_cats );
 			}
 		}
 

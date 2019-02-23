@@ -364,7 +364,7 @@
         return false;
       },
       canAccessStudy(study) {
-        if (null === study.restrictions || !study.restrictions.length) {
+        if (undefined === study.restrictions || !study.restrictions.length) {
           return true;
         }
 
