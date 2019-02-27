@@ -52,7 +52,6 @@
         editing: false,
         loading: false,
         config : {
-          key             : process.env.VUE_APP_FROALA_LICENCE,
           events          : {
             'froalaEditor.initialized': function () {
             }

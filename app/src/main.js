@@ -22,14 +22,15 @@ require('froala-editor/css/froala_style.min.css');
 import VueFroala from 'vue-froala-wysiwyg';
 Vue.use(VueFroala);
 
-//window.$.Editable = window.$.Editable || {};
-//window.$.Editable.DEFAULTS = window.$.Editable.DEFAULTS || {};
-//
-//window.$.Editable.DEFAULTS.key = 'AA16A7B6B3xC2D2A2C2A29B4C3A8A1E2sqabA2gacsaG2ysioB-16w==';
-//window.$.Editable.DEFAULTS.pastedImagesUploadURL = '';
-//window.$.Editable.DEFAULTS.imageUploadURL = '';
-//
-//window.$.Editable.DEFAULTS.imageUploadToS3 = scFroalaS3;
+window.$.FroalaEditor = window.$.FroalaEditor || {};
+window.$.FroalaEditor.DEFAULTS = window.$.FroalaEditor.DEFAULTS || {};
+
+window.$.FroalaEditor.DEFAULTS.key = window.scVars.froalaKey;
+window.$.FroalaEditor.DEFAULTS.pastedImagesUploadURL = '';
+window.$.FroalaEditor.DEFAULTS.imageUploadURL = '';
+
+window.$.FroalaEditor.DEFAULTS.imageUploadToS3 = window.scFroalaS3;
+window.$.FroalaEditor.DEFAULTS.imageMaxSize = 1024 * 1024 * 1;
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;

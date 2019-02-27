@@ -44,7 +44,7 @@
     props: {
       title: {
         type: String,
-        default: (undefined === window.scSidebarTitle) ? 'StudyChurch' : window.scSidebarTitle,
+        default: (undefined === window.scVars.sidebarTitle) ? 'StudyChurch' : window.scVars.sidebarTitle,
       },
       backgroundColor: {
         type: String,
@@ -56,7 +56,7 @@
       },
       logo: {
         type: String,
-        default: '/wp-content/plugins/sc-dashboard/app/dist/logo.png'
+        default: window.scVars.sidebarIcon,
       },
       sidebarLinks: {
         type: Array,

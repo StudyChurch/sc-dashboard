@@ -9,6 +9,7 @@ undefined === process.env.VUE_APP_BRAND
 module.exports = {
   lintOnSave      : true,
   baseUrl         : '/wp-content/plugins/sc-dashboard/app/dist',
+  indexPath       : 'index.php',
   css             : {
     loaderOptions: {
       // pass options to sass-loader
@@ -35,7 +36,8 @@ module.exports = {
   chainWebpack    : config => {
     config.plugin('html')
       .tap(args => {
-        args[0].template = publicPath + 'index.html';
+        args[0].template = publicPath + 'index.php';
+        args[0].filename = 'index.php';
         return args;
       });
   },

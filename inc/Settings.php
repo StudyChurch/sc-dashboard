@@ -78,6 +78,24 @@ class Settings {
 		) );
 
 		$cmb->add_field( array(
+			'name'         => 'Sidebar Icon',
+			'desc'         => 'The image to use for the icon in the sidebar',
+			'id'           => 'sidebar_icon',
+			'type'         => 'file',
+			'text'         => array(
+				'add_upload_file_text' => 'Add Image' // Change upload button text. Default: "Add or Upload File"
+			),
+			'query_args' => array(
+				'type' => array(
+					'image/gif',
+					'image/jpeg',
+					'image/png',
+				),
+			),
+			'preview_size' => 'large', // Image size to use when previewing in the admin.
+		) );
+
+		$cmb->add_field( array(
 			'name' => __( 'Membership Messages', 'studychurch' ),
 			'id'   => 'membership_messages',
 			'type' => 'title',

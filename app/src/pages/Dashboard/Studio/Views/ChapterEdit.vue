@@ -86,7 +86,6 @@
         },
         loading : true,
         config  : {
-          key             : process.env.VUE_APP_FROALA_LICENCE,
           events          : {
             'froalaEditor.initialized': function () {
             }
@@ -96,7 +95,7 @@
           heightMax       : 400,
           theme           : 'gray',
           charCounterCount: false,
-		  placeholderText: 'Chapter introduction, video, etc...',
+          placeholderText : 'Chapter introduction, video, etc...',
           toolbarButtons  : [
             'bold',
             'italic',
