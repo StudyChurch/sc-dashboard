@@ -24,6 +24,7 @@ import {
   faTimes,
   faPlus,
   faBars,
+  faDollarSign,
   faArrowsAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -46,7 +47,8 @@ library.add(
   faTimes,
   faPlus,
   faBars,
-  faArrowsAlt
+  faArrowsAlt,
+  faDollarSign
 );
 
 /**

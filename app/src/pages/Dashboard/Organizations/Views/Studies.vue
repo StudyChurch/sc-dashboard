@@ -184,7 +184,7 @@
 										tag="a"
 										size="sm"
 										v-else>
-										Purchase
+										<font-awesome-icon icon="dollar-sign"></font-awesome-icon>
 									</n-button>
 								</template>
 							</el-table-column>
@@ -364,7 +364,7 @@
         return false;
       },
       canAccessStudy(study) {
-        if (undefined === study.restrictions || !study.restrictions.length) {
+        if (!Boolean(study.restrictions) || !study.restrictions.length) {
           return true;
         }
 

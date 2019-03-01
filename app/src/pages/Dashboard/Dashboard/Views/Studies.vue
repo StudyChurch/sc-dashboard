@@ -135,14 +135,14 @@
 										<font-awesome-icon icon="plus"></font-awesome-icon>
 									</n-button>
 									<n-button
-										class="add btn-neutral"
+										class="btn-neutral"
 										type="primary"
 										:href="getStudyPurchaseLink(scope.row)"
 										:nativeType="'text/html'"
 										tag="a"
 										size="sm"
 										v-else>
-										Purchase
+										<font-awesome-icon icon="dollar-sign"></font-awesome-icon>
 									</n-button>
 									<a :href="'/studio/studies/' + scope.row.id" v-if="scope.row.author === user.me.id">
 										<n-button
@@ -354,7 +354,7 @@
           });
       },
       canAccessStudy(study) {
-        if (undefined === study.restrictions || !study.restrictions.length) {
+        if (!Boolean(study.restrictions) || !study.restrictions.length) {
           return true;
         }
 
