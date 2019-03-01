@@ -508,6 +508,10 @@ class Groups extends BP_REST_Groups_Endpoint {
 		// setup the is_item_admin global
 		bp_update_is_item_admin( groups_is_user_admin( bp_loggedin_user_id(), $group->id ), 'groups' );
 
+		if ( groups_is_user_admin( bp_loggedin_user_id(), $group->id ) ) {
+			return true;
+		}
+
 		if ( $retval = parent::can_user_delete_or_update( $group ) ) {
 			return $retval;
 		}
