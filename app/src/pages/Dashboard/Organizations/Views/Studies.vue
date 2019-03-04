@@ -314,7 +314,7 @@
        * Return premium studies list
        */
       premiumStudies() {
-        return this.tableData.filter(study => study.restrictions.length !== 0);
+        return this.tableData.filter(study => !Boolean(study.restrictions) || study.restrictions.length !== 0);
       },
 
       /**
