@@ -42,6 +42,7 @@ class Study {
 		add_action( 'template_redirect', array( $this, 'redirect_on_empty' ) );
 		add_action( 'wp_head', array( $this, 'print_styles' ) );
 		add_action( 'pre_get_posts', array( $this, 'study_archive' ) );
+		add_action( 'pre_get_posts', array( $this, 'default_groups' ) );
 
 		add_filter( 'private_title_format', array( $this, 'private_title_format' ), 10, 2 );
 		add_filter( 'user_has_cap', array( $this, 'private_study_cap' ), 10, 4 );
@@ -286,6 +287,42 @@ class Study {
 		}
 
 		$query->set( 'post_parent', 0 );
+	}
+
+
+	/**
+	 * Set the default query for studies
+	 *
+	 * @param \WP_Query $query
+	 *
+	 * @author Tanner Moushey
+	 */
+	public function default_groups( $query ) {
+		if ( is_admin() || 'sc_study' !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		// break early if we already have a tax query
+		if ( $query->get( 'tax_query' ) ) {
+			return;
+		}
+
+		$tax_query = [];
+
+		$tax_query[] = [
+			'relation' => 'OR',
+			[
+				'taxonomy' => 'sc_group',
+				'operator' => 'NOT EXISTS',
+			],
+			[
+				'taxonomy' => 'sc_group',
+				'field' => 'slug',
+				'terms' => [0],
+			],
+		];
+
+		$query->set( 'tax_query', $tax_query );
 	}
 
 	public function allow_private_parent( $uri, $page ) {

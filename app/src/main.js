@@ -70,9 +70,11 @@ new Vue({
     store
       .dispatch('user/fetchMe')
       .then(() => {
-        store.dispatch('group/fetchOrgs');
+        store.dispatch('group/fetchOrgs')
+          .then(() => {
+            store.dispatch('study/fetchStudies');
+          });
         store.dispatch('group/fetchGroups');
-        store.dispatch('study/fetchStudies');
       })
   },
   methods: {

@@ -37,6 +37,10 @@ class Studies extends WP_REST_Posts_Controller {
 			'get_callback' => array( $this, 'get_restrictions' )
 		) );
 
+		register_rest_field( 'sc_study', 'categories', array(
+			'get_callback' => array( $this, 'get_categories' )
+		) );
+
 		register_rest_field( 'sc_study', 'is_private', array(
 			'update_callback' => array( $this, 'save_is_private' ),
 			'get_callback'    => array( $this, 'get_is_private' )
@@ -183,6 +187,40 @@ class Studies extends WP_REST_Posts_Controller {
 			),
 			'schema' => array( $this, 'get_public_item_schema' ),
 		) );
+	}
+
+	/**
+	 * Only query studies that are public or belong to an org that this user has access to
+	 *
+	 * @param array                 $args
+	 * @param null|\WP_REST_Request $request
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function prepare_items_query( $args, $request ) {
+
+		if ( empty( $args['tax_query'] ) ) {
+			$tax_query = [
+				'relation' => 'OR',
+				[
+					'taxonomy' => 'sc_group',
+					'operator' => 'NOT EXISTS',
+				],
+			];
+
+			if ( $request['organizations'] ) {
+				$tax_query[] = [
+					'taxonomy' => 'sc_group',
+					'field'    => 'slug',
+					'terms'    => $request['organizations'],
+				];
+			}
+
+			$args['tax_query'] = $tax_query;
+		}
+
+		return parent::prepare_items_query( $args, $request );
 	}
 
 	public function create_item( $request ) {
@@ -666,6 +704,32 @@ class Studies extends WP_REST_Posts_Controller {
 	 */
 	public function get_restrictions( $object ) {
 		return apply_filters( 'sc_study_restrictions', [], $object['id'] );
+	}
+
+	/**
+	 * Return Study categories
+	 *
+	 * @param $object
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public function get_categories( $object ) {
+		$categories = get_the_terms( $object['id'], 'sc_category' );
+		$return     = [];
+
+		if ( ! $categories || is_wp_error( $categories ) ) {
+			return [];
+		}
+
+		foreach( $categories as $category ) {
+			$return[] = [
+				'name' => $category->name,
+			    'slug' => $category->slug,
+			];
+		}
+
+		return $return;
 	}
 
 	/**

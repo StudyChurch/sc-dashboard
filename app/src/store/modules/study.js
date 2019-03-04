@@ -94,7 +94,11 @@ export const actions = {
       });
   },
   fetchStudies({commit, dispatch, rootState}, data) {
-    return StudyService.getStudies(rootState.user.me.id, data)
+    data = data || {};
+    data.params = data.params || {};
+    data.params.organizations = rootState.group.organizations.map(org => org.id);
+
+    return StudyService.getStudies(data)
       .then(response => {
         commit('SET_STUDIES_TOTAL', parseInt(response.headers['x-wp-total']));
         commit('SET_STUDIES', response.data);
