@@ -198,7 +198,7 @@ class Studies extends WP_REST_Posts_Controller {
 	 * @return array
 	 * @author Tanner Moushey
 	 */
-	public function prepare_items_query( $args, $request ) {
+	public function prepare_items_query( $args = array(), $request = null ) {
 
 		if ( empty( $args['tax_query'] ) ) {
 			$tax_query = [

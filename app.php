@@ -2,6 +2,11 @@
 
 use StudyChurch\Settings;
 
+// @todo handle 404 more gracefully
+global $wp_query, $wp_the_query;
+$wp_query->is_404 = $wp_the_query->is_404 = false;
+status_header( 200 );
+
 $secure = ( 'https' === parse_url( wp_login_url(), PHP_URL_SCHEME ) );
 setcookie( '_wpnonce', wp_create_nonce( 'wp_rest' ), time() + 2 * DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, $secure );
 
@@ -9,12 +14,8 @@ remove_action( 'wp_head', '_admin_bar_bump_cb' );
 add_filter( 'show_admin_bar', '__return_false' );
 
 // fix 404 title
-add_filter( 'document_title_parts', function ( $title ) {
-	$title = [
-		'title' => get_bloginfo( 'name' ) . ' Dashboard'
-	];
-
-	return $title;
+add_filter( 'pre_get_document_title', function ( $title ) {
+	return get_bloginfo( 'name' ) . ' Dashboard';
 }, 9999 );
 
 add_action( 'wp_head', function () {
