@@ -22,7 +22,7 @@
                 </router-link>
               </li>
               <li>
-                <router-link to="/settings">
+                <router-link to="/settings/">
                   <span class="sidebar-mini-icon">S</span>
                   <span class="sidebar-normal">My Settings</span>
                 </router-link>

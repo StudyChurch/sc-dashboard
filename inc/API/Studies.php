@@ -715,21 +715,7 @@ class Studies extends WP_REST_Posts_Controller {
 	 * @author Tanner Moushey
 	 */
 	public function get_categories( $object ) {
-		$categories = get_the_terms( $object['id'], 'sc_category' );
-		$return     = [];
-
-		if ( ! $categories || is_wp_error( $categories ) ) {
-			return [];
-		}
-
-		foreach( $categories as $category ) {
-			$return[] = [
-				'name' => $category->name,
-			    'slug' => $category->slug,
-			];
-		}
-
-		return $return;
+		return studychurch()->study::get_categories( $object['id'] );
 	}
 
 	/**

@@ -126,7 +126,7 @@
 							<el-option class="select-primary" :value="'library'" :label="'My Library'" :key="'library'"></el-option>
 							<el-option class="select-primary" :value="'mine'" :label="'My Studies'" :key="'mine'" v-if="authoredStudies.length"></el-option>
 							<el-option class="select-primary" :value="'premium'" :label="'Premium Studies'" :key="'premium'" v-if="premiumStudies.length"></el-option>
-							<el-option class="select-primary" :value="'all'" :label="'All Studies'" :key="'all'"></el-option>
+							<el-option class="select-primary" :value="'all'" :label="'All Studies'" :key="'all'" v-if="premiumStudies.length"></el-option>
 						</el-select>
 						&nbsp;
 						<el-select class="select-primary" placeholder="All Categories" v-model="filter.category" v-if="studyCategories.length">
@@ -244,7 +244,7 @@
         total      : 0
       },
       filter        : {
-        scope   : 'all',
+        scope   : 'library',
         category: 'all',
       },
       searchQuery   : '',
@@ -388,8 +388,7 @@
     },
     watch     : {
       tableData(value) {
-        this.searchedData = value;
-        this.filter.scope = 'library';
+        this.searchedData = this.filteredScopeData;
         this.fuseSearch = new Fuse(this.tableData, {keys: ['title.rendered', 'slug'], threshold: 0.3})
       },
 
@@ -400,7 +399,7 @@
        */
       searchQuery(value){
         let result = this.tableData;
-        this.filter.scope = 'all';
+        this.filter.scope = this.premiumStudies.length ? 'all' : 'library';
         if (value !== '') {
           result = this.fuseSearch.search(this.searchQuery)
         }
@@ -507,9 +506,9 @@
 
       },
     },
-    mounted()
-    {
-      this.searchedData = this.tableData;
+    mounted() {
+      this.searchedData = this.filteredScopeData;
+      this.fuseSearch = new Fuse(this.tableData, {keys: ['title.rendered', 'slug'], threshold: 0.3})
     }
   }
 </script>

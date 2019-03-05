@@ -698,6 +698,38 @@ class Study {
 	}
 
 	/**
+	 * Return categories for provided study
+	 *
+	 * @param null $id
+	 *
+	 * @return array
+	 * @author Tanner Moushey
+	 */
+	public static function get_categories( $id = null ) {
+		if ( ! $id ) {
+			$id = get_the_ID();
+		}
+
+		$id = sc_get_study_id( $id );
+
+		$categories = get_the_terms( $id, 'sc_category' );
+		$return     = [];
+
+		if ( ! $categories || is_wp_error( $categories ) ) {
+			return [];
+		}
+
+		foreach( $categories as $category ) {
+			$return[] = [
+				'name' => $category->name,
+			    'slug' => $category->slug,
+			];
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Can the user access this study?
 	 *
 	 * @param null $study_id
@@ -762,6 +794,8 @@ class Study {
 			'thumbnail'    => has_post_thumbnail( $post ) ? get_the_post_thumbnail_url( $post, 'medium' ) : studychurch()->study->default_thumbnail(),
 			'author'       => absint( $post->post_author ),
 			'organization' => $groups ? $groups : [],
+			'restrictions' => [], // don't include restrictions at this level, but keep placeholder
+			'categories'   => self::get_categories( $post->ID ),
 		];
 
 		wp_reset_postdata();

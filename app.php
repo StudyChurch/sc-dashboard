@@ -10,10 +10,12 @@ add_filter( 'show_admin_bar', '__return_false' );
 
 // fix 404 title
 add_filter( 'document_title_parts', function ( $title ) {
-	$title['title'] = get_bloginfo( 'name' ) . ' Dashboard';
+	$title = [
+		'title' => get_bloginfo( 'name' ) . ' Dashboard'
+	];
 
 	return $title;
-} );
+}, 9999 );
 
 add_action( 'wp_head', function () {
 	global $wp_scripts, $wp_styles;
