@@ -3,17 +3,14 @@ import apiClient from './apiClient'
 let base = '/wp-json/studychurch/v1/studies/';
 
 export default {
-  getStudies(data) {
-    let config = Object.assign({
-      params : {
+  getStudies(params) {
+    let config = {};
+    config.params = Object.assign({
         per_page : 100,
         orderby : 'title',
         order : 'asc',
-        status : ['publish', 'private']
-      },
-    }, data);
-
-    config = Object.assign(config, data);
+        status : ['publish', 'private'],
+    }, params);
 
     return apiClient.get(base, config)
   },

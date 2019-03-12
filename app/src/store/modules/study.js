@@ -95,8 +95,7 @@ export const actions = {
   },
   fetchStudies({commit, dispatch, rootState}, data) {
     data = data || {};
-    data.params = data.params || {};
-    data.params.organizations = rootState.group.organizations.map(org => org.id);
+    data.organizations = rootState.group.organizations.map(org => org.id);
 
     return StudyService.getStudies(data)
       .then(response => {
