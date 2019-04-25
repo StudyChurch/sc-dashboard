@@ -48,7 +48,7 @@
 			</template>
 		</modal>
 
-		<card v-for="data in todoData" :class="'card'">
+		<card v-for="data in todoData" :class="'card todo'">
 			&nbsp;
 			<h6>Due Date: {{data.date}}</h6>
 			<p v-for="lesson in data.lessons">
@@ -57,6 +57,9 @@
 					<span v-html="lesson.title"></span></router-link>
 			</p>
 			<p v-html="data.content"></p>
+			<p style="position: absolute; right: 0; top: 0; display: none;" class="todo-actions">
+				<n-button type="danger" @click.native="removeTodo( data.key )">Remove</n-button>
+			</p>
 		</card>
 
 		<p v-if="!todoData.length && !loadingTodos" class="text-center">There are no upcoming to-dos.</p>
@@ -149,8 +152,23 @@
             this.getGroupTodos();
             this.creatingTodo = false;
           })
-
       },
+		removeTodo( itemId ) {
+
+          this.loadingTodos = true;
+
+          this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
+                assignment_id: itemId
+			}).then(response => {
+				if ( response.data.message.length ) {
+					alert( response.data.message );
+					this.getGroupTodos();
+				} else {
+					alert( 'An error occurred.' );
+					this.loadingTodos = false;
+				}
+			});
+		},
       getStudies () {
         if (this.newTodo.studies.length) {
           return;
@@ -189,4 +207,7 @@
   }
 </script>
 <style>
+.todo:hover .todo-actions {
+	display: block!important;
+}
 </style>
