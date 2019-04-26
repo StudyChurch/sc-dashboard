@@ -58,7 +58,18 @@
 			</p>
 			<p v-html="data.content"></p>
 			<p style="position: absolute; right: 0; top: 0; display: none;" class="todo-actions">
-				<n-button type="danger" @click.native="removeTodo( data.key )">Remove</n-button>
+				<n-button type="info"
+						  @click.native="removeTodo( data.key )"
+						  size="sm"
+						  class="edit btn-neutral"
+						  icon><font-awesome-icon icon="edit"></font-awesome-icon>
+				</n-button>
+				<n-button type="danger"
+						  @click.native="removeTodo( data.key )"
+						  size="sm"
+						  class="remove btn-neutral"
+						  icon><font-awesome-icon icon="times"></font-awesome-icon>
+				</n-button>
 			</p>
 		</card>
 
@@ -161,10 +172,10 @@
                 assignment_id: itemId
 			}).then(response => {
 				if ( response.data.message.length ) {
-					alert( response.data.message );
+                	Message.success( 'TODO has been removed' );
 					this.getGroupTodos();
 				} else {
-					alert( 'An error occurred.' );
+					Message.error( 'An error occurred.' );
 					this.loadingTodos = false;
 				}
 			});
