@@ -48,6 +48,49 @@
 			</template>
 		</modal>
 
+		<modal :show.sync="showEditModal" headerclasses="justify-content-center" v-loading="editingTodo">
+			<h4 slot="header" class="title title-up">Edit To-Do</h4>
+
+			<div v-for="study in editTodoData.lessons">
+				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
+				<p>
+					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
+						<el-option
+								class="select-primary"
+								v-for="chapter in study.navigation"
+								:key="chapter.id"
+								:label="chapter.title.rendered"
+								:value="chapter.id">
+						</el-option>
+					</el-select>
+				</p>
+			</div>
+
+			<p>
+				<label for="instructions">Instructions</label>
+				<el-input
+						ref="description"
+						type="textarea"
+						id="instructions"
+						:autosize="{ minRows: 4 }"
+						resize="none"
+						label="Study Description"
+						v-model="editTodoData.content"></el-input>
+			</p>
+
+			<!--<p>
+				<label for="datepicker">Due Date</label>
+				<fg-input>
+					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="newTodo.date" type="date" placeholder="Pick a day">
+					</el-date-picker>
+				</fg-input>
+			</p>-->
+
+			<template slot="footer">
+				<n-button type="primary" @click.native="editTodo">Edit</n-button>
+			</template>
+		</modal>
+
 		<card v-for="data in todoData" :class="'card todo'">
 			&nbsp;
 			<h6>Due Date: {{data.date}}</h6>
@@ -59,7 +102,7 @@
 			<p v-html="data.content"></p>
 			<p class="todo-actions">
 				<n-button type="info"
-						  @click.native="editTodo( data.key )"
+						  @click.native="editTodo( data )"
 						  size="sm"
 						  class="edit btn-neutral"
 						  icon
@@ -95,6 +138,8 @@
     return {
       creatingTodo: false,
       showModal   : false,
+		showEditModal: false,
+		editingTodo: false,
       loadingTodos: true,
       loadingMore : false,
       todoData    : [],
@@ -104,6 +149,7 @@
         studies    : [],
         date       : ''
       },
+		editTodoData: {}
     }
   }
 
@@ -167,7 +213,18 @@
           })
       },
 		editTodo( itemId ) {
-            this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
+
+          console.log( 'ITEM', itemId );
+
+          this.showEditModal = true;
+
+          this.editTodoData = itemId;
+
+          console.log( 'EDIT DATA', this.editTodoData );
+
+          console.log( 'Study Data', this.groupData.studies );
+
+            /*this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
                 id: itemId,
 				content: 'This is the new content',
             }).then(response => {
@@ -184,7 +241,7 @@
                 Message.error( 'An error occurred.' );
                 this.loadingTodos = false;
             }
-       	 });
+       	 });*/
 		},
 		removeTodo( itemId ) {
 
