@@ -58,6 +58,13 @@
 			</p>
 			<p v-html="data.content"></p>
 			<p class="todo-actions">
+				<n-button type="info"
+						  @click.native="editTodo( data.key )"
+						  size="sm"
+						  class="edit btn-neutral"
+						  icon
+						  v-if="isGroupAdmin()"><font-awesome-icon icon="edit"></font-awesome-icon>
+				</n-button>
 				<n-button type="danger"
 						  @click.native="removeTodo( data.key )"
 						  size="sm"
@@ -159,6 +166,26 @@
             this.creatingTodo = false;
           })
       },
+		editTodo( itemId ) {
+            this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
+                id: itemId,
+				content: 'This is the new content',
+            }).then(response => {
+                if ( response.data.message.length ) {
+
+                if ( response.data.success ) {
+                    Message.success( response.data.message );
+                } else {
+                    Message.error( response.data.message );
+                }
+
+                this.getGroupTodos();
+            } else {
+                Message.error( 'An error occurred.' );
+                this.loadingTodos = false;
+            }
+       	 });
+		},
 		removeTodo( itemId ) {
 
           this.loadingTodos = true;
