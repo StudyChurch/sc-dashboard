@@ -62,7 +62,8 @@
 						  @click.native="removeTodo( data.key )"
 						  size="sm"
 						  class="remove btn-neutral"
-						  icon><font-awesome-icon icon="times"></font-awesome-icon>
+						  icon
+						  v-if="isGroupAdmin()"><font-awesome-icon icon="times"></font-awesome-icon>
 				</n-button>
 			</p>
 		</card>
