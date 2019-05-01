@@ -183,6 +183,7 @@ class Assignments extends WP_REST_Controller {
         if ( sc_delete_group_assignment( absint( $request['assignment_id'] ) ) ) {
             return array(
               'message' => 'Item has been successfully removed.',
+                'success' => true,
             );
         }
 

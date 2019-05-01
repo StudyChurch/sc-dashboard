@@ -57,13 +57,7 @@
 					<span v-html="lesson.title"></span></router-link>
 			</p>
 			<p v-html="data.content"></p>
-			<p style="position: absolute; right: 0; top: 0; display: none;" class="todo-actions">
-				<n-button type="info"
-						  @click.native="removeTodo( data.key )"
-						  size="sm"
-						  class="edit btn-neutral"
-						  icon><font-awesome-icon icon="edit"></font-awesome-icon>
-				</n-button>
+			<p class="todo-actions">
 				<n-button type="danger"
 						  @click.native="removeTodo( data.key )"
 						  size="sm"
@@ -172,7 +166,13 @@
                 assignment_id: itemId
 			}).then(response => {
 				if ( response.data.message.length ) {
-                	Message.success( 'TODO has been removed' );
+
+				    if ( response.data.success ) {
+                        Message.success( response.data.message );
+					} else {
+				        Message.error( response.data.message );
+					}
+
 					this.getGroupTodos();
 				} else {
 					Message.error( 'An error occurred.' );
@@ -218,7 +218,11 @@
   }
 </script>
 <style>
-.todo:hover .todo-actions {
-	display: block!important;
-}
+
+	.todo-actions {
+		position: absolute;
+		right: 0;
+		top: 0;
+		display: block;
+	}
 </style>
