@@ -282,7 +282,7 @@ class StudyChurch {
 			}
 		}
 
-		include( get_home_url() . '/join' );
+		auth_redirect();
 		exit();
 	}
 
