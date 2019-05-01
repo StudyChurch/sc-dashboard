@@ -124,7 +124,7 @@
       this.getGroupTodos();
     },
     computed  : {
-      ...mapState(['user', 'group']),
+      ...mapState(['user', 'group', 'assignment']),
       ...mapGetters('user', ['getUserById']),
       ...mapGetters('group', ['isGroupAdmin', 'isGroupAdmin', 'getGroupMembers', 'getGroupAdmins']),
 
@@ -161,7 +161,11 @@
       },
 		removeTodo( itemId ) {
 
-          this.loadingTodos = true;
+          this.$store.dispatch( 'assignment/createAssignment', {
+              message: 'Hello World!'
+		  } );
+
+         /* this.loadingTodos = true;
 
           this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
                 assignment_id: itemId
@@ -179,7 +183,7 @@
 					Message.error( 'An error occurred.' );
 					this.loadingTodos = false;
 				}
-			});
+			});*/
 		},
       getStudies () {
         if (this.newTodo.studies.length) {
