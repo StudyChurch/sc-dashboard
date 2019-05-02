@@ -652,7 +652,6 @@ class Study {
 		} else {
 			$group = groups_get_group( $group_id );
 
-			// TODO: This is wrong
 			return str_replace( '/studies/', '/groups/' . bp_get_group_slug( $group ) . '/studies/', get_permalink( $study_id ) );
 		}
 	}
