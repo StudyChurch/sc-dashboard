@@ -122,7 +122,9 @@ class Assignments {
 			$group_id = bp_get_current_group_id();
 		}
 
-		return add_query_arg( 'sc-group', $group_id, get_permalink( $lesson_id ) );
+		$group = groups_get_group( $group_id );
+
+		return str_replace( '/studies/', '/groups/' . bp_get_group_slug( $group ) . '/studies/', get_permalink( $lesson_id ) );
 	}
 
 }
