@@ -161,8 +161,14 @@
       },
 		removeTodo( itemId ) {
 
-          this.$store.dispatch( 'assignment/createAssignment', {
-              message: 'Hello World!'
+          console.log( 'itemId', itemId );
+
+          /*let item = this.$store.dispatch( 'assignment/getAssignment', itemId ).then( response => {
+              console.log( 'RESPONSE', response );
+		  });*/
+
+          let item = this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
+		      console.log( 'update', response );
 		  } );
 
          /* this.loadingTodos = true;

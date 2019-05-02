@@ -74,6 +74,11 @@ class Assignments extends WP_REST_Controller {
 				'permission_callback' => array( $this, 'get_permissions_check' ),
 			),
 			array(
+			  'methods' => WP_REST_Server::CREATABLE,
+              'callback' => array( $this, 'update_item' ),
+              'permission_callback' => array( $this, 'get_permission_check' ),
+            ),
+			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'delete_item' ),
 				'permission_callback' => array( $this, 'get_permissions_check' ),
@@ -189,6 +194,22 @@ class Assignments extends WP_REST_Controller {
 
 	    return array(
 	        'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
+        );
+    }
+
+    public function get_item( $request ) {
+
+	    if ( empty( $request['assignment_id'] ) ) {
+	        return new WP_Error( 'invalid date', 'Please provide an id' );
+        }
+
+	    return sc_get_group_assignment( $request['assignment_id'] );
+    }
+
+    public function update_item( $request ) {
+
+	    return array(
+	      'message' => 'Updated',
         );
     }
 }

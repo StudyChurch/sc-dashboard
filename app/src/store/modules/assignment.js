@@ -1,3 +1,5 @@
+import AssignmentService from '@/services/AssignmentService.js';
+
 export const namespaced = true;
 
 export const mutations = {
@@ -20,11 +22,30 @@ export const mutations = {
         state.study.navigation = navigation;
     }*/
 
-
+    ADD_ASSIGNMENT( state, assignment ) {
+      // TODO
+    },
+    SET_ASSIGNMENT( state, assignment ) {
+        state.assignment = assignment;
+    }
 };
 
 export const actions = {
     createAssignment( {commit, dispatch }, assignment ) {
-        alert( assignment.message );
+        // TODO
+    },
+
+    getAssignment( {commit, dispatch }, assignmentId ) {
+        return AssignmentService.getAssignment( assignmentId ).then( response => {
+                //commit( 'SET_ASSIGNMENT', response.data );
+                return response.data;
+            });
+    },
+
+    updateAssignment( {commit, dispatch }, assignmentId ) {
+        return AssignmentService.updateAssignment( assignmentId ).then( response => {
+            //commit( 'SET_ASSIGNMENT', response.data );
+            return response.data;
+        } );
     }
 };
