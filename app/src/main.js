@@ -9,6 +9,7 @@ import { Message } from 'element-ui';
 const he = require('he');
 const $ = require('jquery');
 window.$ = $;
+window.jQuery = $;
 
 // Require Froala Editor js file.
 require('froala-editor/js/froala_editor.pkgd.min');
