@@ -172,19 +172,27 @@
       },
 		removeTodo( itemId ) {
 
-          console.log( 'itemId', itemId );
+         this.loadingTodos = true;
 
-          /*let item = this.$store.dispatch( 'assignment/getAssignment', itemId ).then( response => {
-              console.log( 'RESPONSE', response );
-		  });*/
+         this.$store.dispatch( 'assignment/deleteAssignment', itemId ).then( response => {
 
-          let item = this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
-		      console.log( 'update', response );
-		  } );
+             // Works but I think this should just be part of the Service response?
+		 	if ( response.message.length ) {
 
-         /* this.loadingTodos = true;
+					if ( response.success ) {
+						Message.success( response.message );
+					} else {
+						Message.error( response.message );
+					}
 
-          this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
+					this.getGroupTodos();
+				} else {
+					Message.error( 'An error occurred.' );
+					this.loadingTodos = false;
+				}
+			} );
+
+          /*this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
                 assignment_id: itemId
 			}).then(response => {
 				if ( response.data.message.length ) {

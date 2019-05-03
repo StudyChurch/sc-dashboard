@@ -49,5 +49,11 @@ export const actions = {
             //commit( 'SET_ASSIGNMENT', response.data );
             return response.data;
         } );
+    },
+
+    deleteAssignment( { commit, dispatch }, itemId ) {
+        return AssignmentService.deleteAssignment( itemId ).then( response => {
+            return response.data;
+        } );
     }
 };

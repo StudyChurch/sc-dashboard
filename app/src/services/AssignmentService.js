@@ -20,5 +20,9 @@ export default {
 
     createAssignment( data ) {
       return apiClient.post( base, data );
+    },
+
+    deleteAssignment( itemId ) {
+      return apiClient.delete( base + itemId, { assignment_id: itemId } );
     }
 }
