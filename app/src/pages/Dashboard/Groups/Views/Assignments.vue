@@ -148,7 +148,7 @@
           studies = studies.concat(this.newTodo.studies[i].value);
         }
 
-        this.$http.post('/wp-json/studychurch/v1/assignments/', {
+        /*this.$http.post('/wp-json/studychurch/v1/assignments/', {
           group_id: this.groupData.id,
           content : this.newTodo.description,
           lessons : studies,
@@ -157,7 +157,18 @@
           .then(response => {
             this.getGroupTodos();
             this.creatingTodo = false;
-          })
+          })*/
+
+        this.$store.dispatch( 'assignment/createAssignment', {
+            group_id: this.groupData.id,
+            content : this.newTodo.description,
+            lessons : studies,
+            date    : this.newTodo.date,
+		} ).then( response => {
+            this.getGroupTodos();
+            this.creatingTodo = false;
+		} );
+
       },
 		removeTodo( itemId ) {
 

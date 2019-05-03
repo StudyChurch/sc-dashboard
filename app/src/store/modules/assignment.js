@@ -31,8 +31,10 @@ export const mutations = {
 };
 
 export const actions = {
-    createAssignment( {commit, dispatch }, assignment ) {
-        // TODO
+    createAssignment( {commit, dispatch }, data ) {
+        return AssignmentService.createAssignment( data ).then( response => {
+            return response.data;
+        } );
     },
 
     getAssignment( {commit, dispatch }, assignmentId ) {
