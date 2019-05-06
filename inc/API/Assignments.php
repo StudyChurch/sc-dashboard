@@ -174,100 +174,21 @@ class Assignments extends WP_REST_Controller {
 		return sc_get_group_assignment( $id );
 	}
 
-	/**
-	 * Delete a password for the provided user
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return array|WP_Error Array on success, or error object on failure.
-	 */
 	public function delete_item( $request ) {
-		$user = new User( $request['user_id'] );
-		$slug = $request['slug'];
 
-		if ( ! $item = $user->get_api_password( $slug ) ) {
-			return new WP_Error( 'no-item-found', __( 'No password was found with that slug.', 'awesome-support-api' ), array( 'status' => 404 ) );
-		}
+	    if ( empty ( $request['assignment_id'] ) ) {
+	        return new WP_Error( 'invalid data', 'Please provide an assignment ID' );
+        }
 
-		if ( $user->delete_api_password( $slug ) ) {
-			return array( 'deleted' => true, 'previous' => $item );
-		} else {
-			return new WP_Error( 'no-item-found', __( 'No password was found with that slug.', 'awesome-support-api' ), array( 'status' => 404 ) );
-		}
+        if ( sc_delete_group_assignment( absint( $request['assignment_id'] ) ) ) {
+            return array(
+              'message' => 'Item has been successfully removed.',
+                'success' => true,
+            );
+        }
 
-	}
-
-	/**
-	 * Delete all api passwords for the provided user
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return array Array on success
-	 */
-	public function delete_all_items( $request ) {
-		$user  = new User( $request['user_id'] );
-		$items = $this->get_items( $request );
-
-		$user->delete_all_api_passwords();
-
-		return array( 'deleted' => true, 'previous' => $items );
-	}
-
-	/**
-	 * Retrieves the site setting schema, conforming to JSON Schema.
-	 *
-	 * @since 4.7.0
-	 * @access public
-	 *
-	 * @return array Item schema data.
-	 */
-	public function get_item_schema() {
-		$schema = array(
-			'$schema'    => 'http://json-schema.org/schema#',
-			'title'      => 'password',
-			'type'       => 'object',
-			'properties' => array(
-				'name'      => array(
-					'description' => __( "The name of the new password" ),
-					'required'    => true,
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit', 'embed' ),
-				),
-				'password'  => array(
-					'description' => __( "The hashed password that was created" ),
-					'type'        => 'string',
-					'format'      => 'date-time',
-					'context'     => array( 'edit' ),
-					'readonly'    => true,
-				),
-				'created'   => array(
-					'description' => __( 'The date the password was created' ),
-					'type'        => 'string',
-					'format'      => 'date-time',
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-				'last_used' => array(
-					'description' => __( 'The date the password was last used' ),
-					'type'        => 'string',
-					'format'      => 'date-time',
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-				'last_ip'   => array(
-					'description' => __( 'The IP address that the password was last used from' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-				'slug'      => array(
-					'description' => __( 'The password\'s unique slug' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-			),
-		);
-
-		return $this->add_additional_fields_schema( $schema );
-	}
-
+	    return array(
+	        'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
+        );
+    }
 }

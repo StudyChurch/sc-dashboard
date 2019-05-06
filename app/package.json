@@ -10,7 +10,7 @@
     "build": "vue-cli-service build",
     "test": "vue-cli-service test --watch",
     "lint": "vue-cli-service lint",
-    "watch": "NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
+    "watch": "cross-env NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
     "watch-pilgrimage": "NODE_ENV=pilgrimage webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
   },
   "dependencies": {

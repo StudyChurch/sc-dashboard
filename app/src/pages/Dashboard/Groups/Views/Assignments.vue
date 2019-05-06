@@ -48,7 +48,7 @@
 			</template>
 		</modal>
 
-		<card v-for="data in todoData" :class="'card'">
+		<card v-for="data in todoData" :class="'card todo'">
 			&nbsp;
 			<h6>Due Date: {{data.date}}</h6>
 			<p v-for="lesson in data.lessons">
@@ -57,6 +57,15 @@
 					<span v-html="lesson.title"></span></router-link>
 			</p>
 			<p v-html="data.content"></p>
+			<p class="todo-actions">
+				<n-button type="danger"
+						  @click.native="removeTodo( data.key )"
+						  size="sm"
+						  class="remove btn-neutral"
+						  icon
+						  v-if="isGroupAdmin()"><font-awesome-icon icon="times"></font-awesome-icon>
+				</n-button>
+			</p>
 		</card>
 
 		<p v-if="!todoData.length && !loadingTodos" class="text-center">There are no upcoming to-dos.</p>
@@ -149,8 +158,29 @@
             this.getGroupTodos();
             this.creatingTodo = false;
           })
-
       },
+		removeTodo( itemId ) {
+
+          this.loadingTodos = true;
+
+          this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
+                assignment_id: itemId
+			}).then(response => {
+				if ( response.data.message.length ) {
+
+				    if ( response.data.success ) {
+                        Message.success( response.data.message );
+					} else {
+				        Message.error( response.data.message );
+					}
+
+					this.getGroupTodos();
+				} else {
+					Message.error( 'An error occurred.' );
+					this.loadingTodos = false;
+				}
+			});
+		},
       getStudies () {
         if (this.newTodo.studies.length) {
           return;
@@ -189,4 +219,11 @@
   }
 </script>
 <style>
+
+	.todo-actions {
+		position: absolute;
+		right: 0;
+		top: 0;
+		display: block;
+	}
 </style>
