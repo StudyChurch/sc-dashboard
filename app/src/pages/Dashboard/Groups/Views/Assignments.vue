@@ -155,17 +155,6 @@
           studies = studies.concat(this.newTodo.studies[i].value);
         }
 
-        /*this.$http.post('/wp-json/studychurch/v1/assignments/', {
-          group_id: this.groupData.id,
-          content : this.newTodo.description,
-          lessons : studies,
-          date    : this.newTodo.date,
-        })
-          .then(response => {
-            this.getGroupTodos();
-            this.creatingTodo = false;
-          })*/
-
         this.$store.dispatch( 'assignment/createAssignment', {
             group_id: this.groupData.id,
             content : this.newTodo.description,
@@ -198,24 +187,6 @@
 					this.loadingTodos = false;
 				}
 			} );
-
-          /*this.$http.delete('/wp-json/studychurch/v1/assignments/' + itemId, {
-                assignment_id: itemId
-			}).then(response => {
-				if ( response.data.message.length ) {
-
-				    if ( response.data.success ) {
-                        Message.success( response.data.message );
-					} else {
-				        Message.error( response.data.message );
-					}
-
-					this.getGroupTodos();
-				} else {
-					Message.error( 'An error occurred.' );
-					this.loadingTodos = false;
-				}
-			});*/
 		},
 		editTodo( itemId ) {
           this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
@@ -241,15 +212,6 @@
       },
       getGroupTodos () {
         this.loadingTodos = true;
-        /*this.$http
-          .get(
-            '/wp-json/studychurch/v1/assignments?group_id=' + this.groupData.id)
-          .then(response => {
-              this.todoData = response.data;
-              this.showModal = false;
-            }
-          )
-          .finally(() => this.loadingTodos = false)*/
 
         this.$store.dispatch( 'assignment/fetchAssignments' ).then( response => {
            //console.log( 'response', response );
