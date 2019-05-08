@@ -74,9 +74,9 @@ class Assignments extends WP_REST_Controller {
 				'permission_callback' => array( $this, 'get_permissions_check' ),
 			),
 			array(
-			  'methods' => WP_REST_Server::CREATABLE,
+			  'methods' => WP_REST_Server::EDITABLE,
               'callback' => array( $this, 'update_item' ),
-              'permission_callback' => array( $this, 'get_permission_check' ),
+              'permission_callback' => array( $this, 'get_permissions_check' ),
             ),
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,

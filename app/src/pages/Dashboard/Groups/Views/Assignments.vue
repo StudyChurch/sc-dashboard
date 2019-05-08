@@ -58,6 +58,13 @@
 			</p>
 			<p v-html="data.content"></p>
 			<p class="todo-actions">
+				<n-button type="info"
+						  @click.native="editTodo( data.key )"
+						  size="sm"
+						  class="remove btn-neutral"
+						  icon
+						  v-if="isGroupAdmin()"><font-awesome-icon icon="edit"></font-awesome-icon>
+				</n-button>
 				<n-button type="danger"
 						  @click.native="removeTodo( data.key )"
 						  size="sm"
@@ -209,6 +216,11 @@
 					this.loadingTodos = false;
 				}
 			});*/
+		},
+		editTodo( itemId ) {
+          this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
+              // TODO
+		  } );
 		},
       getStudies () {
         if (this.newTodo.studies.length) {
