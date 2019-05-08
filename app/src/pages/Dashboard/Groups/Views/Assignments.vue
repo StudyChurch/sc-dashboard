@@ -83,6 +83,7 @@
 <script>
   import { Input, Message, Select, Option, DatePicker } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
+  import swal from 'sweetalert2'
 
   import {
     Card,
@@ -170,23 +171,34 @@
 
          this.loadingTodos = true;
 
-         this.$store.dispatch( 'assignment/deleteAssignment', itemId ).then( response => {
+         swal( {
+			 title: 'Are you sure you want to remove this?',
+			 text: 'You won\'t be able to revert this.',
+			 type: 'warning',
+			 showCancelButton: true,
+			 confirmButtonText: 'Remove',
+			 showLoaderOnConfirm: true,
+			 preConfirm: () => {
 
-             // Works but I think this should just be part of the Service response?
-		 	if ( response.message.length ) {
+			    this.$store.dispatch( 'assignment/deleteAssignment', itemId ).then( response => {
 
-					if ( response.success ) {
-						Message.success( response.message );
+					// Works but I think this should just be part of the Service response?
+					if ( response.message.length ) {
+
+						if ( response.success ) {
+							Message.success( response.message );
+						} else {
+							Message.error( response.message );
+						}
+
+						this.getGroupTodos();
 					} else {
-						Message.error( response.message );
+						Message.error( 'An error occurred.' );
+						this.loadingTodos = false;
 					}
-
-					this.getGroupTodos();
-				} else {
-					Message.error( 'An error occurred.' );
-					this.loadingTodos = false;
-				}
-			} );
+        		} );
+		 	}
+		 } );
 		},
 		editTodo( itemId ) {
           this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
