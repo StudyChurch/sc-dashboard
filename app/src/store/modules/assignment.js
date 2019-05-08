@@ -6,7 +6,13 @@ export const state = {
     assignments: [],
     assignmentsTotal: 0,
     assignment: {
-
+        id: 0,
+        title: {
+            rendered: '',
+        },
+        studies: [],
+        description: '',
+        date: '',
     }
 };
 
@@ -14,7 +20,15 @@ export const mutations = {
 
     ADD_ASSIGNMENT( state, assignment ) {
       state.assignments.unshift( assignment );
-    }
+    },
+
+    SET_ASSIGNMENT( state, assignment ) {
+      state.assignment = assignment;
+    },
+
+    SET_ASSIGNMENTS( state, assignments ) {
+        state.assignments = assignments;
+    },
 };
 
 export const actions = {
@@ -27,7 +41,7 @@ export const actions = {
 
     getAssignment( {commit, dispatch }, assignmentId ) {
         return AssignmentService.getAssignment( assignmentId ).then( response => {
-                //commit( 'SET_ASSIGNMENT', response.data );
+                commit( 'SET_ASSIGNMENT', response.data );
                 return response.data;
             });
     },
@@ -46,7 +60,20 @@ export const actions = {
     },
 
     fetchAssignments( {commit, dispatch, rootState }, data ) {
-        // TODO
+        data = data || {};
+        data.organizations = rootState.group.organizations.map( org => org.id );
+
+        return AssignmentService.getAssignments().then( response => {
+            commit( 'SET_ASSIGNMENTS', response.data );
+            return response.data;
+        } ).catch( error => {
+            const notification = {
+                type: 'error',
+                message: 'There was a problem fetching assignments: ' + error.message,
+            };
+            dispatch( 'alert/add', notification, { root: true } );
+            return 'error';
+        });
     },
 
     fetchAssignment( { commit, getters, state }, { id, params = {} } ) {
@@ -54,7 +81,14 @@ export const actions = {
             return state.assignment;
         }
 
-        // TODO
+        let assignment = getters.getAssignmentById( id );
+
+        if ( assignment ) {
+            commit( 'SET_ASSIGNMENT', assignment );
+            return assignment;
+        } else {
+            return dispatch( 'getAssignment' );
+        }
     }
 };
 

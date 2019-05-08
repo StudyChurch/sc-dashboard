@@ -241,7 +241,7 @@
       },
       getGroupTodos () {
         this.loadingTodos = true;
-        this.$http
+        /*this.$http
           .get(
             '/wp-json/studychurch/v1/assignments?group_id=' + this.groupData.id)
           .then(response => {
@@ -249,7 +249,13 @@
               this.showModal = false;
             }
           )
-          .finally(() => this.loadingTodos = false)
+          .finally(() => this.loadingTodos = false)*/
+
+        this.$store.dispatch( 'assignment/fetchAssignments' ).then( response => {
+           //console.log( 'response', response );
+			this.todoData = response;
+			this.showModal = false;
+		} ).finally( () => this.loadingTodos = false );
       },
       reset (keep) {
         let def = getDefaultData();
