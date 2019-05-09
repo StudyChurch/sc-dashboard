@@ -8,7 +8,7 @@
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
 			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
 
-			<div v-for="study in newTodo.studies">
+			<!--<div v-for="study in currentTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
 					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
@@ -21,7 +21,7 @@
 						</el-option>
 					</el-select>
 				</p>
-			</div>
+			</div>-->
 
 			<p>
 				<label for="instructions">Instructions</label>
@@ -32,16 +32,16 @@
 					:autosize="{ minRows: 4 }"
 					resize="none"
 					label="Study Description"
-					v-model="newTodo.description"></el-input>
+					v-model="currentTodo.content"></el-input>
 			</p>
 
-			<p>
+			<!--<p>
 				<label for="datepicker">Due Date</label>
 				<fg-input>
 					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="newTodo.date" type="date" placeholder="Pick a day">
 					</el-date-picker>
 				</fg-input>
-			</p>
+			</p>-->
 
 			<template slot="footer">
 				<n-button type="primary" @click.native="createTodo">Create</n-button>
@@ -105,6 +105,7 @@
         studies    : [],
         date       : ''
       },
+		currentTodo: {},
     }
   }
 
@@ -201,9 +202,20 @@
 		 } );
 		},
 		editTodo( itemId ) {
-          this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
-              // TODO
+
+          console.log( 'itemId', itemId );
+
+          this.$store.dispatch( 'assignment/getAssignment', itemId ).then( response => {
+             this.currentTodo = response;
+
+             console.log( 'currentTodo', this.currentTodo );
+
+             this.showModal = true;
 		  } );
+
+          /*this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
+              // TODO: this works but we need to edit the todo first and then update it when it's being saved
+		  } );*/
 		},
       getStudies () {
         if (this.newTodo.studies.length) {
