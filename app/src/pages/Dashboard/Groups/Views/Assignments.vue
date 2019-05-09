@@ -6,7 +6,7 @@
 			<n-button type="primary" @click.native="getStudies();showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
-			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
+			<h4 slot="header" class="title title-up">{{ action }} To-Do</h4>
 
 			<!--<div v-for="study in currentTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
@@ -44,7 +44,7 @@
 			</p>-->
 
 			<template slot="footer">
-				<n-button type="primary" @click.native="createTodo">Create</n-button>
+				<n-button type="primary" @click.native="createTodo">{{ action }}</n-button>
 			</template>
 		</modal>
 
@@ -105,7 +105,9 @@
         studies    : [],
         date       : ''
       },
+
 		currentTodo: {},
+		action: 'Create',
     }
   }
 
@@ -208,7 +210,7 @@
           this.$store.dispatch( 'assignment/getAssignment', itemId ).then( response => {
              this.currentTodo = response;
 
-             console.log( 'currentTodo', this.currentTodo );
+             this.action = 'Edit';
 
              this.showModal = true;
 		  } );
