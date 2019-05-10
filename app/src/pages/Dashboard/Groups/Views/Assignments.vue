@@ -228,6 +228,8 @@
               this.currentTodo.date = new Date( response.date );
               this.currentTodo.id = itemId;
 
+              this.getStudies();
+
              console.log( 'current TODO', this.currentTodo );
 
             //this.getStudyById( response.lessons[0] );
