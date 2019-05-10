@@ -3,12 +3,12 @@
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
 		<div class="text-right" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="getStudies();showModal = true">Create To-Do</n-button>
+			<n-button type="primary" @click.native="action = 'Create'; getStudies(); showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
 			<h4 slot="header" class="title title-up">{{ action }} To-Do</h4>
 
-			<!--<div v-for="study in currentTodo.studies">
+			<div v-for="study in currentTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
 					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
@@ -21,7 +21,7 @@
 						</el-option>
 					</el-select>
 				</p>
-			</div>-->
+			</div>
 
 			<p>
 				<label for="instructions">Instructions</label>
@@ -35,13 +35,13 @@
 					v-model="currentTodo.content"></el-input>
 			</p>
 
-			<!--<p>
+			<p>
 				<label for="datepicker">Due Date</label>
 				<fg-input>
-					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="newTodo.date" type="date" placeholder="Pick a day">
+					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="currentTodo.date" type="date" placeholder="Pick a day">
 					</el-date-picker>
 				</fg-input>
-			</p>-->
+			</p>
 
 			<template slot="footer">
 				<n-button type="primary" @click.native="createTodo">{{ action }}</n-button>
@@ -101,12 +101,16 @@
       todoData    : [],
       todoPage    : 1,
       newTodo     : {
-        description: '',
+        content: '',
         studies    : [],
         date       : ''
       },
 
-		currentTodo: {},
+		currentTodo: {
+          description: '',
+			studies: [],
+			date: '',
+		},
 		action: 'Create',
     }
   }
@@ -148,22 +152,22 @@
     },
     methods   : {
       createTodo() {
-        if (!this.newTodo.date || !this.newTodo.description) {
+        if (!this.currentTodo.date || !this.currentTodo.content) {
           Message.error('Please enter a date and description for your new to-do item');
           return;
         }
 
         this.creatingTodo = true;
         let studies = [];
-        for (let i = 0; i < this.newTodo.studies.length; i++) {
-          studies = studies.concat(this.newTodo.studies[i].value);
+        for (let i = 0; i < this.currentTodo.studies.length; i++) {
+          studies = studies.concat(this.currentTodo.studies[i].value);
         }
 
         this.$store.dispatch( 'assignment/createAssignment', {
             group_id: this.groupData.id,
-            content : this.newTodo.description,
+            content : this.currentTodo.content,
             lessons : studies,
-            date    : this.newTodo.date,
+            date    : this.currentTodo.date,
 		} ).then( response => {
             this.getGroupTodos();
             this.creatingTodo = false;
@@ -208,9 +212,17 @@
           console.log( 'itemId', itemId );
 
           this.$store.dispatch( 'assignment/getAssignment', itemId ).then( response => {
-             this.currentTodo = response;
 
-             this.action = 'Edit';
+              this.action = 'Edit';
+
+              console.log( 'Response', response );
+
+              this.currentTodo.content = response.content;
+              this.currentTodo.date = response.date;
+
+             console.log( 'current TODO', this.currentTodo );
+
+            //this.getStudyById( response.lessons[0] );
 
              this.showModal = true;
 		  } );
@@ -220,20 +232,36 @@
 		  } );*/
 		},
       getStudies () {
-        if (this.newTodo.studies.length) {
+
+          if ( 'Create' === this.action ) {
+              this.currentTodo = this.newTodo;
+          }
+
+          console.log( 'Group Data', this.groupData );
+
+        if ( this.currentTodo.studies && this.currentTodo.studies.length) {
           return;
         }
 
         for (let i = 0; i < this.groupData.studies.length; i++) {
           this.getStudy(this.groupData.studies[i]);
         }
+
+        console.log( 'GET STUDIES', this.currentTodo );
       },
       getStudy (study) {
         this.$http
           .get('/wp-json/studychurch/v1/studies/' + study.id + '/navigation')
           .then(response => {
             study.navigation = response.data;
-            this.newTodo.studies.push(study);
+
+            if ( ! this.currentTodo.studies ) {
+                this.currentTodo.studies = [];
+			}
+
+            this.currentTodo.studies.push(study);
+
+            console.log( 'Push Study', this.currentTodo );
           })
       },
       getGroupTodos () {
