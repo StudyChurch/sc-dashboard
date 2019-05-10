@@ -225,7 +225,7 @@
               console.log( 'Response', response );
 
               this.currentTodo.content = response.content;
-              this.currentTodo.date = response.date;
+              this.currentTodo.date = new Date( response.date );
               this.currentTodo.id = itemId;
 
              console.log( 'current TODO', this.currentTodo );
