@@ -580,3 +580,7 @@ function sc_add_group_assignment( $assignment, $group_id, $disable_reminders = f
 function sc_delete_group_assignment( $assignment ) {
 	return wp_delete_post( $assignment, true );
 }
+
+function sc_update_group_assignment( $assignment ) {
+    return wp_update_post( $assignment );
+}

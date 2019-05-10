@@ -46,8 +46,8 @@ export const actions = {
             });
     },
 
-    updateAssignment( {commit, dispatch }, assignmentId ) {
-        return AssignmentService.updateAssignment( assignmentId ).then( response => {
+    updateAssignment( {commit, dispatch }, assignment ) {
+        return AssignmentService.updateAssignment( assignment ).then( response => {
             //commit( 'SET_ASSIGNMENT', response.data );
             return response.data;
         } );

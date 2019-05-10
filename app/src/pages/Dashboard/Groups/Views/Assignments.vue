@@ -164,7 +164,7 @@
         }
 
         if ( 'Edit' === this.action ) {
-            this.$store.dispatch( 'assignment/updateAssignment', this.currentTodo.id ).then( response => {
+            this.$store.dispatch( 'assignment/updateAssignment', this.currentTodo ).then( response => {
 				console.log( 'Edit saved', response )
 				this.creatingTodo = false
 				this.getGroupTodos();

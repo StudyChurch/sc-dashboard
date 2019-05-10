@@ -14,8 +14,8 @@ export default {
       return apiClient.get( base + id );
     },
 
-    updateAssignment( id ) {
-      return apiClient.post( base + id );
+    updateAssignment( data ) {
+      return apiClient.post( base + data.id, data );
     },
 
     createAssignment( data ) {
