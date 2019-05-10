@@ -212,9 +212,16 @@ class Assignments extends WP_REST_Controller {
             return new WP_Error( 'invalid data', 'Please provide an id' );
         }
 
+        if ( ! $timezone = get_option( 'timezone_string', 'America/Los_Angeles' ) ) {
+            $timezone = 'America/Los_Angeles';
+        }
+
+        $date = new \DateTime( $request['date'] . ' 23:59:59', new \DateTimeZone( $timezone ) );
+
         $edit = sc_update_group_assignment( [
             'ID' => $request['id'],
             'post_content' => $request['content'],
+            'post_date'    => $date->format( 'Y-m-d H:i:s' ),
         ] );
 
         if ( $edit !== 0 ) {
