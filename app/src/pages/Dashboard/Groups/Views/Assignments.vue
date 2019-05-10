@@ -107,7 +107,7 @@
       },
 
 		currentTodo: {
-          description: '',
+          content: '',
 			studies: [],
 			date: '',
 		},
@@ -163,16 +163,23 @@
           studies = studies.concat(this.currentTodo.studies[i].value);
         }
 
-        this.$store.dispatch( 'assignment/createAssignment', {
-            group_id: this.groupData.id,
-            content : this.currentTodo.content,
-            lessons : studies,
-            date    : this.currentTodo.date,
-		} ).then( response => {
-            this.getGroupTodos();
-            this.creatingTodo = false;
-		} );
-
+        if ( 'Edit' === this.action ) {
+            this.$store.dispatch( 'assignment/updateAssignment', this.currentTodo.id ).then( response => {
+				console.log( 'Edit saved', response )
+				this.creatingTodo = false
+				this.getGroupTodos();
+		  } );
+		} else {
+            this.$store.dispatch( 'assignment/createAssignment', {
+                group_id: this.groupData.id,
+                content : this.currentTodo.content,
+                lessons : studies,
+                date    : this.currentTodo.date,
+            } ).then( response => {
+                this.getGroupTodos();
+           	 	this.creatingTodo = false;
+			} );
+		}
       },
 		removeTodo( itemId ) {
 
@@ -219,6 +226,7 @@
 
               this.currentTodo.content = response.content;
               this.currentTodo.date = response.date;
+              this.currentTodo.id = itemId;
 
              console.log( 'current TODO', this.currentTodo );
 
@@ -227,9 +235,6 @@
              this.showModal = true;
 		  } );
 
-          /*this.$store.dispatch( 'assignment/updateAssignment', itemId ).then( response => {
-              // TODO: this works but we need to edit the todo first and then update it when it's being saved
-		  } );*/
 		},
       getStudies () {
 
