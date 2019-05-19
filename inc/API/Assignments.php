@@ -217,7 +217,7 @@ class Assignments extends WP_REST_Controller {
                 $timezone = 'America/Los_Angeles';
             }
 
-            $date = new \DateTime( $request['date'] . ' 23:59:59', new \DateTimeZone( $timezone ) );
+            $date = new \DateTime( $request['date'], new \DateTimeZone( $timezone ) );
 
             $edit = sc_update_group_assignment( [
                 'id' => $request['id'],
