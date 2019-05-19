@@ -581,6 +581,23 @@ function sc_delete_group_assignment( $assignment ) {
 	return wp_delete_post( $assignment, true );
 }
 
-function sc_update_group_assignment( $assignment ) {
-    return wp_update_post( $assignment );
+function sc_update_group_assignment( $assignment, $group_id ) {
+
+    $id = wp_update_post( array(
+            'ID'           => $assignment['id'],
+            'post_content' => $assignment['post_content'],
+            'post_date'    => $assignment['post_date'],
+    ) );
+
+    if ( ! $id ) {
+        return 0;
+    }
+
+    wp_set_post_terms( $assignment['id'], $group_id, 'sc_group' );
+
+    if ( ! empty( $assignment['lessons'] ) ) {
+        update_post_meta( $assignment['id'], 'lessons', array_map( 'absint', (array) $assignment['lessons'] ) );
+    }
+
+    return $id;
 }

@@ -164,6 +164,10 @@
         }
 
         if ( 'Edit' === this.action ) {
+
+            this.currentTodo.group_id = this.groupData.id;
+            this.currentTodo.lessons = studies;
+
             this.$store.dispatch( 'assignment/updateAssignment', this.currentTodo ).then( response => {
 				console.log( 'Edit saved', response );
 				this.creatingTodo = false;

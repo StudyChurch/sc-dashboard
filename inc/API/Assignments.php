@@ -212,27 +212,33 @@ class Assignments extends WP_REST_Controller {
             return new WP_Error( 'invalid data', 'Please provide an id' );
         }
 
-        if ( ! $timezone = get_option( 'timezone_string', 'America/Los_Angeles' ) ) {
-            $timezone = 'America/Los_Angeles';
-        }
+        try {
+            if ( ! $timezone = get_option( 'timezone_string', 'America/Los_Angeles' ) ) {
+                $timezone = 'America/Los_Angeles';
+            }
 
-        $date = new \DateTime( $request['date'] . ' 23:59:59', new \DateTimeZone( $timezone ) );
+            $date = new \DateTime( $request['date'] . ' 23:59:59', new \DateTimeZone( $timezone ) );
 
-        $edit = sc_update_group_assignment( [
-            'ID' => $request['id'],
-            'post_content' => $request['content'],
-            'post_date'    => $date->format( 'Y-m-d H:i:s' ),
-        ] );
+            $edit = sc_update_group_assignment( [
+                'id' => $request['id'],
+                'post_content' => $request['content'],
+                'post_date'    => $date->format( 'Y-m-d H:i:s' ),
+                'lessons'      => $request['lessons'],
+            ], $request['group_id'] );
 
-        if ( $edit !== 0 ) {
+            if ( $edit !== 0 ) {
+                return array(
+                    'message' => 'Item has been successfully updated!',
+                    'success' => true,
+                    'request' => $request['content'],
+                );
+            }
             return array(
-                'message' => 'Item has been successfully updated!',
-                'success' => true,
-                'request' => $request['content'],
+                'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
             );
+        } catch ( \Exception $e ) {
+            return new WP_Error( $request['date'], $e->getMessage() );
         }
-        return array(
-            'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
-        );
+
     }
 }
