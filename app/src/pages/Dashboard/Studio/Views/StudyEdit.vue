@@ -131,6 +131,7 @@
   import { Select, Option, RadioGroup, RadioButton, DatePicker, Input } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
   import AvatarCropper from "vue-avatar-cropper";
+  import swal from 'sweetalert2';
 
   export default {
     components: {
@@ -278,11 +279,30 @@
           })
       },
 		deleteChapter( item ) {
-          console.log( 'Deleting Chapter: ' + item.id );
 
-          this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
-              console.log( 'Delete Response', response );
-		  } );
+            this.loadingChapters = true;
+            swal( {
+                title: 'Are you sure you want to remove this?',
+                text: 'You won\'t be able to revert this.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Remove',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
+						this.$store
+							.dispatch('study/updateNavigation', {studyID: this.studyData.id })
+							.then(response => {
+							this.navigation = response;
+							this.loadingChapters = false;
+						});
+				});
+				}
+       		 } ).then( (value) => {
+       		     if ( value.dismiss && value.dismiss == 'cancel' ) {
+                	this.loadingChapters = false;
+            	}
+			});
 		},
       saveStudy() {
         this.loading = true;
