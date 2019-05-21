@@ -168,6 +168,11 @@ export const actions = {
         return response.data;
       });
   },
+    deleteStudyChapter( {commit}, id ) {
+      return StudyService.deleteStudyChapter( id ).then( response => {
+        return response.data;
+      } );
+    },
   updateStudyChapter({commit, getters, state}, {chapterID, data}) {
     return StudyService.updateStudyChapter(chapterID, data)
       .then(response => {

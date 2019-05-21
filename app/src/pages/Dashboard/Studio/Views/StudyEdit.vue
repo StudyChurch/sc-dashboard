@@ -70,6 +70,9 @@
 					<draggable v-model="navigation" :options="{draggable: '.item', handle : '.drag-item'}" @end="saveNavigation">
 						<div v-for="item in navigation" :key="item.id" class="item">
 							<p>
+								<a @click="deleteChapter( item )" class="remove float-right" href="#">
+									<font-awesome-icon icon="times"></font-awesome-icon>
+								</a>
 								<a class="float-right drag-item" href="#">
 									<font-awesome-icon icon="arrows-alt"></font-awesome-icon>
 								</a>
@@ -274,6 +277,13 @@
             this.newChapter = '';
           })
       },
+		deleteChapter( item ) {
+          console.log( 'Deleting Chapter: ' + item.id );
+
+          this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
+              console.log( 'Delete Response', response );
+		  } );
+		},
       saveStudy() {
         this.loading = true;
         this.$store
