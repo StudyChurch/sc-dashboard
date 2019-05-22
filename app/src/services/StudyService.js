@@ -48,5 +48,8 @@ export default {
         'Content-Type': 'multipart/form-data',
       }
     });
-  }
+  },
+    deleteStudyChapter( id ) {
+      return apiClient.delete( base + id + '/navigation', id );
+    }
 }

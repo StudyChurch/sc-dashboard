@@ -93,6 +93,11 @@ class Studies extends WP_REST_Posts_Controller {
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 				'args'                => $this->get_endpoint_args_for_item_schema( false ),
 			),
+            array(
+                'methods'             => WP_REST_Server::DELETABLE,
+                'callback'            => array( $this, 'remove_chapter' ),
+                'permission_callback' => array( $this, 'update_item_permissions_check' ),
+            ),
 		) );
 
 		register_rest_route( $this->namespace, $this->base . '/(?P<study_id>[a-zA-Z0-9-]+)/chapters', array(
@@ -572,6 +577,25 @@ class Studies extends WP_REST_Posts_Controller {
 
 		return $this->get_navigation( $request );
 	}
+
+	public function remove_chapter( $request ) {
+
+	    if ( ! isset( $request['id'] ) ) {
+	        return new WP_Error( 'invalid data', 'Please provide an ID' );
+        }
+
+        $p = wp_delete_post( absint( $request['id'] ), true );
+
+	    if ( false === $p ) {
+	        return array(
+	            'message' => 'Error removing item, please try again or contact support.',
+            );
+        }
+
+        return array(
+            'message' => 'Item removed!',
+        );
+    }
 
 	public function update_item_thumbnail( $request ) {
 		require_once( ABSPATH . 'wp-admin/includes/image.php' );

@@ -70,6 +70,9 @@
 					<draggable v-model="navigation" :options="{draggable: '.item', handle : '.drag-item'}" @end="saveNavigation">
 						<div v-for="item in navigation" :key="item.id" class="item">
 							<p>
+								<a @click="deleteChapter( item )" class="remove float-right" href="#">
+									<font-awesome-icon icon="times"></font-awesome-icon>
+								</a>
 								<a class="float-right drag-item" href="#">
 									<font-awesome-icon icon="arrows-alt"></font-awesome-icon>
 								</a>
@@ -128,6 +131,7 @@
   import { Select, Option, RadioGroup, RadioButton, DatePicker, Input } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
   import AvatarCropper from "vue-avatar-cropper";
+  import swal from 'sweetalert2';
 
   export default {
     components: {
@@ -274,6 +278,32 @@
             this.newChapter = '';
           })
       },
+		deleteChapter( item ) {
+
+            this.loadingChapters = true;
+            swal( {
+                title: 'Are you sure you want to remove this?',
+                text: 'You won\'t be able to revert this.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Remove',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
+						this.$store
+							.dispatch('study/updateNavigation', {studyID: this.studyData.id })
+							.then(response => {
+							this.navigation = response;
+							this.loadingChapters = false;
+						});
+				});
+				}
+       		 } ).then( (value) => {
+       		     if ( value.dismiss && value.dismiss == 'cancel' ) {
+                	this.loadingChapters = false;
+            	}
+			});
+		},
       saveStudy() {
         this.loading = true;
         this.$store
