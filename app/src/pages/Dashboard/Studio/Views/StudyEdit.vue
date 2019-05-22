@@ -377,4 +377,9 @@
 </script>
 <style scoped>
 
+	.remove {
+		color: #FF3636;
+		margin-left: 7px;
+	}
+
 </style>
