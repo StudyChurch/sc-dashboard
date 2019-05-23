@@ -49,7 +49,7 @@
 
 						<el-popover
 							placement="top"
-							width="230"
+							width=""
 							v-model="deleteModal">
 							<p>Are you sure you want to delete this study?</p>
 							<div>
