@@ -299,7 +299,7 @@
 				});
 				}
        		 } ).then( (value) => {
-       		     if ( value.dismiss && value.dismiss == 'cancel' ) {
+				if ( value.dismiss && ( value.dismiss == 'cancel' || value.dismiss == 'overlay' ) ) {
                 	this.loadingChapters = false;
             	}
 			});
@@ -371,7 +371,6 @@
       handlerError(message, type, xhr) {
         this.message = "Oops! Something went wrong...";
       }
-
     }
   }
 </script>
