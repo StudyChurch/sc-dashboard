@@ -4,11 +4,11 @@
 
 		<div class="row">
 			<div class="col-12">
-				<div class="text-right" v-if="isGroupAdmin() && groupOrgID">
+				<div class="text-right" v-if="isGroupAdmin()">
 					<n-button type="primary" @click.native="handleShowModal">Create Study</n-button>
 				</div>
 
-				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin() && groupOrgID" v-loading="creatingStudy">
+				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin()" v-loading="creatingStudy">
 					<h4 slot="header" class="title title-up">Create a new study</h4>
 					<p>
 						<label for="name">Study Name</label>
@@ -567,28 +567,24 @@
         this.showModal = true;
       },
       createStudy() {
-        if (!this.newStudy.name || !this.newStudy.description) {
-          Message.error('Please enter a name and description for your new study');
-          return;
-        }
 
-        this.creatingStudy = true;
+            if (!this.newStudy.name || !this.newStudy.description) {
+                Message.error('Please enter a name and description for your new study');
+                return;
+            }
 
-        this.$store
-          .dispatch('study/createStudy', {
-            title   : this.newStudy.name,
-            content : this.newStudy.description,
-            author  : this.user.me.id,
-            status  : 'private',
-            sc_group: [this.groupOrgID + ''],
-          })
-          .then(response => {
-            this.addStudy(response.id)
-              .then(() => {
-                window.location = '/studio/studies/' + response.id;
-                Message.success('Study created! Taking you to the study edit page.');
-              })
-          })
+            this.creatingStudy = true;
+
+            this.$http.post('/wp-json/studychurch/v1/studies/', {
+                title  : this.newStudy.name,
+                content: this.newStudy.description,
+                author : this.user.me.id,
+                status : 'private',
+            })
+                .then(response => {
+                window.location = '/studio/studies/' + response.data.id;
+            Message.success('Study created! Taking you to the study edit page.');
+        });
 
       },
     },
