@@ -157,7 +157,10 @@ class BuddyPress {
 		if ( ! empty( $usernames ) ) {
 			// Replace @mention text with userlinks
 			foreach( (array) $usernames as $user_id => $username ) {
-				$activity->content = preg_replace( '/(@' . $username . '\b)/', "<span class='mention username'>@$username</span>", $activity->content );
+
+			    $editing = strpos( $activity->content, "<span class='mention username'>" ) !== false ? true : false;
+
+				$activity->content = preg_replace( '/(@' . $username . '\b)/', ( $editing ? "@$username" : "<span class='mention username'>@$username</span>" ), $activity->content );
 			}
 
 			// Add our hook to send @mention emails after the activity item is saved
