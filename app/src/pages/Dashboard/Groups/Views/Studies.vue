@@ -575,16 +575,26 @@
 
             this.creatingStudy = true;
 
-            this.$http.post('/wp-json/studychurch/v1/studies/', {
-                title  : this.newStudy.name,
-                content: this.newStudy.description,
-                author : this.user.me.id,
-                status : 'private',
-            })
+            let data = {
+                title   : this.newStudy.name,
+                content : this.newStudy.description,
+                author  : this.user.me.id,
+                status  : 'private',
+			};
+
+            if ( this.groupOrgID ) {
+                data.sc_group = [ this.groupOrgID + '' ];
+			}
+
+            this.$store
+                .dispatch('study/createStudy', data )
                 .then(response => {
-                window.location = '/studio/studies/' + response.data.id;
+                this.addStudy(response.id)
+                .then(() => {
+                window.location = '/studio/studies/' + response.id;
             Message.success('Study created! Taking you to the study edit page.');
-        });
+        })
+        })
 
       },
     },
