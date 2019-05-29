@@ -110,7 +110,7 @@
       },
       getUsers() {
         return this.user.users;
-      }
+      },
     },
 
     watch: {
@@ -203,8 +203,15 @@
         })
       },
       updateComment(comment) {
-        this.comment = comment;
-      }
+        this.comment = this.stripHTML( comment );
+      },
+
+		stripHTML( value ) {
+            var div = document.createElement("div");
+            div.innerHTML = value;
+            var text = div.textContent || div.innerText || "";
+            return text;
+		},
     },
     mounted() {
       let textarea = this.$refs.commentform.$refs.textarea;

@@ -49,7 +49,7 @@
 
 						<el-popover
 							placement="top"
-							width="230"
+							width=""
 							v-model="deleteModal">
 							<p>Are you sure you want to delete this study?</p>
 							<div>
@@ -67,12 +67,27 @@
 
 				<card v-loading="loadingChapters">
 					<h6>Chapters</h6>
+
+					<el-popover
+							placement="right-end"
+							width=""
+							v-model="deleteChapterModal">
+						<p>Are you sure you want to delete this chapter?</p>
+						<div>
+							<n-button size="sm" type="text" @click.native="deleteChapterModal = false">cancel</n-button>
+							<n-button type="danger" size="sm" @click.native="deleteChapter( currentChapterItem )">delete</n-button>
+						</div>
+
+					</el-popover>
+
 					<draggable v-model="navigation" :options="{draggable: '.item', handle : '.drag-item'}" @end="saveNavigation">
 						<div v-for="item in navigation" :key="item.id" class="item">
 							<p>
-								<a @click="deleteChapter( item )" class="remove float-right" href="#">
-									<font-awesome-icon icon="times"></font-awesome-icon>
-								</a>
+
+							<a @click="deleteChapterModal = true; currentChapterItem = item" class="remove float-right" href="#">
+								<font-awesome-icon icon="times"></font-awesome-icon>
+							</a>
+
 								<a class="float-right drag-item" href="#">
 									<font-awesome-icon icon="arrows-alt"></font-awesome-icon>
 								</a>
@@ -155,12 +170,14 @@
     data      : function () {
       return {
         deleteModal    : false,
+		deleteChapterModal: false,
         loading        : true,
         loadingChapters: true,
         uploadingThumb : false,
         navigation     : [],
         creatingChapter: false,
         newChapter     : '',
+		currentChapterItem: {},
         studyData      : {
           id     : 0,
           title  : '',
@@ -281,28 +298,15 @@
 		deleteChapter( item ) {
 
             this.loadingChapters = true;
-            swal( {
-                title: 'Are you sure you want to remove this?',
-                text: 'You won\'t be able to revert this.',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Remove',
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
-						this.$store
-							.dispatch('study/updateNavigation', {studyID: this.studyData.id })
-							.then(response => {
-							this.navigation = response;
-							this.loadingChapters = false;
-						});
-				});
-				}
-       		 } ).then( (value) => {
-				if ( value.dismiss && ( value.dismiss == 'cancel' || value.dismiss == 'overlay' ) ) {
-                	this.loadingChapters = false;
-            	}
-			});
+            this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
+                this.$store
+                .dispatch('study/updateNavigation', {studyID: this.studyData.id })
+                .then(response => {
+					this.navigation = response;
+            		this.loadingChapters = false;
+            		this.deleteChapterModal = false;
+        		});
+        	});
 		},
       saveStudy() {
         this.loading = true;
