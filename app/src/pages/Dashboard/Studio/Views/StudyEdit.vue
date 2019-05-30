@@ -50,7 +50,8 @@
 						<el-popover
 							placement="top"
 							width=""
-							v-model="deleteModal">
+							v-model="deleteModal"
+							popper-class="delete-study-modal">
 							<p>Are you sure you want to delete this study?</p>
 							<div>
 								<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
@@ -71,7 +72,8 @@
 					<el-popover
 							placement="right-end"
 							width=""
-							v-model="deleteChapterModal">
+							v-model="deleteChapterModal"
+							popper-class="delete-chapter-modal">
 						<p>Are you sure you want to delete this chapter?</p>
 						<div>
 							<n-button size="sm" type="text" @click.native="deleteChapterModal = false">cancel</n-button>
@@ -84,7 +86,7 @@
 						<div v-for="item in navigation" :key="item.id" class="item">
 							<p>
 
-							<a @click="deleteChapterModal = true; currentChapterItem = item" class="remove float-right" href="#">
+							<a @click.prevent="deleteChapterModal = true; currentChapterItem = item" class="remove float-right" href="#">
 								<font-awesome-icon icon="times"></font-awesome-icon>
 							</a>
 
@@ -385,4 +387,15 @@
 		margin-left: 7px;
 	}
 
+
+</style>
+
+<style>
+	.delete-chapter-modal {
+		top: 50%;
+	}
+
+	.delete-chapter-modal, .delete-study-modal {
+		word-break: break-word;
+	}
 </style>
