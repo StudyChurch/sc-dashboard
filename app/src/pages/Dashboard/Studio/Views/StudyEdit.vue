@@ -50,7 +50,8 @@
 						<el-popover
 							placement="top"
 							width=""
-							v-model="deleteModal">
+							v-model="deleteModal"
+							popper-class="delete-study-modal">
 							<p>Are you sure you want to delete this study?</p>
 							<div>
 								<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
@@ -392,6 +393,9 @@
 <style>
 	.delete-chapter-modal {
 		top: 50%;
+	}
+
+	.delete-chapter-modal, .delete-study-modal {
 		word-break: break-word;
 	}
 </style>
