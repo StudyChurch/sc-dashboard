@@ -52,6 +52,12 @@ class BuddyPress {
 
 	}
 
+    /**
+     * This function takes the ID out of the argument array from BuddyPress and stores it here so we can use it later.
+     *
+     * @param $r array Arguments being parsed by BuddyPress
+     * @return array
+     */
 	public function save_comment_id( $r ) {
 
 	    if ( isset ( $r['id'] ) ) {
@@ -61,6 +67,12 @@ class BuddyPress {
         return $r;
     }
 
+    /**
+     * This function injects the comment ID back into the BuddyPress array so we can update a comment without it duplicating
+     *
+     * @param $r array Arguments being parsed by BuddyPress
+     * @return array
+     */
     public function retrieve_comment_id( $r ) {
 
 	    if ( self::$saved_comment_id !== null ) {
