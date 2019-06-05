@@ -9,6 +9,8 @@ class BuddyPress {
 	 */
 	protected static $_instance;
 
+	protected static $saved_comment_id = null; // This is so we can update a comment on the Dashboard
+
 	/**
 	 * Only make one instance of the BuddyPress
 	 *
@@ -45,7 +47,40 @@ class BuddyPress {
 
 		add_filter( 'groups_group_slug_before_save', array( $this, 'id_as_slug' ), 10, 2 );
 
+		add_filter( 'bp_before_groups_post_update_parse_args', array( $this, 'save_comment_id' ) );
+		add_filter( 'bp_after_groups_record_activity_parse_args', array( $this, 'retrieve_comment_id' ) );
+
 	}
+
+    /**
+     * This function takes the ID out of the argument array from BuddyPress and stores it here so we can use it later.
+     *
+     * @param $r array Arguments being parsed by BuddyPress
+     * @return array
+     */
+	public function save_comment_id( $r ) {
+
+	    if ( isset ( $r['id'] ) ) {
+	        self::$saved_comment_id = absint( $r['id'] );
+        }
+
+        return $r;
+    }
+
+    /**
+     * This function injects the comment ID back into the BuddyPress array so we can update a comment without it duplicating
+     *
+     * @param $r array Arguments being parsed by BuddyPress
+     * @return array
+     */
+    public function retrieve_comment_id( $r ) {
+
+	    if ( self::$saved_comment_id !== null ) {
+	        $r['id'] = absint( self::$saved_comment_id );
+        }
+
+        return $r;
+    }
 
 	/**
 	 * Default to show hidden
