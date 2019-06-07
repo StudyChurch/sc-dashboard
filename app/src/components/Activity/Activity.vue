@@ -133,8 +133,8 @@
       },
 		deleteActivity() {
           ActivityService.deleteActivity( this.item ).then( response => {
-              console.log( 'Response', response );
-              // TODO: Refresh activity list
+			this.$parent.reset();
+			this.$parent.getGroupActivity();
 		  } );
 		},
       cancelUpdate(e) {
