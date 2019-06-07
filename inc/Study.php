@@ -488,6 +488,8 @@ class Study {
 
 		$studies = groups_get_groupmeta( $group_id, '_sc_study', true );
 
+		// TODO: Loop through group meta and make sure each study exists and is not trashed.
+
 		if ( empty( $studies ) ) {
 			$studies = [];
 		}
