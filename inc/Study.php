@@ -490,12 +490,10 @@ class Study {
 
 		// Loop through the studies and make sure they actually exist
         if ( is_array( $studies ) && ! empty( $studies ) ) {
-            $i = 0;
-            foreach( $studies as $study ) {
+            foreach( $studies as $key => $study ) {
                 if ( ! self::group_study_is_valid( $study ) ) {
-                    unset( $studies[ $i ] );
+                    unset( $studies[ $key ] );
                 }
-                $i++;
             }
         }
 
