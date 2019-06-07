@@ -2,6 +2,7 @@
 	<card class="card-chart sc-activity--card" no-footer-line>
 
 		<div slot="header" style="position:relative;padding-left:40px;">
+			<a href="#" class="sc-activity--card--edit" @click.prevent="deleteActivity">Delete</a>
 			<a href="#" v-if="showEditButton" @click.stop="editActivity" class="sc-activity--card--edit">Edit</a>
 			<img class="avatar border-gray" :src="item.user_avatar.full" alt="..." style="position: absolute;left:0;">
 			<div class="card-category" v-html="item.title"></div>
@@ -39,6 +40,7 @@
   import Card from '../Cards/Card.vue';
   import ActivityForm from './ActivityForm.vue';
   import ActivityComment from './ActivityComment.vue';
+  import ActivityService from '@/services/ActivityService.js';
   import { mapState } from 'vuex';
 
   export default {
@@ -129,6 +131,12 @@
           this.$refs.activityForm.setFocus();
         });
       },
+		deleteActivity() {
+          ActivityService.deleteActivity( this.item ).then( response => {
+              console.log( 'Response', response );
+              // TODO: Refresh activity list
+		  } );
+		},
       cancelUpdate(e) {
         this.update = false;
       },
