@@ -488,7 +488,16 @@ class Study {
 
 		$studies = groups_get_groupmeta( $group_id, '_sc_study', true );
 
-		// TODO: Loop through group meta and make sure each study exists and is not trashed.
+		// Loop through the studies and make sure they actually exist
+        if ( is_array( $studies ) && ! empty( $studies ) ) {
+            $i = 0;
+            foreach( $studies as $study ) {
+                if ( ! self::group_study_is_valid( $study ) ) {
+                    unset( $studies[ $i ] );
+                }
+                $i++;
+            }
+        }
 
 		if ( empty( $studies ) ) {
 			$studies = [];
@@ -500,6 +509,16 @@ class Study {
 
 		return $studies;
 	}
+
+    /**
+     * Check by ID if a study exists and is not trashed
+     *
+     * @param $id int Study ID
+     * @return bool
+     */
+	public static function group_study_is_valid( $id ) {
+        return ( null !== get_post( $id ) && 'trash' !== get_post_status( $id ) );
+    }
 
 	/**
 	 * Update Group studies
