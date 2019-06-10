@@ -2,6 +2,7 @@
 	<div class="sc-activity--comment--container">
 
 		<div class="sc-activity--comment" v-if="!showUpdateForm">
+			<a href="#" @click.prevent="deleteActivity" class="sc-activity--card--edit">Delete</a>
 			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>
 			<img class="avatar border-gray" :src="item.user_avatar.full">
 			<p class="category" style="margin-bottom:0;">
@@ -27,6 +28,7 @@
 <script>
   import ActivityForm from './ActivityForm.vue';
   import { Input } from 'element-ui';
+  import ActivityService from '@/services/ActivityService.js';
 
   export default {
     components: {
@@ -36,7 +38,7 @@
     data() {
       return {
         item  : this.comment,
-        update: false
+        update: false,
       }
     },
     props     : {
@@ -75,9 +77,15 @@
         this.item.content = activity.content;
         this.item.date = activity.date;
         this.update = false;
-      }
+      },
+		deleteActivity() {
+            ActivityService.deleteActivity( this.item ).then( response => {
+				console.log( response );
+        	} );
+		}
     }
   }
 </script>
 <style>
 </style>
+12
