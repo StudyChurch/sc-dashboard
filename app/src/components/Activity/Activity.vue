@@ -23,7 +23,7 @@
 
 		<div v-if="showActivityContent" v-html="item.content.rendered"></div>
 
-		<activity-comment v-if="showActivityContent" v-for="comment in getComments" :comment="comment" :key="comment.id"></activity-comment>
+		<activity-comment v-if="showActivityContent" v-for="comment in getComments" :comment="comment" :key="comment.id" v-on:activityDeleted="activityDeleted"></activity-comment>
 
 		<activity-form
 			v-show="showCommentForm"
@@ -151,7 +151,11 @@
         this.item.content = activity.content;
         this.item.date = activity.date;
         this.update = false;
-      }
+      },
+		activityDeleted(activity) {
+          let index = this.item.comments.findIndex( x => x.id === activity.id );
+          this.item.comments.splice( index, 1 );
+		}
     }
   }
 </script>

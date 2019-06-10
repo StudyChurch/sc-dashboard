@@ -79,9 +79,10 @@
         this.update = false;
       },
 		deleteActivity() {
-            ActivityService.deleteActivity( this.item ).then( response => {
-				console.log( response );
+           ActivityService.deleteActivity( this.item ).then( response => {
+            	this.$emit('activityDeleted', response.data );
         	} );
+
 		}
     }
   }
