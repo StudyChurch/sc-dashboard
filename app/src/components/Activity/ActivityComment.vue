@@ -1,9 +1,27 @@
 <template>
 	<div class="sc-activity--comment--container">
 
-		<div class="sc-activity--comment" v-if="!showUpdateForm">
-			<a href="#" @click.prevent="deleteActivity" class="sc-activity--card--edit">Delete</a>
-			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>
+		<div class="sc-activity--comment" v-if="!showUpdateForm" v-loading="loading">
+			<!--<a href="#" @click.prevent="deleteActivity" class="sc-activity--card--edit">Delete</a>
+			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>-->
+			<div class="sc-activity--comment--actions">
+				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
+					<n-button
+							class="edit btn-neutral"
+							type="info"
+							size="sm" icon>
+						<font-awesome-icon icon="edit"></font-awesome-icon>
+					</n-button>
+				</a>
+				<n-button
+						@click.native="deleteActivity"
+						class="remove btn-neutral"
+						type="danger"
+						size="sm" icon>
+					<font-awesome-icon icon="times"></font-awesome-icon>
+				</n-button>
+			</div>
+
 			<img class="avatar border-gray" :src="item.user_avatar.full">
 			<p class="category" style="margin-bottom:0;">
 				{{ item.date | dateFormat }} | <span v-html="item.title"></span>
@@ -33,12 +51,13 @@
   export default {
     components: {
       ActivityForm,
-      Input
+      Input,
     },
     data() {
       return {
         item  : this.comment,
         update: false,
+		  loading: false,
       }
     },
     props     : {
@@ -79,13 +98,19 @@
         this.update = false;
       },
 		deleteActivity() {
+          this.loading = true;
            ActivityService.deleteActivity( this.item ).then( response => {
             	this.$emit('activityDeleted', response.data );
+            	this.loading = false;
         	} );
 
 		}
     }
   }
 </script>
-<style>
+<style scoped>
+	.sc-activity--comment--actions {
+		display: inline-block;
+		float: right;
+	}
 </style>
