@@ -2,9 +2,7 @@
 	<div class="sc-activity--comment--container">
 
 		<div class="sc-activity--comment" v-if="!showUpdateForm" v-loading="loading">
-			<!--<a href="#" @click.prevent="deleteActivity" class="sc-activity--card--edit">Delete</a>
-			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>-->
-			<div class="sc-activity--comment--actions">
+			<div class="sc-activity--comment--child-actions">
 				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
 					<n-button
 							class="edit btn-neutral"
@@ -109,8 +107,12 @@
   }
 </script>
 <style scoped>
-	.sc-activity--comment--actions {
+	.sc-activity--comment--child-actions {
 		display: inline-block;
 		float: right;
+	}
+
+	.sc-activity--comment--child-actions .btn-neutral {
+		background: transparent;
 	}
 </style>

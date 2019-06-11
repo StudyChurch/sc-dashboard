@@ -2,8 +2,27 @@
 	<card class="card-chart sc-activity--card" no-footer-line>
 
 		<div slot="header" style="position:relative;padding-left:40px;">
-			<a href="#" class="sc-activity--card--edit" @click.prevent="deleteActivity">Delete</a>
-			<a href="#" v-if="showEditButton" @click.stop="editActivity" class="sc-activity--card--edit">Edit</a>
+			<!--<a href="#" class="sc-activity--card--edit" @click.prevent="deleteActivity">Delete</a>
+			<a href="#" v-if="showEditButton" @click.stop="editActivity" class="sc-activity--card--edit">Edit</a>-->
+
+			<div class="sc-activity--comment--parent-actions">
+				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
+					<n-button
+							class="edit btn-neutral"
+							type="info"
+							size="sm" icon>
+						<font-awesome-icon icon="edit"></font-awesome-icon>
+					</n-button>
+				</a>
+				<n-button
+						@click.native="deleteActivity"
+						class="remove btn-neutral"
+						type="danger"
+						size="sm" icon>
+					<font-awesome-icon icon="times"></font-awesome-icon>
+				</n-button>
+			</div>
+
 			<img class="avatar border-gray" :src="item.user_avatar.full" alt="..." style="position: absolute;left:0;">
 			<div class="card-category" v-html="item.title"></div>
 			<div class="card-category">{{item.date | dateFormat }}</div>
@@ -159,5 +178,9 @@
     }
   }
 </script>
-<style>
+<style scoped>
+	.sc-activity--comment--parent-actions {
+		display: inline-block;
+		float: right;
+	}
 </style>
