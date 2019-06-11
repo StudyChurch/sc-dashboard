@@ -2,9 +2,6 @@
 	<card class="card-chart sc-activity--card" no-footer-line>
 
 		<div slot="header" style="position:relative;padding-left:40px;">
-			<!--<a href="#" class="sc-activity--card--edit" @click.prevent="deleteActivity">Delete</a>
-			<a href="#" v-if="showEditButton" @click.stop="editActivity" class="sc-activity--card--edit">Edit</a>-->
-
 			<div class="sc-activity--comment--parent-actions">
 				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
 					<n-button
@@ -14,13 +11,22 @@
 						<font-awesome-icon icon="edit"></font-awesome-icon>
 					</n-button>
 				</a>
-				<n-button
-						@click.native="deleteActivity"
-						class="remove btn-neutral"
-						type="danger"
-						size="sm" icon v-if="showEditButton || isGroupAdmin()">
-					<font-awesome-icon icon="times"></font-awesome-icon>
-				</n-button>
+				<el-popover
+						v-model="deleteModal"
+						placement="top">
+					<p>Are you sure you want to delete this entire activity thread?</p>
+					<div>
+						<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
+						<n-button type="danger" size="sm" @click.native="deleteActivity">delete</n-button>
+					</div>
+					<n-button
+							slot="reference"
+							class="remove btn-neutral"
+							type="danger"
+							size="sm" icon v-if="showEditButton || isGroupAdmin()">
+						<font-awesome-icon icon="times"></font-awesome-icon>
+					</n-button>
+				</el-popover>
 			</div>
 
 			<img class="avatar border-gray" :src="item.user_avatar.full" alt="..." style="position: absolute;left:0;">
@@ -71,7 +77,8 @@
     data() {
       return {
         item  : this.activity,
-        update: false
+        update: false,
+		  deleteModal: false,
       }
     },
     props     : {
