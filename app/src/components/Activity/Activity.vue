@@ -18,7 +18,7 @@
 						@click.native="deleteActivity"
 						class="remove btn-neutral"
 						type="danger"
-						size="sm" icon>
+						size="sm" icon v-if="showEditButton || isGroupAdmin()">
 					<font-awesome-icon icon="times"></font-awesome-icon>
 				</n-button>
 			</div>
@@ -60,7 +60,7 @@
   import ActivityForm from './ActivityForm.vue';
   import ActivityComment from './ActivityComment.vue';
   import ActivityService from '@/services/ActivityService.js';
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
 
   export default {
     components: {
@@ -91,6 +91,7 @@
     watch     : {},
     computed  : {
       ...mapState(['user', 'group']),
+      ...mapGetters('group', ['isGroupAdmin']),
 
       getComments() {
         if (undefined === this.item.comments) {

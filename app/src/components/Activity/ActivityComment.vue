@@ -15,7 +15,7 @@
 						@click.native="deleteActivity"
 						class="remove btn-neutral"
 						type="danger"
-						size="sm" icon>
+						size="sm" icon v-if="showEditButton || isGroupAdmin()">
 					<font-awesome-icon icon="times"></font-awesome-icon>
 				</n-button>
 			</div>
@@ -45,6 +45,7 @@
   import ActivityForm from './ActivityForm.vue';
   import { Input } from 'element-ui';
   import ActivityService from '@/services/ActivityService.js';
+  import { mapGetters } from 'vuex';
 
   export default {
     components: {
@@ -66,6 +67,8 @@
     },
     watch     : {},
     computed  : {
+        ...mapGetters('group', ['isGroupAdmin']),
+
       showEditButton() {
         return undefined !== this.item.content.raw && this.item.user === this.$store.state.user.me.id;
       },
