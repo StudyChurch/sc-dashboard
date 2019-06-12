@@ -1,4 +1,15 @@
 
-.fr-video iframe {
-  max-width: 100%;
+.f-video-editor {
+  display: block;
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 25px;
+  height: 0;
+}
+.f-video-editor iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
