@@ -5,6 +5,7 @@ import Axios from 'axios';
 import router from './router';
 import store from './store/store';
 import { Message } from 'element-ui';
+import videoResize from './video-resize.js';
 
 const he = require('he');
 const $ = require('jquery');
