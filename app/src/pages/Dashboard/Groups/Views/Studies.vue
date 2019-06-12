@@ -4,11 +4,11 @@
 
 		<div class="row">
 			<div class="col-12">
-				<div class="text-right" v-if="isGroupAdmin() && ( currentUserCan( 'create_study' ) ) || groupOrgID )">
+				<div class="text-right" v-if="isGroupAdmin() && ( currentUserCan( 'create_study' ) || groupOrgID )">
 					<n-button type="primary" @click.native="handleShowModal">Create Study</n-button>
 				</div>
 
-				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin() && ( currentUserCan( 'create_study' ) ) || groupOrgID )" v-loading="creatingStudy">
+				<modal :show.sync="showModal" headerclasses="justify-content-center" v-if="isGroupAdmin() && ( currentUserCan( 'create_study' ) || groupOrgID )" v-loading="creatingStudy">
 					<h4 slot="header" class="title title-up">Create a new study</h4>
 					<p>
 						<label for="name">Study Name</label>
