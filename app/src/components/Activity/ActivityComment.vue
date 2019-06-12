@@ -23,7 +23,7 @@
 							slot="reference"
 							class="remove btn-neutral"
 							type="danger"
-							size="sm" icon v-if="showEditButton || isGroupAdmin()">
+							size="sm" icon v-if="( showEditButton || isGroupAdmin() ) && item.type != 'answer_update'">
 						<font-awesome-icon icon="times"></font-awesome-icon>
 					</n-button>
 				</el-popover>
