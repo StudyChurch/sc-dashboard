@@ -193,19 +193,5 @@ class Activity extends BP_REST_Activity_Endpoint {
 
 		return groups_is_user_admin( $user_id, $group->parent_id );
 	}
-
-
-	public function delete_item_permissions_check( $request ) {
-
-        $activity = $this->get_activity_object( $request );
-        $group    = groups_get_group( $activity->item_id );
-
-	    if ( groups_is_user_admin( get_current_user_id(), $group->id ) ) {
-	        return true;
-        } else {
-	        wp_die( 'error' . print_r( $activity, true ) );
-        }
-
-        return parent::delete_item_permissions_check( $request );
-    }
+    
 }
