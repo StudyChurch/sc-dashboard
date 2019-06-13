@@ -1,12 +1,12 @@
 
-.f-video-editor {
+.f-video-editor, .fr-video {
   display: block;
   position: relative;
   padding-bottom: 56.25%;
   padding-top: 25px;
   height: 0;
 }
-.f-video-editor iframe {
+.f-video-editor iframe, .fr-video iframe {
   position: absolute;
   top: 0;
   left: 0;
