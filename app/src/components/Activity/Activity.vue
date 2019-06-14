@@ -49,7 +49,7 @@
 
 		<div v-if="showActivityContent" v-html="item.content.rendered"></div>
 
-		<activity-comment v-if="showActivityContent" v-for="comment in getComments" :comment="comment" :key="comment.id" v-on:activityDeleted="activityDeleted"></activity-comment>
+		<activity-comment v-if="showActivityContent" v-for="comment in getComments" :comment="comment" :key="comment.id" v-on:activityDeleted="activityDeleted" v-loading="loadingActivity"></activity-comment>
 
 		<activity-form
 			v-show="showCommentForm"
@@ -80,6 +80,7 @@
         item  : this.activity,
         update: false,
 		  deleteModal: false,
+		  loadingActivity: false,
       }
     },
     props     : {
@@ -160,9 +161,11 @@
         });
       },
 		deleteActivity() {
+          this.loadingActivity = true;
           ActivityService.deleteActivity( this.item ).then( response => {
 			this.$parent.reset();
 			this.$parent.getGroupActivity();
+            this.loadingActivity = true;
 		  } );
 		},
       cancelUpdate(e) {
