@@ -198,7 +198,7 @@ class Activity extends BP_REST_Activity_Endpoint {
 
         $activity = $this->get_activity_object( $request );
 
-        if ( 'activity_update' === $activity->type &&  ) {
+        if ( 'activity_update' === $activity->type ) {
             if ( groups_is_user_admin( get_current_user_id(), $activity->item_id ) ) {
                 return true;
             }
