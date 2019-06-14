@@ -2,7 +2,6 @@
 	<card class="card-chart sc-activity--card" no-footer-line>
 
 		<div slot="header" style="position:relative;padding-left:40px;">
-			
 			<div class="sc-activity--comment--parent-actions">
 				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
 					<n-button
@@ -24,7 +23,7 @@
 							slot="reference"
 							class="remove btn-neutral"
 							type="danger"
-							size="sm" icon v-if="( showEditButton || isGroupAdmin() ) && item.type != 'answer_update'">
+							size="sm" icon v-if="( showEditButton || isGroupAdmin() ) && ( item.type == 'activity_update' || item.type == 'activity_comment' )">
 						<font-awesome-icon icon="times"></font-awesome-icon>
 					</n-button>
 				</el-popover>
