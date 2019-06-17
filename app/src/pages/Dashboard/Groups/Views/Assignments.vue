@@ -235,7 +235,7 @@
 
           this.editTodoData.content = this.stripHTML( this.editTodoData.content );
 
-            let savedStudy = this.editTodoData.lessons[0].id;
+            let savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[ 0 ].id : false;
 
             if ( savedStudy ) {
 
