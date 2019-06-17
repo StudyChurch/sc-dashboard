@@ -51,7 +51,7 @@
 		<modal :show.sync="showEditModal" headerclasses="justify-content-center" v-loading="editingTodo">
 			<h4 slot="header" class="title title-up">Edit To-Do</h4>
 
-			<div v-for="study in editTodoData.lessons">
+			<div v-for="study in newTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
 					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
@@ -87,7 +87,7 @@
 			</p>-->
 
 			<template slot="footer">
-				<n-button type="primary" @click.native="editTodo">Edit</n-button>
+				<n-button type="primary" @click.native="saveEdit">Edit</n-button>
 			</template>
 		</modal>
 
@@ -175,6 +175,7 @@
     data      : getDefaultData,
     mounted() {
       this.getGroupTodos();
+      this.getStudies();
     },
     computed  : {
       ...mapState(['user', 'group']),
@@ -213,6 +214,14 @@
           })
       },
 		editTodo( itemId ) {
+          this.getStudies();
+
+
+
+
+            //this.newTodo.studies.value.unshift( this.editTodoData.lessons[0].id );
+
+			console.log( 'new Todo', this.newTodo );
 
           console.log( 'ITEM', itemId );
 
@@ -224,9 +233,45 @@
 
           console.log( 'Study Data', this.groupData.studies );
 
-            /*this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
-                id: itemId,
-				content: 'This is the new content',
+          this.editTodoData.content = this.stripHTML( this.editTodoData.content );
+
+            let savedStudy = this.editTodoData.lessons[0].id;
+
+            if ( savedStudy ) {
+
+                for( let i = 0; i < this.newTodo.studies.length; i++ ) {
+
+                    console.log( 'loop ' + i, this.newTodo.studies[ i ] );
+
+                    let item = this.newTodo.studies[ i ].navigation;
+
+                    console.log( 'Navigation item set', item );
+
+                    for ( let y = 0; y < item.length; y++ ) {
+
+                        console.log( 'inner loop ' + y, item[ y ] );
+
+
+
+                        if ( item[ y ].id === savedStudy ) {
+                            console.log( 'FOUND THE STUDY' );
+
+                            this.newTodo.studies[ i ].value.push( item[ y ].id );
+                        } else {
+                            console.log( 'NOT FOUND', item[ y ].id );
+						}
+                    }
+                }
+            } else {
+                console.log( 'savedStudy was not found', savedStudy );
+			}
+
+		},
+		saveEdit() {
+
+            this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
+                id: this.editTodoData.key,
+                content: this.editTodoData.content,
             }).then(response => {
                 if ( response.data.message.length ) {
 
@@ -241,7 +286,7 @@
                 Message.error( 'An error occurred.' );
                 this.loadingTodos = false;
             }
-       	 });*/
+        });
 		},
 		removeTodo( itemId ) {
 
@@ -294,6 +339,12 @@
           )
           .finally(() => this.loadingTodos = false)
       },
+        stripHTML( value ) {
+            var div = document.createElement("div");
+            div.innerHTML = value;
+            var text = div.textContent || div.innerText || "";
+            return text;
+        },
       reset (keep) {
         let def = getDefaultData();
         def[keep] = this[keep];
