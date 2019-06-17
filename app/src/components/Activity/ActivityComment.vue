@@ -1,8 +1,35 @@
 <template>
 	<div class="sc-activity--comment--container">
 
-		<div class="sc-activity--comment" v-if="!showUpdateForm">
-			<a href="#" v-if="showEditButton" @click.prevent="editActivity" class="sc-activity--card--edit">Edit</a>
+		<div class="sc-activity--comment" v-if="!showUpdateForm" v-loading="loading">
+			<div class="sc-activity--comment--child-actions">
+				<a href="#" v-if="showEditButton" @click.prevent="editActivity">
+					<n-button
+							class="edit btn-neutral"
+							type="info"
+							size="sm" icon>
+						<font-awesome-icon icon="edit"></font-awesome-icon>
+					</n-button>
+				</a>
+				<el-popover
+					v-model="deleteModal"
+					placement="top">
+					<p>Are you sure you want to delete this comment?</p>
+					<div>
+						<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
+						<n-button type="danger" size="sm" @click.native="deleteActivity">delete</n-button>
+					</div>
+					<n-button
+							slot="reference"
+							class="remove btn-neutral"
+							type="danger"
+							size="sm" icon v-if="( showEditButton || isGroupAdmin() ) && ( item.type == 'activity_update' || item.type == 'activity_comment' )">
+						<font-awesome-icon icon="times"></font-awesome-icon>
+					</n-button>
+				</el-popover>
+
+			</div>
+
 			<img class="avatar border-gray" :src="item.user_avatar.full">
 			<p class="category" style="margin-bottom:0;">
 				{{ item.date | dateFormat }} | <span v-html="item.title"></span>
@@ -27,16 +54,20 @@
 <script>
   import ActivityForm from './ActivityForm.vue';
   import { Input } from 'element-ui';
+  import ActivityService from '@/services/ActivityService.js';
+  import { mapGetters } from 'vuex';
 
   export default {
     components: {
       ActivityForm,
-      Input
+      Input,
     },
     data() {
       return {
         item  : this.comment,
-        update: false
+        update: false,
+		  loading: false,
+		  deleteModal: false,
       }
     },
     props     : {
@@ -47,6 +78,8 @@
     },
     watch     : {},
     computed  : {
+        ...mapGetters('group', ['isGroupAdmin']),
+
       showEditButton() {
         return undefined !== this.item.content.raw && this.item.user === this.$store.state.user.me.id;
       },
@@ -75,9 +108,25 @@
         this.item.content = activity.content;
         this.item.date = activity.date;
         this.update = false;
-      }
+      },
+		deleteActivity() {
+          this.loading = true;
+           ActivityService.deleteActivity( this.item ).then( response => {
+            	this.$emit('activityDeleted', response.data );
+            	this.loading = false;
+        	} );
+
+		}
     }
   }
 </script>
-<style>
+<style scoped>
+	.sc-activity--comment--child-actions {
+		display: inline-block;
+		float: right;
+	}
+
+	.sc-activity--comment--child-actions .btn-neutral {
+		background: transparent;
+	}
 </style>

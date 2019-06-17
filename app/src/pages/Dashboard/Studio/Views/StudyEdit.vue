@@ -49,8 +49,9 @@
 
 						<el-popover
 							placement="top"
-							width="230"
-							v-model="deleteModal">
+							width=""
+							v-model="deleteModal"
+							popper-class="delete-study-modal">
 							<p>Are you sure you want to delete this study?</p>
 							<div>
 								<n-button size="sm" type="text" @click.native="deleteModal = false">cancel</n-button>
@@ -67,9 +68,28 @@
 
 				<card v-loading="loadingChapters">
 					<h6>Chapters</h6>
+
+					<el-popover
+							placement="right-end"
+							width=""
+							v-model="deleteChapterModal"
+							popper-class="delete-chapter-modal">
+						<p>Are you sure you want to delete this chapter?</p>
+						<div>
+							<n-button size="sm" type="text" @click.native="deleteChapterModal = false">cancel</n-button>
+							<n-button type="danger" size="sm" @click.native="deleteChapter( currentChapterItem )">delete</n-button>
+						</div>
+
+					</el-popover>
+
 					<draggable v-model="navigation" :options="{draggable: '.item', handle : '.drag-item'}" @end="saveNavigation">
 						<div v-for="item in navigation" :key="item.id" class="item">
 							<p>
+
+							<a @click.prevent="deleteChapterModal = true; currentChapterItem = item" class="remove float-right" href="#">
+								<font-awesome-icon icon="times"></font-awesome-icon>
+							</a>
+
 								<a class="float-right drag-item" href="#">
 									<font-awesome-icon icon="arrows-alt"></font-awesome-icon>
 								</a>
@@ -128,6 +148,7 @@
   import { Select, Option, RadioGroup, RadioButton, DatePicker, Input } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
   import AvatarCropper from "vue-avatar-cropper";
+  import swal from 'sweetalert2';
 
   export default {
     components: {
@@ -151,12 +172,14 @@
     data      : function () {
       return {
         deleteModal    : false,
+		deleteChapterModal: false,
         loading        : true,
         loadingChapters: true,
         uploadingThumb : false,
         navigation     : [],
         creatingChapter: false,
         newChapter     : '',
+		currentChapterItem: {},
         studyData      : {
           id     : 0,
           title  : '',
@@ -274,6 +297,19 @@
             this.newChapter = '';
           })
       },
+		deleteChapter( item ) {
+
+            this.loadingChapters = true;
+            this.$store.dispatch( 'study/deleteStudyChapter', item.id ).then( response => {
+                this.$store
+                .dispatch('study/updateNavigation', {studyID: this.studyData.id })
+                .then(response => {
+					this.navigation = response;
+            		this.loadingChapters = false;
+            		this.deleteChapterModal = false;
+        		});
+        	});
+		},
       saveStudy() {
         this.loading = true;
         this.$store
@@ -341,10 +377,25 @@
       handlerError(message, type, xhr) {
         this.message = "Oops! Something went wrong...";
       }
-
     }
   }
 </script>
 <style scoped>
 
+	.remove {
+		color: #FF3636;
+		margin-left: 7px;
+	}
+
+
+</style>
+
+<style>
+	.delete-chapter-modal {
+		top: 50%;
+	}
+
+	.delete-chapter-modal, .delete-study-modal {
+		word-break: break-word;
+	}
 </style>

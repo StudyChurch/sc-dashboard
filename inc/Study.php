@@ -486,7 +486,22 @@ class Study {
 			$group_id = bp_get_current_group_id();
 		}
 
-		$studies = groups_get_groupmeta( $group_id, '_sc_study', true );
+		$studies         = groups_get_groupmeta( $group_id, '_sc_study', true );
+		$studies_changed = false;
+
+		// Loop through the studies and make sure they actually exist
+        if ( is_array( $studies ) && ! empty( $studies ) ) {
+            foreach( $studies as $key => $study ) {
+                if ( ! self::group_study_is_valid( $study ) ) {
+                    unset( $studies[ $key ] );
+                    $studies_changed = true;
+                }
+            }
+        }
+
+        if ( $studies_changed ) {
+            groups_update_groupmeta( $group_id, '_sc_study', $studies );
+        }
 
 		if ( empty( $studies ) ) {
 			$studies = [];
@@ -498,6 +513,16 @@ class Study {
 
 		return $studies;
 	}
+
+    /**
+     * Check by ID if a study exists and is not trashed
+     *
+     * @param $id int Study ID
+     * @return bool
+     */
+	public static function group_study_is_valid( $id ) {
+        return ( null !== get_post( $id ) && 'trash' !== get_post_status( $id ) );
+    }
 
 	/**
 	 * Update Group studies
@@ -652,7 +677,6 @@ class Study {
 		} else {
 			$group = groups_get_group( $group_id );
 
-			// TODO: This is wrong
 			return str_replace( '/studies/', '/groups/' . bp_get_group_slug( $group ) . '/studies/', get_permalink( $study_id ) );
 		}
 	}

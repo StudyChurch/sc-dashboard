@@ -9,5 +9,9 @@ export default {
 
   addActivity(data) {
     return apiClient.post(path, data);
+  },
+
+  deleteActivity( item ) {
+    return apiClient.delete( path + item.id );
   }
 }

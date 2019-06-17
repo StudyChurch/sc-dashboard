@@ -2,6 +2,17 @@
 
 use StudyChurch\Settings;
 
+
+//https://app.study.church/studies/hope-chpt-1/week-29/?sc-group=248
+if ( ! empty( $_GET[ 'sc-group' ] ) ) {
+	$group = groups_get_group( $_GET[ 'sc-group' ] );
+
+	$url = '/groups/' . bp_get_group_slug( $group ) . $_SERVER['REQUEST_URI'];
+	$url = remove_query_arg( 'sc-group', $url );
+	wp_safe_redirect( $url );
+	die();
+}
+
 // @todo handle 404 more gracefully
 global $wp_query, $wp_the_query;
 $wp_query->is_404 = $wp_the_query->is_404 = false;
