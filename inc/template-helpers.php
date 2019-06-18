@@ -599,7 +599,7 @@ function sc_update_group_assignment( $request ) {
     }
 
     if ( isset( $request['lessons'] ) && ! empty( $request['lessons'] ) ) {
-        update_post_meta( $assignment['ID'], 'lessons', array_map( 'absint', (array) $assignment['lessons'] ) );
+        update_post_meta( $assignment['ID'], 'lessons', array_map( 'absint', (array) $request['lessons'] ) );
     }
 
     return wp_update_post( $assignment );

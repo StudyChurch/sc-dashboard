@@ -215,20 +215,9 @@
       },
 		editTodo( itemId ) {
 
-
-            //this.newTodo.studies.value.unshift( this.editTodoData.lessons[0].id );
-
-			console.log( 'new Todo', this.newTodo );
-
-          console.log( 'ITEM', itemId );
-
           this.showEditModal = true;
 
           this.editTodoData = itemId;
-
-          console.log( 'EDIT DATA', this.editTodoData );
-
-          console.log( 'Study Data', this.groupData.studies );
 
           this.editTodoData.content = this.stripHTML( this.editTodoData.content );
 
@@ -239,31 +228,16 @@
 			    savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[ z ].id : false;
 
                 if (savedStudy) {
-
                     for (let i = 0; i < this.newTodo.studies.length; i++) {
-
-                        console.log('loop ' + i, this.newTodo.studies[i]);
-
                         let item = this.newTodo.studies[i].navigation;
-
-                        console.log('Navigation item set', item);
 
                         for (let y = 0; y < item.length; y++) {
 
-                            console.log('inner loop ' + y, item[y]);
-
-
                             if (item[y].id === savedStudy) {
-                                console.log('FOUND THE STUDY');
-
                                 this.newTodo.studies[i].value.push(item[y].id);
-                            } else {
-                                console.log('NOT FOUND', item[y].id);
                             }
                         }
                     }
-                } else {
-                    console.log('savedStudy was not found', savedStudy);
                 }
             }
 
@@ -342,7 +316,6 @@
           .get(
             '/wp-json/studychurch/v1/assignments?group_id=' + this.groupData.id)
           .then(response => {
-              console.log( 'getGroupTodos', response );
               this.todoData = response.data;
               this.showModal = false;
             }
