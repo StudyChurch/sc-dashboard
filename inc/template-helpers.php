@@ -581,9 +581,24 @@ function sc_delete_group_assignment( $assignment ) {
 	return wp_delete_post( $assignment, true );
 }
 
-function sc_update_group_assignment( $assignment ) {
+function sc_update_group_assignment( $request ) {
 
-    if ( ! empty( $assignment['lessons'] ) ) {
+    $assignment = array();
+
+    $assignment['ID'] = $request['id'];
+    $assignment['post_content'] = $request['content'];
+
+    if ( isset( $request['date'] ) ) {
+        if ( ! $timezone = get_option( 'timezone_string', 'America/Los_Angeles' ) ) {
+            $timezone = 'America/Los_Angeles';
+        }
+
+        $date = new DateTime( $request['date'] . ' 23:59:59', new DateTimeZone( $timezone ) );
+
+        $assignment['post_date'] = $date->format( 'Y-m-d H:i:s' );
+    }
+
+    if ( isset( $request['lessons'] ) && ! empty( $request['lessons'] ) ) {
         update_post_meta( $assignment['ID'], 'lessons', array_map( 'absint', (array) $assignment['lessons'] ) );
     }
 

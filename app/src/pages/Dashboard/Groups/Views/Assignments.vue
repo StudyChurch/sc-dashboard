@@ -3,7 +3,7 @@
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
 		<div class="text-right" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="getStudies();showModal = true">Create To-Do</n-button>
+			<n-button type="primary" @click.native="showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
 			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
@@ -78,13 +78,13 @@
 						v-model="editTodoData.content"></el-input>
 			</p>
 
-			<!--<p>
+			<p>
 				<label for="datepicker">Due Date</label>
 				<fg-input>
-					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="newTodo.date" type="date" placeholder="Pick a day">
+					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="editTodoData.formattedDate" type="date" placeholder="Pick a day">
 					</el-date-picker>
 				</fg-input>
-			</p>-->
+			</p>
 
 			<template slot="footer">
 				<n-button type="primary" @click.native="saveEdit">Edit</n-button>
@@ -93,7 +93,7 @@
 
 		<card v-for="data in todoData" :class="'card todo'">
 			&nbsp;
-			<h6>Due Date: {{data.date}}</h6>
+			<h6>Due Date: {{ data.date }}</h6>
 			<p v-for="lesson in data.lessons">
 				<router-link v-if="lesson.link != false" :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
 					<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
@@ -214,9 +214,6 @@
           })
       },
 		editTodo( itemId ) {
-          this.getStudies();
-
-
 
 
             //this.newTodo.studies.value.unshift( this.editTodoData.lessons[0].id );
@@ -283,6 +280,7 @@
                 id: this.editTodoData.key,
                 content: this.editTodoData.content,
                 lessons : studies,
+				date: this.editTodoData.formattedDate,
             }).then(response => {
                 if ( response.data.message.length ) {
 
@@ -344,6 +342,7 @@
           .get(
             '/wp-json/studychurch/v1/assignments?group_id=' + this.groupData.id)
           .then(response => {
+              console.log( 'getGroupTodos', response );
               this.todoData = response.data;
               this.showModal = false;
             }

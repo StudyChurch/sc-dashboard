@@ -143,6 +143,7 @@ class Assignments extends WP_REST_Controller {
 			$ass = [
 				'key'     => $assignments->get_the_key(),
 				'date'    => $assignments->get_the_date(),
+				'formattedDate' => $assignments->get_the_date( 'Y-m-d' ),
 				'group'   => $assignments->get_group_id(),
 				'content' => apply_filters( 'the_content', wp_kses_post( $assignments->get_the_content() ) ),
 			    'lessons' => [],
@@ -207,16 +208,7 @@ class Assignments extends WP_REST_Controller {
             return new WP_Error( 'invalid data', 'Please provide an id' );
         }
 
-        $assignment = array();
-
-        $assignment['ID'] = $request['id'];
-        $assignment['post_content'] = $request['content'];
-
-        if ( isset( $request['lessons'] ) && ! empty( $request['lessons'] ) ) {
-            $assignment['lessons'] = $request['lessons'];
-        }
-
-        $edit = sc_update_group_assignment( $assignment );
+        $edit = sc_update_group_assignment( $request );
 
 	    if ( $edit !== 0 ) {
             return array(
