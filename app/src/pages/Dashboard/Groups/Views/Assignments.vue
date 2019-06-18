@@ -235,37 +235,40 @@
 
           this.editTodoData.content = this.stripHTML( this.editTodoData.content );
 
-            let savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[ 0 ].id : false;
+            let savedStudy = null;
 
-            if ( savedStudy ) {
+			for( let z = 0; z < this.editTodoData.lessons.length; z++ ) {
 
-                for( let i = 0; i < this.newTodo.studies.length; i++ ) {
+			    savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[ z ].id : false;
 
-                    console.log( 'loop ' + i, this.newTodo.studies[ i ] );
+                if (savedStudy) {
 
-                    let item = this.newTodo.studies[ i ].navigation;
+                    for (let i = 0; i < this.newTodo.studies.length; i++) {
 
-                    console.log( 'Navigation item set', item );
+                        console.log('loop ' + i, this.newTodo.studies[i]);
 
-                    for ( let y = 0; y < item.length; y++ ) {
+                        let item = this.newTodo.studies[i].navigation;
 
-                        console.log( 'inner loop ' + y, item[ y ] );
+                        console.log('Navigation item set', item);
+
+                        for (let y = 0; y < item.length; y++) {
+
+                            console.log('inner loop ' + y, item[y]);
 
 
+                            if (item[y].id === savedStudy) {
+                                console.log('FOUND THE STUDY');
 
-                        if ( item[ y ].id === savedStudy ) {
-                            console.log( 'FOUND THE STUDY' );
-
-                            this.newTodo.studies[ i ].value.push( item[ y ].id );
-                        } else {
-                            console.log( 'NOT FOUND', item[ y ].id );
-						}
+                                this.newTodo.studies[i].value.push(item[y].id);
+                            } else {
+                                console.log('NOT FOUND', item[y].id);
+                            }
+                        }
                     }
+                } else {
+                    console.log('savedStudy was not found', savedStudy);
                 }
-            } else {
-                console.log( 'savedStudy was not found', savedStudy );
-			}
-
+            }
 		},
 		saveEdit() {
 
