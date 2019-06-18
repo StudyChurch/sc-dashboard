@@ -582,5 +582,10 @@ function sc_delete_group_assignment( $assignment ) {
 }
 
 function sc_update_group_assignment( $assignment ) {
+
+    if ( ! empty( $assignment['lessons'] ) ) {
+        update_post_meta( $assignment['ID'], 'lessons', array_map( 'absint', (array) $assignment['lessons'] ) );
+    }
+
     return wp_update_post( $assignment );
 }

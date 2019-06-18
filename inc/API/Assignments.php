@@ -207,10 +207,16 @@ class Assignments extends WP_REST_Controller {
             return new WP_Error( 'invalid data', 'Please provide an id' );
         }
 
-        $edit = sc_update_group_assignment( [
-            'ID' => $request['id'],
-            'post_content' => $request['content'],
-        ] );
+        $assignment = array();
+
+        $assignment['ID'] = $request['id'];
+        $assignment['post_content'] = $request['content'];
+
+        if ( isset( $request['lessons'] ) && ! empty( $request['lessons'] ) ) {
+            $assignment['lessons'] = $request['lessons'];
+        }
+
+        $edit = sc_update_group_assignment( $assignment );
 
 	    if ( $edit !== 0 ) {
             return array(

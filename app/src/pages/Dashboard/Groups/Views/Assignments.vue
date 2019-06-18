@@ -51,7 +51,7 @@
 		<modal :show.sync="showEditModal" headerclasses="justify-content-center" v-loading="editingTodo">
 			<h4 slot="header" class="title title-up">Edit To-Do</h4>
 
-			<div v-for="study in newTodo.studies">
+			<div v-for="study in editTodoData.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
 					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
@@ -269,12 +269,20 @@
                     console.log('savedStudy was not found', savedStudy);
                 }
             }
+
+            this.editTodoData.studies = this.newTodo.studies;
 		},
 		saveEdit() {
+
+            let studies = [];
+            for (let i = 0; i < this.editTodoData.studies.length; i++) {
+                studies = studies.concat(this.editTodoData.studies[i].value);
+            }
 
             this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
                 id: this.editTodoData.key,
                 content: this.editTodoData.content,
+                lessons : studies,
             }).then(response => {
                 if ( response.data.message.length ) {
 
