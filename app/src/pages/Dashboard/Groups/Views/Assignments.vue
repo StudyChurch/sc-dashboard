@@ -3,7 +3,7 @@
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
 		<div class="text-right" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="showModal = true">Create To-Do</n-button>
+			<n-button type="primary" @click.native="clearStudyValues();showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
 			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
@@ -223,25 +223,42 @@
 
             let savedStudy = null;
 
-			for( let z = 0; z < this.editTodoData.lessons.length; z++ ) {
+            if ( this.editTodoData.lessons.length ) {
+                for (let z = 0; z < this.editTodoData.lessons.length; z++) {
 
-			    savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[ z ].id : false;
+                    savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[z].id : false;
 
-                if (savedStudy) {
-                    for (let i = 0; i < this.newTodo.studies.length; i++) {
-                        let item = this.newTodo.studies[i].navigation;
+                    if (savedStudy) {
+                        for (let i = 0; i < this.newTodo.studies.length; i++) {
+                            let item = this.newTodo.studies[i].navigation;
 
-                        for (let y = 0; y < item.length; y++) {
+                            this.newTodo.studies[i].value = [];
 
-                            if (item[y].id === savedStudy) {
-                                this.newTodo.studies[i].value.push(item[y].id);
+                            for (let y = 0; y < item.length; y++) {
+
+                                if (item[y].id === savedStudy) {
+                                    this.newTodo.studies[i].value.push(item[y].id);
+                                }
                             }
                         }
+
+                        this.editTodoData.studies = this.newTodo.studies;
                     }
                 }
-            }
+            } else {
 
-            this.editTodoData.studies = this.newTodo.studies;
+                this.clearStudyValues();
+
+                this.editTodoData.studies = this.newTodo.studies;
+			}
+
+            //
+
+		},
+		clearStudyValues() {
+            for (let i = 0; i < this.newTodo.studies.length; i++) {
+                this.newTodo.studies[i].value = '';
+            }
 		},
 		saveEdit() {
 
