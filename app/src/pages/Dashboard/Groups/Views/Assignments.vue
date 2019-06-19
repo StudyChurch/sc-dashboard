@@ -245,6 +245,8 @@
 		},
 		saveEdit() {
 
+          this.editingTodo = true;
+
             let studies = [];
             for (let i = 0; i < this.editTodoData.studies.length; i++) {
                 studies = studies.concat(this.editTodoData.studies[i].value);
@@ -264,11 +266,15 @@
                     Message.error( response.data.message );
                 }
 
+
                 this.getGroupTodos();
             } else {
                 Message.error( 'An error occurred.' );
                 this.loadingTodos = false;
             }
+
+            this.editingTodo = false;
+            this.showEditModal = false;
         });
 		},
 		removeTodo( itemId ) {
