@@ -19,6 +19,8 @@
 
   .el-tag {
     background: $primary-color !important;
+    height: auto;
+    white-space: normal;
   }
 
   .el-icon-close {
