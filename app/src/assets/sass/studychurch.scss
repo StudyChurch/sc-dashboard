@@ -33,3 +33,12 @@
 .mention.username {
   font-weight: 700;
 }
+
+
+.el-select-dropdown {
+
+  @include mobile {
+    max-width: 100% !important;
+    left: 0 !important;
+  }
+}
