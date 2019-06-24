@@ -195,6 +195,11 @@
           })
         }
 
+        values.push( {
+			key : 'group',
+			value: 'group',
+		});
+
         return values;
       },
       setFocus() {
