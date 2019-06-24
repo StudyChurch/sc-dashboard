@@ -11,7 +11,7 @@
 			<div v-for="study in newTodo.studies">
 				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
 				<p>
-					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="select-primary">
+					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="modal-select select-primary">
 						<el-option
 							class="select-primary"
 							v-for="chapter in study.navigation"
