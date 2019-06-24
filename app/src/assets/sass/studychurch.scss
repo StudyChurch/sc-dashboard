@@ -1,3 +1,4 @@
+@import "mixins.sass";
 
 .f-video-editor, .fr-video {
   display: block;
@@ -6,6 +7,7 @@
   padding-top: 25px;
   height: 0;
 }
+
 .f-video-editor iframe, .fr-video iframe {
   position: absolute;
   top: 0;
