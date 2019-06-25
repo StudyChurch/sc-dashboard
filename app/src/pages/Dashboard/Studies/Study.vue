@@ -3,6 +3,14 @@
 		<card v-loading="loading" style="min-height: 200px;">
 			<div class="card-header">
 				<div class="study-meta float-right">
+					<n-button
+							type="primary"
+							class=""
+							@click.native="toggleFullscreen"
+							icon
+							size="sm">
+							<font-awesome-icon icon="arrows-alt"></font-awesome-icon>
+					</n-button>
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
 						<el-option
 							v-for="option in studyData.navigation"
@@ -94,6 +102,7 @@
         nextChapter   : {},
         navigation    : []
       },
+		fullscreen: false,
     }
   }
 
@@ -158,6 +167,27 @@
       }
     },
     methods   : {
+        toggleFullscreen() {
+          this.fullscreen = ! this.fullscreen;
+
+            let sidebar = document.getElementsByClassName( 'groups-sidebar' );
+
+            if ( sidebar.length > 0 ) {
+                sidebar[0].style.display = this.fullscreen ? 'none' : 'block';
+            }
+
+            let mainContent = document.getElementsByClassName( 'col-lg-8' );
+
+            if ( mainContent.length > 0 ) {
+
+                if ( this.fullscreen ) {
+                    mainContent[0].classList.add( 'fullscreen' );
+				} else {
+                    mainContent[0].classList.remove( 'fullscreen' );
+				}
+
+            }
+		},
       decode(html) {
         return he.decode(html);
       },

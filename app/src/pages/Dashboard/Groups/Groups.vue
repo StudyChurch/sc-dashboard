@@ -2,7 +2,7 @@
 	<div class="sc-group">
 
 		<div class="row">
-			<div class="col-lg-4">
+			<div class="col-lg-4 groups-sidebar">
 				<card class="card-user">
 					<div slot="image" class="image">
 						<img src="@/assets/img/bg-bible.jpg" alt="...">
