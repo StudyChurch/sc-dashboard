@@ -195,6 +195,11 @@
           })
         }
 
+        values.push( {
+			key : 'group',
+			value: 'group',
+		});
+
         return values;
       },
       setFocus() {
@@ -221,6 +226,10 @@
       this.tribute.attach(textarea);
 
       textarea.addEventListener('keydown', this.handleKeydown);
+
+        textarea.addEventListener('tribute-replaced', (event) => {
+            textarea.dispatchEvent( new Event('input') );
+        });
     },
     beforeDestroy() {
       let textarea = this.$refs.commentform.$refs.textarea;

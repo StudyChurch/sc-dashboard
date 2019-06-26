@@ -81,6 +81,15 @@ class Assignments extends WP_REST_Controller {
 			'schema' => array( $this, 'get_public_item_schema' ),
 		) );
 
+        register_rest_route( $this->namespace, $this->rest_base . '/edit', array(
+            array(
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => array( $this, 'edit_item' ),
+                'permission_callback' => array( $this, 'get_permissions_check' ),
+            ),
+            'schema' => array( $this, 'get_public_item_schema' ),
+        ) );
+
 	}
 
 	/**
@@ -134,6 +143,7 @@ class Assignments extends WP_REST_Controller {
 			$ass = [
 				'key'     => $assignments->get_the_key(),
 				'date'    => $assignments->get_the_date(),
+				'formattedDate' => $assignments->get_the_date( 'Y-m-d' ),
 				'group'   => $assignments->get_group_id(),
 				'content' => apply_filters( 'the_content', wp_kses_post( $assignments->get_the_content() ) ),
 			    'lessons' => [],
@@ -189,6 +199,26 @@ class Assignments extends WP_REST_Controller {
 
 	    return array(
 	        'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
+        );
+    }
+
+    public function edit_item( $request ) {
+
+	    if ( empty( $request['id'] ) ) {
+            return new WP_Error( 'invalid data', 'Please provide an id' );
+        }
+
+        $edit = sc_update_group_assignment( $request );
+
+	    if ( $edit !== 0 ) {
+            return array(
+                'message' => 'Item has been successfully updated!',
+                'success' => true,
+            );
+        }
+
+        return array(
+            'message' => 'An error has occurred, please try again. If the problem persists please contact support.',
         );
     }
 }

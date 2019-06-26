@@ -3,7 +3,7 @@
 	<div class="sc-group--assignments" v-loading="loadingTodos" style="min-height: 200px;">
 
 		<div class="text-right" v-if="isGroupAdmin()">
-			<n-button type="primary" @click.native="getStudies();showModal = true">Create To-Do</n-button>
+			<n-button type="primary" @click.native="clearStudyValues();showModal = true">Create To-Do</n-button>
 		</div>
 		<modal :show.sync="showModal" headerclasses="justify-content-center" v-loading="creatingTodo">
 			<h4 slot="header" class="title title-up">Create a new To-Do</h4>
@@ -48,9 +48,52 @@
 			</template>
 		</modal>
 
+		<modal :show.sync="showEditModal" headerclasses="justify-content-center" v-loading="editingTodo">
+			<h4 slot="header" class="title title-up">Edit To-Do</h4>
+
+			<div v-for="study in editTodoData.studies">
+				<label :for="'study-' + study.id" v-html="study.title.rendered"></label>
+				<p>
+					<el-select v-model="study.value" :id="'study-' + study.id" multiple placeholder="Select" class="modal-select select-primary">
+						<el-option
+								class="select-primary"
+								v-for="chapter in study.navigation"
+								:key="chapter.id"
+								:label="chapter.title.rendered"
+								:value="chapter.id">
+						</el-option>
+					</el-select>
+				</p>
+			</div>
+
+			<p>
+				<label for="instructions">Instructions</label>
+				<el-input
+						ref="description"
+						type="textarea"
+						id="instructions"
+						:autosize="{ minRows: 4 }"
+						resize="none"
+						label="Study Description"
+						v-model="editTodoData.content"></el-input>
+			</p>
+
+			<p>
+				<label for="datepicker">Due Date</label>
+				<fg-input>
+					<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="editTodoData.formattedDate" type="date" placeholder="Pick a day">
+					</el-date-picker>
+				</fg-input>
+			</p>
+
+			<template slot="footer">
+				<n-button type="primary" @click.native="saveEdit">Edit</n-button>
+			</template>
+		</modal>
+
 		<card v-for="data in todoData" :class="'card todo'">
 			&nbsp;
-			<h6>Due Date: {{data.date}}</h6>
+			<h6>Due Date: {{ data.date }}</h6>
 			<p v-for="lesson in data.lessons">
 				<router-link v-if="lesson.link != false" :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
 					<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
@@ -58,6 +101,13 @@
 			</p>
 			<p v-html="data.content"></p>
 			<p class="todo-actions">
+				<n-button type="info"
+						  @click.native="editTodo( data )"
+						  size="sm"
+						  class="edit btn-neutral"
+						  icon
+						  v-if="isGroupAdmin()"><font-awesome-icon icon="edit"></font-awesome-icon>
+				</n-button>
 				<n-button type="danger"
 						  @click.native="removeTodo( data.key )"
 						  size="sm"
@@ -88,6 +138,8 @@
     return {
       creatingTodo: false,
       showModal   : false,
+		showEditModal: false,
+		editingTodo: false,
       loadingTodos: true,
       loadingMore : false,
       todoData    : [],
@@ -97,6 +149,7 @@
         studies    : [],
         date       : ''
       },
+		editTodoData: {}
     }
   }
 
@@ -122,6 +175,7 @@
     data      : getDefaultData,
     mounted() {
       this.getGroupTodos();
+      this.getStudies();
     },
     computed  : {
       ...mapState(['user', 'group']),
@@ -159,6 +213,87 @@
             this.creatingTodo = false;
           })
       },
+		editTodo( itemId ) {
+
+          this.showEditModal = true;
+
+          this.editTodoData = itemId;
+
+          this.editTodoData.content = this.stripHTML( this.editTodoData.content );
+
+            let savedStudy = null;
+
+            if ( this.editTodoData.lessons.length ) {
+                for (let z = 0; z < this.editTodoData.lessons.length; z++) {
+
+                    savedStudy = this.editTodoData.lessons.length > 0 ? this.editTodoData.lessons[z].id : false;
+
+                    if (savedStudy) {
+                        for (let i = 0; i < this.newTodo.studies.length; i++) {
+                            let item = this.newTodo.studies[i].navigation;
+
+                            this.newTodo.studies[i].value = [];
+
+                            for (let y = 0; y < item.length; y++) {
+
+                                if (item[y].id === savedStudy) {
+                                    this.newTodo.studies[i].value.push(item[y].id);
+                                }
+                            }
+                        }
+
+                        this.editTodoData.studies = this.newTodo.studies;
+                    }
+                }
+            } else {
+
+                this.clearStudyValues();
+
+                this.editTodoData.studies = this.newTodo.studies;
+			}
+
+            //
+
+		},
+		clearStudyValues() {
+            for (let i = 0; i < this.newTodo.studies.length; i++) {
+                this.newTodo.studies[i].value = '';
+            }
+		},
+		saveEdit() {
+
+          this.editingTodo = true;
+
+            let studies = [];
+            for (let i = 0; i < this.editTodoData.studies.length; i++) {
+                studies = studies.concat(this.editTodoData.studies[i].value);
+            }
+
+            this.$http.post('/wp-json/studychurch/v1/assignments/edit', {
+                id: this.editTodoData.key,
+                content: this.editTodoData.content,
+                lessons : studies,
+				date: this.editTodoData.formattedDate,
+            }).then(response => {
+                if ( response.data.message.length ) {
+
+                if ( response.data.success ) {
+                    Message.success( response.data.message );
+                } else {
+                    Message.error( response.data.message );
+                }
+
+
+                this.getGroupTodos();
+            } else {
+                Message.error( 'An error occurred.' );
+                this.loadingTodos = false;
+            }
+
+            this.editingTodo = false;
+            this.showEditModal = false;
+        });
+		},
 		removeTodo( itemId ) {
 
           this.loadingTodos = true;
@@ -210,6 +345,12 @@
           )
           .finally(() => this.loadingTodos = false)
       },
+        stripHTML( value ) {
+            var div = document.createElement("div");
+            div.innerHTML = value;
+            var text = div.textContent || div.innerText || "";
+            return text;
+        },
       reset (keep) {
         let def = getDefaultData();
         def[keep] = this[keep];

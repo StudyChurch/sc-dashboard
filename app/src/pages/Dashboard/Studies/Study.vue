@@ -251,4 +251,13 @@
 	.study-meta div {
 		margin: 0 .5rem;
 	}
+
+	@media screen and (max-width: 768px) {
+		.study-meta {
+			width: 100%;
+			margin-bottom: 2em;
+		}
+
+
+	}
 </style>
