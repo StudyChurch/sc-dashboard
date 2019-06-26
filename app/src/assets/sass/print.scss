@@ -1,0 +1,18 @@
+
+@media print {
+
+  .col-lg-4,
+  .navbar,
+  .sidebar,
+  .el-menu,
+  .panel-header-sm,
+  .btn,
+  .footer,
+  .study-meta {
+    display: none !important;
+  }
+
+  .col-lg-8 {
+    width: 100%;
+  }
+}
