@@ -49,7 +49,8 @@ library.add(
   faBars,
   faArrowsAlt,
   faDollarSign,
-  faArrowsAlt,
+  faEye,
+  faEyeSlash,
 );
 
 /**
