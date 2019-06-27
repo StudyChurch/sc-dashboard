@@ -5,6 +5,12 @@
 				<div class="col-lg-10">
 					<card style="min-height: 200px;">
 						<h6 slot="header" class="card-title">Chapter Details</h6>
+
+						<p>
+							Publish Date<br>
+							<el-date-picker id="datepicker" value-format="yyyy-MM-dd" v-model="model.date" type="date" placeholder="Defaults to today">
+							</el-date-picker>
+						</p>
 						<p>
 							<el-input type="text" v-model="model.title" style="font-size:22px;"></el-input>
 						</p>
@@ -47,7 +53,7 @@
 
   import draggable from 'vuedraggable';
   import Element from '../Components/Element';
-  import { Select, Option } from 'element-ui';
+  import { Select, Option, DatePicker } from 'element-ui';
   import { mapState, mapGetters } from 'vuex';
 
   export default {
@@ -61,6 +67,7 @@
       ActivityForm,
       'el-select': Select,
       'el-option': Option,
+	  'el-date-picker': DatePicker,
       Element,
       draggable
     },
@@ -71,6 +78,7 @@
         model   : {
           title  : '',
           content: '',
+		  date: '',
         },
         chapter : {
           id      : 0,
@@ -124,11 +132,13 @@
       this.$store
         .dispatch('study/getStudyChapter', {study: this.$route.params.study_id, chapter: this.$route.params.chapter_id})
         .then(response => {
+            console.log( 'Retrieve Chapter', response );
           this.chapter = response;
           this.loading = false;
           this.model = {
             title  : response.title.raw,
             content: response.content.raw,
+			date   : response.date,
           };
         });
     },
@@ -158,6 +168,7 @@
               elements: this.elements,
               title   : this.model.title,
               content : this.model.content,
+			  date    : this.model.date + ' 00:00:00',
             }
           })
           .then(response => {
