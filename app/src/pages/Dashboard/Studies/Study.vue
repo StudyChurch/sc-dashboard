@@ -193,7 +193,7 @@
             }
 
             // Dashboard column is different
-			let dashboardSidebar = document.querySelector( '.col-lg-4' );
+			let dashboardSidebar = document.querySelector( '.sc-dashboard .col-lg-4' );
 
 			if ( null !== dashboardSidebar ) {
 			    dashboardSidebar.style.display = this.fullscreen ? 'none' : 'flex';
