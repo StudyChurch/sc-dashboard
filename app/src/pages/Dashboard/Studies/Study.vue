@@ -171,10 +171,13 @@
     },
     methods   : {
         toggleFullscreen() {
+
           this.fullscreen = ! this.fullscreen;
 
-            let sidebar = document.querySelector( '.groups-sidebar' );
-			sidebar.style.display = this.fullscreen ? 'none' : 'block';
+           let sidebar = document.querySelector( '.groups-sidebar' );
+            if ( null !== sidebar ) {
+                sidebar.style.display = this.fullscreen ? 'none' : 'block';
+            }
 
             let mainContent = document.querySelector( '.col-lg-8' );
 
@@ -185,7 +188,16 @@
 			}
 
 			let innerMenu = document.querySelector( '.el-menu' );
-			innerMenu.style.display = this.fullscreen ? 'none' : 'flex';
+			if ( null !== innerMenu ) {
+                innerMenu.style.display = this.fullscreen ? 'none' : 'flex';
+            }
+
+            // Dashboard column is different
+			let dashboardSidebar = document.querySelector( '.col-lg-4' );
+
+			if ( null !== dashboardSidebar ) {
+			    dashboardSidebar.style.display = this.fullscreen ? 'none' : 'flex';
+			}
 		},
       decode(html) {
         return he.decode(html);
