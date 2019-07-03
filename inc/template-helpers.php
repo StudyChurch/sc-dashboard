@@ -121,9 +121,9 @@ function sc_study_get_navigation( $id = null ) {
         'child_of'    => sc_get_study_id( $study_id ),
     );
 
-	//if ( is_admin() ) {
+	if ( sc_user_can_manage_group() ) {
 	    $args['post_status'] = 'publish,private,future';
-   // }
+    }
 
 
 	$elements = get_pages( $args );
