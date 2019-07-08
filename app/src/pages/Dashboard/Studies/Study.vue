@@ -14,6 +14,7 @@
 					</el-select>
 				</div>
 				<div>
+					<p v-if="chapterData.status === 'future'" class="admin-future-dated">Goes live <span v-html="getDate"></span></p>
 					<h6 class="title" v-html="studyData.name"></h6>
 					<h5 class="title" v-html="chapterData.title.rendered"></h5>
 				</div>
@@ -155,7 +156,10 @@
       },
       isPreview() {
         return this.isOrganization;
-      }
+      },
+        getDate() {
+            return this.$options.filters.dateFormat(this.chapterData.date);
+        }
     },
     methods   : {
       decode(html) {
@@ -250,6 +254,12 @@
 
 	.study-meta div {
 		margin: 0 .5rem;
+	}
+
+	.admin-future-dated {
+		font-size: smaller;
+		font-style: italic;
+		margin-bottom: 0;
 	}
 
 	@media screen and (max-width: 768px) {
