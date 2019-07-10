@@ -121,7 +121,7 @@ function sc_study_get_navigation( $id = null ) {
         'child_of'    => sc_get_study_id( $study_id ),
     );
 
-	if ( sc_user_can_manage_group() ) {
+	if ( current_user_can( 'create_study' ) ) {
 	    $args['post_status'] = 'publish,private,future';
     }
 
