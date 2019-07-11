@@ -3,6 +3,15 @@
 		<card v-loading="loading" style="min-height: 200px;">
 			<div class="card-header">
 				<div class="study-meta float-right">
+					<n-button
+							type="primary"
+							class="btn-print"
+							@click.native="printPage"
+							icon
+							size="sm">
+						<font-awesome-icon :icon="[ 'fas', 'print' ]"></font-awesome-icon>
+					</n-button>
+
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
 						<el-option
 							v-for="option in studyData.navigation"
@@ -232,6 +241,9 @@
         }
 
       },
+		printPage() {
+          window.print();
+		},
       reset (keep) {
         let def = getDefaultData();
         def[keep] = this[keep];
@@ -258,6 +270,9 @@
 			margin-bottom: 2em;
 		}
 
+	.btn-print {
+		margin-top: 1px;
+	}
 
 	}
 </style>
