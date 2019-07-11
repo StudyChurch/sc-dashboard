@@ -18,6 +18,19 @@
 							<p class="description" v-show="!showGroupDesc">
 								<a href="#" @click.stop="showGroupDesc=true">Show details</a></p>
 						</div>
+
+						<div v-loading="loadingTodos" class="mobile-only">
+							<ul slot="raw-content" class="list-group list-group-flush">
+								<li :class="'list-group-item'" style="text-align: center;">
+									<h6>Upcoming To-Do</h6>
+									<p v-for="lesson in firstTodo.lessons" :key="lesson.id">
+										<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
+											<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
+											<span v-html="lesson.title"></span></router-link>
+									</p>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</card>
 
@@ -135,6 +148,7 @@
       loadingMembers: true,
       showGroupDesc : false,
       todoData      : [],
+		firstTodo: '',
     }
   }
 
@@ -175,7 +189,7 @@
 
       loaded() {
         return this.groupData.id && (!this.groupData.parent_id || this.group.organization.id === this.groupData.parent_id);
-	  }
+	  },
 
     },
     methods   : {
@@ -192,9 +206,12 @@
         this.$http
           .get(
             '/wp-json/studychurch/v1/assignments?group_id=' + this.groupData.id)
-          .then(response => (
-            this.todoData = response.data
-          ))
+          .then(response => {
+              this.todoData = response.data;
+              if ( this.todoData.length > 0 ) {
+                  this.firstTodo = this.todoData[0];
+			  }
+          })
           .finally(() => this.loadingTodos = false)
       },
       getMembers () {
