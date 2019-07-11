@@ -41,158 +41,167 @@
 	</div>
 </template>
 <script>
-  import {
-    Card,
-    Table as NTable,
-    Progress as NProgress,
-    AnimatedNumber,
-    TimeLine,
-    TimeLineItem,
-    ActivityForm
-  } from 'src/components';
+    import {
+        Card,
+        Table as NTable,
+        Progress as NProgress,
+        AnimatedNumber,
+        TimeLine,
+        TimeLineItem,
+        ActivityForm
+    } from 'src/components';
 
-  import draggable from 'vuedraggable';
-  import Element from '../Components/Element';
-  import { Select, Option, DatePicker } from 'element-ui';
-  import { mapState, mapGetters } from 'vuex';
+    import draggable from 'vuedraggable';
+    import Element from '../Components/Element';
+    import { Select, Option, DatePicker } from 'element-ui';
+    import { mapState, mapGetters } from 'vuex';
 
-  export default {
-    components: {
-      Card,
-      NTable,
-      NProgress,
-      AnimatedNumber,
-      TimeLine,
-      TimeLineItem,
-      ActivityForm,
-      'el-select': Select,
-      'el-option': Option,
-	  'el-date-picker': DatePicker,
-      Element,
-      draggable
-    },
-    data      : function () {
-      return {
-        items   : [],
-        chapters: [],
-        model   : {
-          title  : '',
-          content: '',
-		  date: '',
+    export default {
+        components: {
+            Card,
+            NTable,
+            NProgress,
+            AnimatedNumber,
+            TimeLine,
+            TimeLineItem,
+            ActivityForm,
+            'el-select': Select,
+            'el-option': Option,
+            'el-date-picker': DatePicker,
+            Element,
+            draggable
         },
-        chapter : {
-          id      : 0,
-          title   : {
-            rendered: '',
-            raw     : '',
-          },
-          excerpt : {
-            rendered: '',
-            raw     : '',
-          },
-          elements: [],
-        },
-        loading : true,
-        config  : {
-          events          : {
-            'froalaEditor.initialized': function () {
+        data      : function () {
+            return {
+                items   : [],
+                chapters: [],
+                model   : {
+                    title  : '',
+                    content: '',
+                    date: '',
+                },
+                chapter : {
+                    id      : 0,
+                    title   : {
+                        rendered: '',
+                        raw     : '',
+                    },
+                    excerpt : {
+                        rendered: '',
+                        raw     : '',
+                    },
+                    elements: [],
+                },
+                loading : true,
+                config  : {
+                    events          : {
+                        'froalaEditor.initialized': function () {
+                        }
+                    },
+                    inlineMode      : false,
+                    heightMin       : 100,
+                    heightMax       : 400,
+                    theme           : 'gray',
+                    charCounterCount: false,
+                    placeholderText : 'Chapter introduction, video, etc...',
+                    toolbarButtons  : [
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strikeThrough',
+                        '|',
+                        'paragraphFormat',
+                        'align',
+                        'formatOL',
+                        'formatUL',
+                        'quote',
+                        '|',
+                        'insertLink',
+                        'insertImage',
+                        'insertTable',
+                        '|',
+                        'clearFormatting',
+                        'undo',
+                        'redo',
+                        'fullscreen',
+                    ]
+                },
             }
-          },
-          inlineMode      : false,
-          heightMin       : 100,
-          heightMax       : 400,
-          theme           : 'gray',
-          charCounterCount: false,
-          placeholderText : 'Chapter introduction, video, etc...',
-          toolbarButtons  : [
-            'bold',
-            'italic',
-            'underline',
-            'strikeThrough',
-            '|',
-            'paragraphFormat',
-            'align',
-            'formatOL',
-            'formatUL',
-            'quote',
-            '|',
-            'insertLink',
-            'insertImage',
-            'insertTable',
-            '|',
-            'clearFormatting',
-            'undo',
-            'redo',
-            'fullscreen',
-          ]
         },
-      }
-    },
-    mounted() {
-      this.$store
-        .dispatch('study/getStudyChapter', {study: this.$route.params.study_id, chapter: this.$route.params.chapter_id})
-        .then(response => {
-            console.log( 'Retrieve Chapter', response );
-          this.chapter = response;
-          this.loading = false;
-          this.model = {
-            title  : response.title.raw,
-            content: response.content.raw,
-			date   : response.date,
-          };
-        });
-    },
-    watch     : {},
-    methods   : {
-      addItem(index) {
-        console.log('index: ' + index);
-        let newElements = this.elements;
-        newElements.splice(index, 0, {
-          id     : Date.now(),
-          editing: true,
-          title  : {
-            raw: '',
-          },
-          content: {
-            raw: '',
-          }
-        });
+        mounted() {
+            this.$store
+                .dispatch('study/getStudyChapter', {study: this.$route.params.study_id, chapter: this.$route.params.chapter_id})
+                .then(response => {
+                    console.log( 'Retrieve Chapter', response );
+                    this.chapter = response;
+                    this.loading = false;
+                    this.model = {
+                        title  : response.title.raw,
+                        content: response.content.raw,
+                        date   : response.date,
+                    };
+                });
+        },
+        watch     : {},
+        methods   : {
+            addItem(index) {
+                console.log('index: ' + index);
+                let newElements = this.elements;
+                newElements.splice(index, 0, {
+                    id     : Date.now(),
+                    editing: true,
+                    title  : {
+                        raw: '',
+                    },
+                    content: {
+                        raw: '',
+                    }
+                });
 
-        this.elements = newElements;
-      },
-      save() {
-        this.loading = true;
-        this.$store
-          .dispatch('study/updateStudyChapter', {
-            chapterID: this.study.chapter.id, data: {
-              elements: this.elements,
-              title   : this.model.title,
-              content : this.model.content,
-			  date    : this.model.date + ' 00:00:00',
+                this.elements = newElements;
+            },
+            save() {
+
+                console.log( 'saving...', this.model.date );
+
+                this.model.date = this.model.date.split("T")[0];
+
+                console.log( 'DATE...', this.model.date );
+
+                this.loading = true;
+                this.$store
+                    .dispatch('study/updateStudyChapter', {
+                        chapterID: this.study.chapter.id, data: {
+                            elements: this.elements,
+                            title   : this.model.title,
+                            content : this.model.content,
+                            date    : this.model.date + ' 00:00:00',
+                        }
+                    })
+                    .then(response => {
+                        console.log( 'Response', response );
+                        this.loading = false;
+                        this.model = {
+                            title  : response.title.raw,
+                            content: response.content.raw,
+                            date: response.date,
+                        };
+                    });
             }
-          })
-          .then(response => {
-            this.loading = false;
-            this.model = {
-              title  : response.title.raw,
-              content: response.content.raw,
-            };
-          });
-      }
-    },
-    computed  : {
-      ...mapState(['study', 'user']),
-      ...mapGetters('user', ['currentUserCan']),
-      elements: {
-        get() {
-          return this.study.chapter.elements;
         },
-        set(value) {
-          this.study.chapter.elements = value;
+        computed  : {
+            ...mapState(['study', 'user']),
+            ...mapGetters('user', ['currentUserCan']),
+            elements: {
+                get() {
+                    return this.study.chapter.elements;
+                },
+                set(value) {
+                    this.study.chapter.elements = value;
+                }
+            }
         }
-      }
     }
-  }
 </script>
 <style scoped lang="scss">
 
