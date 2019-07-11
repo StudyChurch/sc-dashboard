@@ -12,7 +12,7 @@
 						<font-awesome-icon :icon="[ 'fas', 'print' ]"></font-awesome-icon>
 					</n-button>
 
-					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
+					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter">
 						<el-option
 							v-for="option in studyData.navigation"
 							class="select-primary"
@@ -264,15 +264,14 @@
 		margin: 0 .5rem;
 	}
 
+	.btn-print {
+		margin-top: 1px;
+	}
+
 	@media screen and (max-width: 768px) {
 		.study-meta {
 			width: 100%;
 			margin-bottom: 2em;
 		}
-
-	.btn-print {
-		margin-top: 1px;
-	}
-
 	}
 </style>
