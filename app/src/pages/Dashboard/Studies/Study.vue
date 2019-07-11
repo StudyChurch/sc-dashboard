@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<card v-loading="loading" style="min-height: 200px;" v-if="chapterData.length > 0">
+		<card v-loading="loading" style="min-height: 200px;" v-if="chapterData.status !== 'future'">
 			<div class="card-header">
 				<div class="study-meta float-right">
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
@@ -46,7 +46,7 @@
 			</div>
 		</card>
 
-		<div v-if="chapterData.length > 0">
+		<div v-if="chapterData.status !== 'future'">
 			<router-link v-if="studyData.prevChapter.id && chapterData.id !== studyData.prevChapter.id" :to="navPrefix + $root.cleanLink(studyData.prevChapter.link)" tag="button" class="btn btn-default">
 				<span class="btn-label btn-label-right"><i class="now-ui-icons arrows-1_minimal-left"></i></span>
 				&nbsp;&nbsp;<span v-html="studyData.prevChapter.title.rendered"></span>
@@ -163,6 +163,7 @@
       isPreview() {
         return this.isOrganization;
       },
+
         getDate() {
             return this.$options.filters.dateFormat(this.chapterData.date);
         }
