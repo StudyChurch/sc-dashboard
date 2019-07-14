@@ -169,7 +169,7 @@
             return this.$options.filters.dateFormat(this.chapterData.date);
         },
 	  canViewChapter() {
-          return ( this.chapterData && this.chapterData.status === 'publish' ) || ( this.chapterData.status === 'future' && this.currentUserCan( 'create_study' ) );
+          return ( this.chapterData && this.chapterData.status === 'publish' ) || ( this.chapterData && this.chapterData.status === 'future' && this.currentUserCan( 'create_study' ) );
 	  }
     },
     methods   : {
