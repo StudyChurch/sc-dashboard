@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<card v-loading="loading" style="min-height: 200px;" v-if="canViewChapter">
+		<card v-loading="loading" style="min-height: 200px;" v-if="canViewChapter && ! loading">
 			<div class="card-header">
 				<div class="study-meta float-right">
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
@@ -40,7 +40,7 @@
 			</div>
 		</card>
 
-		<card v-else>
+		<card v-else-if="false === canViewChapter && ! loading" v-loading="loading">
 			<div class="card-body">
 				<p>This study or chapter has not started yet, please check with your leader to see when it will become available.</p>
 			</div>
@@ -140,7 +140,7 @@
         if (to !== this.$route.path) {
           this.$router.push(to);
         }
-      }
+      },
     },
     computed  : {
       ...mapState(['group']),
@@ -169,7 +169,6 @@
             return this.$options.filters.dateFormat(this.chapterData.date);
         },
 	  canViewChapter() {
-          console.log( this.chapterData );
           return ( this.chapterData && this.chapterData.status === 'publish' ) || ( this.chapterData.status === 'future' && this.currentUserCan( 'create_study' ) );
 	  }
     },
