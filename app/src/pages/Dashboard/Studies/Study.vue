@@ -3,7 +3,15 @@
 		<card v-loading="loading" style="min-height: 200px;">
 			<div class="card-header">
 				<div class="study-meta float-right">
-					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter" style="margin:-10px -5px">
+					<n-button
+							type="primary"
+							class="btn-fullscreen"
+							@click.native="toggleFullscreen"
+							icon
+							size="sm">
+							<font-awesome-icon :icon="fullscreenIcon"></font-awesome-icon>
+					</n-button>
+					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter">
 						<el-option
 							v-for="option in studyData.navigation"
 							class="select-primary"
@@ -94,6 +102,7 @@
         nextChapter   : {},
         navigation    : []
       },
+		fullscreen: false,
     }
   }
 
@@ -155,9 +164,41 @@
       },
       isPreview() {
         return this.isOrganization;
-      }
+      },
+		fullscreenIcon() {
+            return this.fullscreen ? 'eye-slash' : 'eye';
+		}
     },
     methods   : {
+        toggleFullscreen() {
+
+          this.fullscreen = ! this.fullscreen;
+
+           let sidebar = document.querySelector( '.groups-sidebar' );
+            if ( null !== sidebar ) {
+                sidebar.style.display = this.fullscreen ? 'none' : 'block';
+            }
+
+            let mainContent = document.querySelector( '.col-lg-8' );
+
+			if ( this.fullscreen ) {
+				mainContent.classList.add( 'fullscreen' );
+			} else {
+				mainContent.classList.remove( 'fullscreen' );
+			}
+
+			let innerMenu = document.querySelector( '.el-menu' );
+			if ( null !== innerMenu ) {
+                innerMenu.style.display = this.fullscreen ? 'none' : 'flex';
+            }
+
+            // Dashboard column is different
+			let dashboardSidebar = document.querySelector( '.sc-dashboard .col-lg-4' );
+
+			if ( null !== dashboardSidebar ) {
+			    dashboardSidebar.style.display = this.fullscreen ? 'none' : 'flex';
+			}
+		},
       decode(html) {
         return he.decode(html);
       },
@@ -250,6 +291,10 @@
 
 	.study-meta div {
 		margin: 0 .5rem;
+	}
+
+	.btn-fullscreen {
+		margin-top: 1px;
 	}
 
 	@media screen and (max-width: 768px) {
