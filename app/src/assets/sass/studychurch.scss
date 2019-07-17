@@ -46,4 +46,15 @@
     max-width: 100% !important;
     left: 0 !important;
   }
+
+}
+
+.mobile-only {
+
+  display: none;
+
+  @include mobile {
+    display: block;
+  }
+
 }
