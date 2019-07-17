@@ -11,6 +11,14 @@
 							size="sm">
 							<font-awesome-icon :icon="fullscreenIcon"></font-awesome-icon>
 					</n-button>
+					<n-button
+							class="btn-print"
+							@click.native="printPage"
+							icon
+							size="sm">
+						<font-awesome-icon :icon="[ 'fas', 'print' ]"></font-awesome-icon>
+					</n-button>
+
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter">
 						<el-option
 							v-for="option in studyData.navigation"
@@ -273,6 +281,9 @@
         }
 
       },
+		printPage() {
+          window.print();
+		},
       reset (keep) {
         let def = getDefaultData();
         def[keep] = this[keep];
@@ -293,7 +304,8 @@
 		margin: 0 .5rem;
 	}
 
-	.btn-fullscreen {
+	.btn-fullscreen,
+	.btn-print {
 		margin-top: 1px;
 	}
 
@@ -302,7 +314,5 @@
 			width: 100%;
 			margin-bottom: 2em;
 		}
-
-
 	}
 </style>
