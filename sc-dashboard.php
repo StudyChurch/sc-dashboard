@@ -179,7 +179,34 @@ class StudyChurch {
 		add_filter( 'bp_get_loggedin_user_link', function ( $link ) {
 			return get_home_url();
 		} );
+
+
+        add_filter( 'post_type_link', array( $this, 'fix_future_post_links' ), 10, 3 );
+
 	}
+
+    public function fix_future_post_links( $permalink, $post, $leavename ) {
+
+
+        /* for filter recursion (infinite loop) */
+        static $recursing = false;
+
+        if ( empty( $post->ID ) ) {
+            return $permalink;
+        }
+
+        if ( !$recursing ) {
+            if ( isset( $post->post_status ) && ( 'future' === $post->post_status ) ) {
+                // set the post status to publish to get the 'publish' permalink
+                $post->post_status = 'publish';
+                $recursing = true;
+                return get_permalink( $post, $leavename ) ;
+            }
+        }
+
+        $recursing = false;
+        return $permalink;
+    }
 
 	/**
 	 * Wire up actions

@@ -115,11 +115,19 @@ function sc_study_get_navigation( $id = null ) {
 
 	$study_id = sc_get_study_id( $id );
 
-	$elements = get_pages( array(
-		'sort_column' => 'menu_order',
-		'post_type'   => 'sc_study',
-		'child_of'    => sc_get_study_id( $study_id ),
-	) );
+	$args = array(
+        'sort_column' => 'menu_order',
+        'post_type'   => 'sc_study',
+        'child_of'    => sc_get_study_id( $study_id ),
+    );
+
+	if ( current_user_can( 'create_study' ) ) {
+	    $args['post_status'] = 'publish,private,future';
+    }
+
+
+	$elements = get_pages( $args );
+
 
 	if ( ! $elements ) {
 		return array();
