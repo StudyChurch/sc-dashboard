@@ -80,7 +80,7 @@
 							v-if="isOrgAdmin"
 							width="110">
 							<template slot-scope="scope">
-								<a :href="'/studio/studies/' + scope.row.id" v-if="canEditStudy(scope.row)">
+								<a :href="'/studio/studies/' + scope.row.id" v-if="isOrgAdmin()">
 									<n-button
 										class="edit btn-neutral"
 										type="info"
