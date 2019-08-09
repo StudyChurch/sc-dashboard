@@ -6,7 +6,7 @@
 			<router-link class="category" v-html="getGroupById(data.group).name" :to="'/groups/' + getGroupById(data.group).slug + '/'"></router-link>
 			<h6>Due Date: {{data.date}}</h6>
 			<p v-for="lesson in data.lessons">
-				<router-link :to="'/groups/' + getGroupById(data.group).slug + $root.cleanLink(lesson.link)">
+				<router-link :to="'/groups/' + getGroupById(data.group).slug + $root.cleanLink(lesson.link)" v-if="$root.cleanLink(lesson.link)">
 					<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
 					<span v-html="lesson.title"></span></router-link>
 			</p>

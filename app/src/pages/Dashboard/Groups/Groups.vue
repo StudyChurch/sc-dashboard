@@ -45,7 +45,7 @@
 							&nbsp;
 							<h6>Due Date: {{data.date}}</h6>
 							<p v-for="lesson in data.lessons" :key="lesson.id">
-								<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
+								<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)" v-if="$root.cleanLink(lesson.link)">
 									<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
 									<span v-html="lesson.title"></span></router-link>
 							</p>
