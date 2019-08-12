@@ -80,7 +80,6 @@
 								<el-input
 									type="search"
 									class="mb-3"
-									clearable
 									prefix-icon="el-icon-search"
 									style="width: 200px"
 									placeholder="Search library"
