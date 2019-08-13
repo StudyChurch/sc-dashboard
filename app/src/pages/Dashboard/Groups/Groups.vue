@@ -21,10 +21,10 @@
 
 						<div v-loading="loadingTodos" class="mobile-only">
 							<ul slot="raw-content" class="list-group list-group-flush">
-								<li :class="'list-group-item'" style="text-align: center;">
+								<li :class="'list-group-item'" style="   text-align: center;">
 									<h6>Upcoming To-Do</h6>
 									<p v-for="lesson in firstTodo.lessons" :key="lesson.id">
-										<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)">
+										<router-link :to="'/groups/' + $route.params.slug + $root.cleanLink(lesson.link)" v-if="$root.cleanLink(lesson.link)">
 											<i class="now-ui-icons design_bullet-list-67"></i>&nbsp;
 											<span v-html="lesson.title"></span></router-link>
 									</p>
