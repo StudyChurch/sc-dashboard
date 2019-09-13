@@ -33,7 +33,7 @@
 @import 'now-ui-dashboard/plugins/plugin-bootstrap-select';
 @import 'now-ui-dashboard/plugins/plugin-jquery.jvectormap';
 @import 'now-ui-dashboard/plugins/plugin-fullcalendar';
-@import '~tributejs/scss/tribute';
+//@import '~tributejs/scss/tribute';
 
 // Core CSS
 @import 'now-ui-dashboard/buttons';
@@ -123,7 +123,7 @@
 @import "~element-ui/packages/theme-chalk/src/alert";
 //@import "~element-ui/packages/theme-chalk/src/notification";
 //@import "~element-ui/packages/theme-chalk/src/slider";
-//@import "~element-ui/packages/theme-chalk/src/loading";
+@import "~element-ui/packages/theme-chalk/src/loading";
 //@import "~element-ui/packages/theme-chalk/src/row";
 //@import "~element-ui/packages/theme-chalk/src/col";
 @import "~element-ui/packages/theme-chalk/src/upload";
