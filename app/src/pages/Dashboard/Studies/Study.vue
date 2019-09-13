@@ -22,6 +22,11 @@
 
 					<el-select class="select-primary" size="small" placeholder="Select Chapter" v-if="studyData.navigation.length" v-model="studyData.currentChapter">
 						<el-option
+							class="select-primary"
+							:value="navPrefix + '/studies/' + $route.params.study + '/'"
+							:label="'Overview'">
+						</el-option>
+						<el-option
 								v-for="option in studyData.navigation"
 								class="select-primary"
 								:value="getChapterLink(option)"
@@ -269,8 +274,17 @@
             getChapter() {
 
                 if (undefined === this.$route.params.chapter) {
-                    // this.chapterData = null;
-                    this.loading = false;
+				  this.$http
+                    .get('/wp-json/studychurch/v1/studies/' + this.$route.params.study)
+                    .then(response => {
+                        this.chapterData = response.data;
+                        this.studyData.name = this.chapterData.study;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                        this.$root.reftag();
+                    });
+
                     return;
                 }
 

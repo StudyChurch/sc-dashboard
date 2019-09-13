@@ -100,6 +100,15 @@ class Studies extends WP_REST_Posts_Controller {
             ),
 		) );
 
+		register_rest_route( $this->namespace, $this->base . '/(?P<study_id>[a-zA-Z0-9-]+)', array(
+			array(
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'get_study' ),
+				'args'     => $posts_args,
+				//				'permission_callback' => array( $this, 'get_item_permissions_check' ),
+			),
+		) );
+
 		register_rest_route( $this->namespace, $this->base . '/(?P<study_id>[a-zA-Z0-9-]+)/chapters', array(
 			array(
 				'methods'  => WP_REST_Server::READABLE,
@@ -234,6 +243,26 @@ class Studies extends WP_REST_Posts_Controller {
 		}
 
 		return parent::create_item( $request );
+	}
+
+	public function get_study( $request ) {
+		$args       = (array) $request->get_params();
+		$study_id   = $args['study_id'];
+
+		if ( ! is_numeric( $study_id ) ) {
+			$study_id = get_page_by_path( $study_id, OBJECT, 'sc_study' )->ID;
+		}
+
+		if ( empty( $study_id ) || ! $study = get_post( $study_id ) ) {
+			return new WP_Error( 'json_post_invalid_id', __( 'Invalid post ID.' ), array( 'status' => 404 ) );
+		}
+
+		$study = $this->prepare_item_for_response( $study, $request );
+		$study = $this->prepare_response_for_collection( $study );
+
+		$response = rest_ensure_response( $study );
+
+		return $response;
 	}
 
 	public function get_chapter( $request, $context = 'view' ) {
