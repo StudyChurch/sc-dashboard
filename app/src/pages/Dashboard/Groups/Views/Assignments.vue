@@ -87,7 +87,7 @@
 			</p>
 
 			<template slot="footer">
-				<n-button type="primary" @click.native="saveEdit">Edit</n-button>
+				<n-button type="primary" @click.native="saveEdit">Save Changes</n-button>
 			</template>
 		</modal>
 
@@ -218,6 +218,10 @@
           this.showEditModal = true;
 
           this.editTodoData = itemId;
+
+          if ( undefined === this.editTodoData.studies ) {
+            this.editTodoData.studies = [];
+		  }
 
           this.editTodoData.content = this.stripHTML( this.editTodoData.content );
 
