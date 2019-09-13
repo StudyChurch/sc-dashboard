@@ -8,7 +8,7 @@ undefined === process.env.VUE_APP_BRAND
 // vue.config.js
 module.exports = {
   lintOnSave      : true,
-  baseUrl         : '/wp-content/plugins/sc-dashboard/app/dist',
+  publicPath      : '/wp-content/plugins/sc-dashboard/app/dist',
   indexPath       : 'index.php',
   css             : {
     loaderOptions: {
