@@ -160,7 +160,7 @@ class Study {
 		}
 
 		// if we are allowing personal studies, we don't care if the group was setup
-		if ( apply_filters( 'sc_allow_personal_studies', false, $study_id ) ) {
+		if ( apply_filters( 'sc_allow_personal_studies', true, $study_id ) ) {
 			return;
 		}
 

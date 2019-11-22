@@ -261,7 +261,7 @@
 		},
 		clearStudyValues() {
             for (let i = 0; i < this.newTodo.studies.length; i++) {
-                this.newTodo.studies[i].value = '';
+                this.newTodo.studies[i].value = [];
             }
 		},
 		saveEdit() {
