@@ -30,7 +30,7 @@
     "fuse.js": "^3.2.0",
     "google-maps": "^3.2.1",
     "he": "^1.2.0",
-    "jquery": "^3.2.1",
+    "jquery": "^3.4.0",
     "js-cookie": "^2.2.0",
     "jvectormap-next": "^3.0.0",
     "jwt-decode": "^2.2.0",
