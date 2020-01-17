@@ -51,7 +51,7 @@
 
       SELF.error = function (data) {
         SELF.finishProcessing('Ooops! Something went wrong, please try again.', false);
-        SELF.$form.prepend('<p class="rcp_error" data-alert>' + data.message + '</p>');
+        SELF.$form.prepend(data.errors);
         console.log(data);
       };
 

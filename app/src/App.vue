@@ -3,7 +3,6 @@
 		<router-view v-if="user.me.id"></router-view>
 	</div>
 </template>
-
 <script>
   import { mapState } from 'vuex';
 
