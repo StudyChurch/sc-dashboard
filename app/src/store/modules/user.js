@@ -165,13 +165,13 @@ export const getters = {
       return state.me;
     }
 
-    let user = state.users.find(user => user.id === id);
+    let found = state.users.find(user => user.id === id);
 
-    if (undefined === user) {
-      return { id : 0, name : '' };
+    if (undefined === found) {
+      return { id : 0, name : '', thumb : '' };
     }
 
-    return user;
+    return found;
   },
   getAvatar     : (state, getters) => id => {
     let user = getters.getUserById(id);
