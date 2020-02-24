@@ -111,7 +111,7 @@ export const actions = {
     let idsToFetch = [];
 
     for (let id of ids) {
-      if (undefined === getters.getUserById(id)) {
+      if (0 === getters.getUserById(id).id) {
         idsToFetch.push(id);
       }
     }
@@ -168,7 +168,7 @@ export const getters = {
     let found = state.users.find(user => user.id === id);
 
     if (undefined === found) {
-      return { id : 0, name : '', thumb : '' };
+      return { id : 0, name : '', avatar_urls : {} };
     }
 
     return found;
