@@ -30,7 +30,7 @@
 			</div>
 
 			<img class="avatar border-gray" :src="item.user_avatar.full" alt="..." style="position: absolute;left:0;">
-			<div class="card-category" v-html="item.title"></div>
+			<div class="card-category" v-html="item.title.replace(/href/g, 'href-dis')"></div>
 			<div class="card-category">{{item.date | dateFormat }}</div>
 		</div>
 
