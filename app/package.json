@@ -21,7 +21,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.2",
     "axios": "^0.18.0",
     "babel-plugin-component-scss": "^1.1.2",
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.3.1",
     "chart.js": "^2.7.1",
     "custom-env": "^1.0.0",
     "element-ui": "^2.2.1",
