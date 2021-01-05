@@ -19,7 +19,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/vue-fontawesome": "^0.1.2",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-plugin-component-scss": "^1.1.2",
     "bootstrap": "^4.0.0",
     "chart.js": "^2.7.1",
