@@ -68,7 +68,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "chai": "^4.1.2",
     "lint-staged": "^6.0.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "sass-loader": "^6.0.6",
     "vue-template-compiler": "^2.5.13",
     "webpack-cli": "^3.1.2"
