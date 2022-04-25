@@ -79,6 +79,7 @@ class SC_Ajax_Register {
 
 	public function __construct() {
 		add_action( 'sc_ajax_form_nopriv_sc_register', array( $this, 'ajax_register' ) );
+		add_action( 'sc_ajax_form_sc_register', array( $this, 'register_success' ) );
 		add_action( 'init', array( $this, 'remove_default' ) );
 		add_action( 'sc_register_form_end', 'sc_group_join_redirect' );
 
@@ -97,24 +98,21 @@ class SC_Ajax_Register {
 
 		$_POST = $this->data = $data;
 
-		add_filter( 'wp_redirect', array( $this, 'register_success' ) );
+		add_action( 'rcp_form_processing', array( $this, 'register_success' ) );
 		rcp_setup_registration_init();
 		rcp_process_registration();
-		remove_filter( 'wp_redirect', array( $this, 'register_success' ) );
 
 		wp_send_json_error( array(
 			'message' => implode( '<br />', rcp_errors()->get_error_messages() ),
 		) );
 	}
 
-	public function register_success( $location ) {
-		remove_filter( 'wp_redirect', array( $this, 'register_success' ) );
-
+	public function register_success() {
 		$data = $this->data;
 
 		$return = array(
 			'message' => __( 'Success! Taking you to your profile.', 'sc' ),
-			'url'     => $location
+			'url'     => bp_get_loggedin_user_link()
 		);
 
 		if ( isset( $data['url'], $data['group_id'] ) ) {
@@ -124,6 +122,7 @@ class SC_Ajax_Register {
 		}
 
 		wp_send_json_success( $return );
+		exit;
 	}
 
 	public function remove_default() {

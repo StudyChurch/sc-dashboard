@@ -2,6 +2,8 @@ $env : 'sc' !default;
 
 @if $env == 'pilgrimage' {
 	$primary-color: #46c7ea !global;
+} @else if $env == 'hero-otd' {
+	$primary-color: #5F5938 !global;
 } @else {
 	$primary-color: #3ebeb2 !global;
 }

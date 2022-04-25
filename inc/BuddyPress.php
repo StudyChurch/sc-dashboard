@@ -50,6 +50,50 @@ class BuddyPress {
 		add_filter( 'bp_before_groups_post_update_parse_args', array( $this, 'save_comment_id' ) );
 		add_filter( 'bp_after_groups_record_activity_parse_args', array( $this, 'retrieve_comment_id' ) );
 
+		add_action( 'groups_remove_data_for_user', [ $this, 'remove_user_from_groups' ] );
+	}
+
+	/**
+	 * Remove user from all groups on delete. Normal action doesn't remove from hidden groups.
+	 *
+	 * @param $user_id
+	 *
+	 * @author Tanner Moushey
+	 */
+	public function remove_user_from_groups( $user_id ) {
+		global $wpdb;
+
+		$pag_sql = '';
+		$bp = buddypress();
+
+		$group_sql = $wpdb->prepare( "SELECT DISTINCT group_id FROM {$bp->groups->table_name_members} WHERE user_id = %d AND is_confirmed = 1 AND is_banned = 0{$pag_sql}", $user_id );
+
+		$groups = $wpdb->get_col( $group_sql );
+
+		foreach ( $groups as $group_id ) {
+			if ( groups_is_user_admin( $user_id, $group_id ) ) {
+				// If the user is a sole group admin, install a site admin as their replacement.
+				if ( count( groups_get_group_admins( $group_id ) ) < 2 ) {
+					$admin = get_users( array(
+						'blog_id' => bp_get_root_blog_id(),
+						'fields'  => 'id',
+						'number'  => 1,
+						'orderby' => 'ID',
+						'role'    => 'administrator',
+					) );
+
+					if ( ! empty( $admin ) ) {
+						groups_join_group( $group_id, $admin[0] );
+
+						$member = new \BP_Groups_Member( $admin[0], $group_id );
+						$member->promote( 'admin' );
+					}
+				}
+			}
+
+			\BP_Groups_Member::delete( $user_id, $group_id );
+		}
+
 	}
 
     /**

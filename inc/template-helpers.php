@@ -123,8 +123,16 @@ function sc_study_get_navigation( $id = null ) {
 
 	if ( current_user_can( 'create_study' ) ) {
 	    $args['post_status'] = 'publish,private,future';
-    }
+    } else if ( $groups = get_the_terms( $study_id, 'sc_group' ) ) {
+		$groups = array_map( 'absint', wp_list_pluck( $groups, 'name' ) );
 
+		foreach ( $groups as $group ) {
+			if ( BP_Groups_Member::check_is_admin( get_current_user_id(), $group ) ) {
+			    $args['post_status'] = 'publish,private,future';
+			    break;
+			}
+		}
+	}
 
 	$elements = get_pages( $args );
 

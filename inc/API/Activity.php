@@ -171,6 +171,10 @@ class Activity extends BP_REST_Activity_Endpoint {
 			return $retval;
 		}
 
+		if ( is_array( $item_id ) ) {
+			$item_id = array_shift( $item_id );
+		}
+
 		// everyone has access to group 0 for personal studies.
 		if ( 0 === $item_id ) {
 			return true;

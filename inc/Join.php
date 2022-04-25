@@ -212,8 +212,8 @@ class Join {
 			</p>
 
 			<p class="description">By registering you are agreeing to the
-				<a href="<?php echo network_home_url(); ?>privacy-policy">Privacy Policy</a> and
-				<a href="<?php echo network_home_url(); ?>terms">Terms and Conditions</a>.</p>
+				<a href="<?php echo network_home_url(); ?>/privacy-policy">Privacy Policy</a> and
+				<a href="<?php echo network_home_url(); ?>/terms">Terms and Conditions</a>.</p>
 
 		</form>
 		<?php

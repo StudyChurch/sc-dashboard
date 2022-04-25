@@ -12,7 +12,8 @@
     "lint": "vue-cli-service lint",
     "watch": "cross-env NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
     "watch-mac": "NODE_ENV=studychurch webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
-    "watch-pilgrimage": "NODE_ENV=pilgrimage webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
+    "watch-pilgrimage": "NODE_ENV=pilgrimage webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch",
+    "watch-hero": "NODE_ENV=hero-otd webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
@@ -67,7 +68,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "chai": "^4.1.2",
     "lint-staged": "^6.0.0",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.13.1",
     "sass-loader": "^6.0.6",
     "vue-template-compiler": "^2.5.13",
     "webpack-cli": "^3.1.2"
