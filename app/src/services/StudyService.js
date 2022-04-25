@@ -6,7 +6,7 @@ export default {
   getStudies(params) {
     let config = {};
     config.params = Object.assign({
-        per_page : 100,
+        per_page : 9999,
         orderby : 'title',
         order : 'asc',
         status : ['publish', 'private'],
